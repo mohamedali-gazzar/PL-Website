@@ -45,7 +45,7 @@ export default function AboutPage() {
             {heroStats.map((s, i) => (
               <Reveal as="div" key={s.label} delay={i * 90}>
                 <div className="stat">
-                  <div className="sv"><CountUp value={s.value} suffix={s.suffix} /></div>
+                  <div className="sv"><CountUp value={s.value} suffix={s.suffix} group={!s.plain} /></div>
                   <div className="sl">{s.label}</div>
                 </div>
               </Reveal>

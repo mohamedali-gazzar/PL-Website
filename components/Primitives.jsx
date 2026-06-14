@@ -29,7 +29,7 @@ export function Reveal({ children, as: Tag = "div", className = "", style, delay
 }
 
 /** Counts up to `value` the first time it enters the viewport. */
-export function CountUp({ value, suffix = "", prefix = "", duration = 1600 }) {
+export function CountUp({ value, suffix = "", prefix = "", duration = 1600, group = true }) {
   const ref = useRef(null);
   const [display, setDisplay] = useState(0);
 
@@ -64,7 +64,7 @@ export function CountUp({ value, suffix = "", prefix = "", duration = 1600 }) {
   return (
     <span ref={ref}>
       {prefix}
-      {display.toLocaleString("en-US")}
+      {group ? display.toLocaleString("en-US") : String(display)}
       {suffix}
     </span>
   );

@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Poppins, Montserrat } from "next/font/google";
+import StyledJsxRegistry from "./registry";
+import ChunkReload from "@/components/ChunkReload";
 
 // Self-hosted at build time by Next — no runtime external request, no @import,
 // no manual <head>. Montserrat stands in for the proprietary Nexa headline face.
@@ -40,10 +42,29 @@ export const viewport = {
   initialScale: 1,
 };
 
+// Critical, first-paint CSS — inlined in the initial HTML so the page never
+// flashes unstyled/white before the main stylesheet applies.
+const CRITICAL_CSS = `
+  html { background: #050506; }
+  body {
+    margin: 0;
+    background: #050506;
+    color: #f4f4f5;
+    font-family: var(--font-poppins), system-ui, -apple-system, sans-serif;
+    overflow-x: hidden;
+  }
+`;
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} ${montserrat.variable}`}>
-      <body>{children}</body>
+      <head>
+        <style dangerouslySetInnerHTML={{ __html: CRITICAL_CSS }} />
+      </head>
+      <body>
+        <ChunkReload />
+        <StyledJsxRegistry>{children}</StyledJsxRegistry>
+      </body>
     </html>
   );
 }

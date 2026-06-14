@@ -19,12 +19,24 @@ import Logos from "@/components/sections/Logos";
 import Memorial from "@/components/sections/Memorial";
 import CTA from "@/components/sections/CTA";
 
+// Module-scoped flag: false on a full page load (first open / reload), and
+// stays true across in-app navigation. So the intro plays once per page load,
+// never again when the user returns to home from another page.
+let introPlayed = false;
+
 export default function Home() {
-  const [ready, setReady] = useState(false);
+  const [ready, setReady] = useState(introPlayed);
 
   return (
     <SmoothScroll>
-      <Preloader onComplete={() => setReady(true)} />
+      {!introPlayed && (
+        <Preloader
+          onComplete={() => {
+            introPlayed = true;
+            setReady(true);
+          }}
+        />
+      )}
 
       {/* Subtle, slow electric ambiance behind the whole page */}
       <div className="page-electric" aria-hidden="true">

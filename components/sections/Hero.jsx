@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Link from "next/link";
 import { gsap } from "gsap";
 import { brand, heroStats } from "@/lib/content";
 import { CountUp } from "@/components/Primitives";
+import MagneticButton from "@/components/MagneticButton";
 
 export default function Hero({ ready }) {
   const root = useRef(null);
@@ -74,15 +74,19 @@ export default function Hero({ ready }) {
         </p>
 
         <div className="h-actions">
-          <Link href="/about" className="btn btn-primary">Discover Powerline</Link>
-          <Link href="/low-voltage" className="btn btn-ghost">Explore Solutions</Link>
+          <MagneticButton href="/about" className="btn btn-primary" floatDelay={0}>
+            Discover Powerline
+          </MagneticButton>
+          <MagneticButton href="/low-voltage" className="btn btn-ghost" floatDelay={1.4}>
+            Explore Solutions
+          </MagneticButton>
         </div>
 
         <div className="h-stats">
           {heroStats.map((s) => (
             <div className="h-stat" key={s.label}>
               <div className="num">
-                <CountUp value={s.value} suffix={s.suffix} />
+                <CountUp value={s.value} suffix={s.suffix} group={!s.plain} />
               </div>
               <div className="lbl">{s.label}</div>
             </div>
