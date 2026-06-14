@@ -140,7 +140,7 @@ export default function Footer() {
         }
         .col :global(a.fcta),
         .col :global(a.fcta:hover) {
-          color: #fff;
+          color: #0a0a0a;
         }
         .bottom {
           display: flex;
