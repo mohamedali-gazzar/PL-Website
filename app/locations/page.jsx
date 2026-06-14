@@ -16,7 +16,7 @@ export default function LocationsPage() {
         title="Our"
         accent="locations"
         lead="A headquarters in the heart of Cairo and two advanced manufacturing facilities in 10th of Ramadan City."
-        img="/img/facility-2.jpg"
+        img="/img/facility-2.webp"
       />
 
       <section className="locs">

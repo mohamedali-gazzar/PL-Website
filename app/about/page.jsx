@@ -17,7 +17,7 @@ export default function AboutPage() {
         title="Powerline"
         accent="is"
         lead={aboutCopy.lead}
-        img="/img/facility-1.jpg"
+        img="/img/facility-1.webp"
       />
 
       <section className="about">
@@ -34,7 +34,7 @@ export default function AboutPage() {
             </Reveal>
             <Reveal delay={120}>
               <div className="intro-media">
-                <img src="/img/facility-2.jpg" alt="Powerline manufacturing facility" />
+                <img src="/img/facility-2.webp" alt="Powerline manufacturing facility" />
                 <span className="im-frame" />
               </div>
             </Reveal>
@@ -59,7 +59,7 @@ export default function AboutPage() {
                 <span className="eyebrow">Trusted Partners</span>
                 <h2>{aboutCopy.partnerStatement}</h2>
               </div>
-              <img src="/img/abb-schneider.png" alt="ABB and Schneider Electric" className="ps-logos" />
+              <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" className="ps-logos" />
             </div>
           </Reveal>
 
@@ -91,7 +91,7 @@ export default function AboutPage() {
                 <Link href="/locations" className="btn btn-ghost">Find us →</Link>
               </div>
               <div className="foot-media">
-                <img src="/img/facility-1.jpg" alt="Powerline facility" />
+                <img src="/img/facility-1.webp" alt="Powerline facility" />
                 <span className="im-frame" />
               </div>
             </div>

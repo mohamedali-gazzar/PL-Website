@@ -34,7 +34,7 @@ export default function Memorial() {
         }
         .inner {
           display: grid;
-          grid-template-columns: clamp(260px, 30vw, 440px) 1fr;
+          grid-template-columns: clamp(170px, 20vw, 300px) 1fr;
           gap: clamp(2.5rem, 6vw, 6rem);
           align-items: center;
         }
@@ -42,19 +42,22 @@ export default function Memorial() {
           position: relative;
           width: 100%;
           aspect-ratio: 1 / 1;
-          border-radius: 40px;
+          border-radius: 18%;
           overflow: hidden;
         }
         .portrait img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          /* zoom in to crop the light sky / empty background around him */
+          transform: scale(1.6);
+          transform-origin: 50% 58%;
           filter: grayscale(0.2);
         }
         .ember {
           position: absolute;
           inset: 0;
-          border-radius: 40px;
+          border-radius: 18%;
           box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4),
             0 0 40px rgba(241, 103, 34, 0.35);
           animation: breathe 4s ease-in-out infinite;

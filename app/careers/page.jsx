@@ -47,7 +47,7 @@ export default function CareersPage() {
         title="Power your"
         accent="career"
         lead="We're a team of engineers and makers building reliable electrical solutions to international standards. If precision and progress drive you, you'll fit right in."
-        img="/img/facility-1.jpg"
+        img="/img/facility-1.webp"
       />
 
       <section className="careers">

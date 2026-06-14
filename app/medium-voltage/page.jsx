@@ -11,7 +11,7 @@ export default function Page() {
     <CollectionView
       data={mediumVoltage}
       eyebrow="Assembly Lines"
-      img="/img/line-mv.jpg"
+      img="/img/line-mv.webp"
     />
   );
 }

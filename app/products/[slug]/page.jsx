@@ -12,9 +12,9 @@ import {
 } from "@/lib/content";
 
 const lineImg = {
-  "Low Voltage": "/img/line-lv.jpg",
-  "Medium Voltage": "/img/line-mv.jpg",
-  Supplies: "/img/line-supplies.jpg",
+  "Low Voltage": "/img/line-lv.webp",
+  "Medium Voltage": "/img/line-mv.webp",
+  Supplies: "/img/line-supplies.webp",
 };
 const lineHref = {
   "Low Voltage": "/low-voltage",

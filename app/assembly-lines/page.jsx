@@ -12,8 +12,8 @@ export const metadata = {
 };
 
 const groups = [
-  { data: lowVoltage, href: "/low-voltage", img: "/img/line-lv.jpg" },
-  { data: mediumVoltage, href: "/medium-voltage", img: "/img/line-mv.jpg" },
+  { data: lowVoltage, href: "/low-voltage", img: "/img/line-lv.webp" },
+  { data: mediumVoltage, href: "/medium-voltage", img: "/img/line-mv.webp" },
 ];
 
 export default function AssemblyLinesPage() {
@@ -24,7 +24,7 @@ export default function AssemblyLinesPage() {
         title="Assembly"
         accent="Lines"
         lead="From certified low voltage panels to medium voltage switchgear — engineered, type-tested and assembled at our facilities to international standards."
-        img="/img/line-lv.jpg"
+        img="/img/line-lv.webp"
       />
 
       <section className="al">

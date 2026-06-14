@@ -11,7 +11,7 @@ export default function Page() {
     <CollectionView
       data={lowVoltage}
       eyebrow="Assembly Lines"
-      img="/img/line-lv.jpg"
+      img="/img/line-lv.webp"
       highlight={lowVoltage.highlight}
     />
   );

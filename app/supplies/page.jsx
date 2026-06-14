@@ -8,6 +8,6 @@ export const metadata = {
 
 export default function Page() {
   return (
-    <CollectionView data={supplies} eyebrow="Supplies" img="/img/line-supplies.jpg" />
+    <CollectionView data={supplies} eyebrow="Supplies" img="/img/line-supplies.webp" />
   );
 }

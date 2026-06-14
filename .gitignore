@@ -1,6 +1,7 @@
 node_modules
 .next
 .next-preview
+.vercel
 out
 .DS_Store
 *.log
@@ -11,3 +12,5 @@ scripts/*.html
 
 # local Claude tooling config
 .claude/
+
+.vercel
