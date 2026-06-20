@@ -13,7 +13,9 @@ export default function ProductGallery({ images, alt, badge }) {
         <img src={list[active]} alt={alt} />
         <span className="frame" />
         {badge && (
-          <img className="pg-badge" src={badge} alt="Type Tested by Powerline" />
+          <span className="pg-stamp">
+            <img className="pg-badge" src={badge} alt="Designed & Type Tested by Powerline" />
+          </span>
         )}
       </div>
 
@@ -59,18 +61,52 @@ export default function ProductGallery({ images, alt, badge }) {
           border-radius: 20px;
           box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
         }
-        /* certification seal overlaid on the product image */
-        .main .pg-badge {
+        /* certification seal — slides in from the side, lands dead-centre on
+           the product image, then flickers on like an electric sign */
+        .pg-stamp {
           position: absolute;
-          top: clamp(0.8rem, 3.5%, 1.5rem);
-          right: clamp(0.8rem, 3.5%, 1.5rem);
-          width: clamp(92px, 28%, 165px);
+          top: 50%;
+          left: 50%;
+          width: clamp(150px, 46%, 340px);
+          transform: translate(-50%, -50%);
+          z-index: 3;
+          pointer-events: none;
+          animation: stampSlide 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+        }
+        .pg-stamp .pg-badge {
+          display: block;
+          width: 100%;
           height: auto;
           object-fit: contain;
-          /* no plate — drop-shadow keeps the seal legible on the photo */
-          filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
-            drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
-          z-index: 3;
+          animation: stampFlicker 2.4s steps(1, end) 1.15s both;
+        }
+        @keyframes stampSlide {
+          0% { opacity: 0; transform: translate(460%, -50%) rotate(7deg); }
+          100% { opacity: 1; transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        /* power-on: a few hard flickers, then settle into a steady orange glow */
+        @keyframes stampFlicker {
+          0%, 7% { opacity: 0.18; filter: none; }
+          9% { opacity: 1; filter: drop-shadow(0 0 22px rgba(241, 103, 34, 0.95)); }
+          12% { opacity: 0.25; filter: none; }
+          16% { opacity: 1; filter: drop-shadow(0 0 28px rgba(241, 103, 34, 1)); }
+          21% { opacity: 0.45; filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.4)); }
+          26% { opacity: 1; filter: drop-shadow(0 0 26px rgba(241, 103, 34, 0.95)); }
+          33% { opacity: 0.7; }
+          40% { opacity: 1; filter: drop-shadow(0 0 24px rgba(241, 103, 34, 0.9)); }
+          100% {
+            opacity: 1;
+            filter: drop-shadow(0 0 12px rgba(241, 103, 34, 0.6))
+              drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pg-stamp { animation: none; opacity: 1; }
+          .pg-stamp .pg-badge {
+            animation: none; opacity: 1;
+            filter: drop-shadow(0 0 12px rgba(241, 103, 34, 0.6))
+              drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+          }
         }
         .thumbs {
           display: flex;
