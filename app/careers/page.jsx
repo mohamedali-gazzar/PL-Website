@@ -33,8 +33,8 @@ export default function CareersPage() {
     }
     setStatus("submitting");
     try {
-      await fetch("/api/careers", { method: "POST", body: data });
-      setStatus("sent");
+      const res = await fetch("/api/careers", { method: "POST", body: data });
+      setStatus(res.ok ? "sent" : "error");
     } catch {
       setStatus("error");
     }

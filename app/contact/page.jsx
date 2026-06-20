@@ -24,13 +24,12 @@ export default function ContactPage() {
     }
     setStatus("submitting");
     try {
-      // Posts to a stub API route. Wire this to Powerline's email/CRM to go live.
-      await fetch("/api/contact", {
+      const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      setStatus("sent");
+      setStatus(res.ok ? "sent" : "error");
     } catch {
       setStatus("error");
     }

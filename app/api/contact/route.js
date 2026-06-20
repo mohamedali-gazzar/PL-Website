@@ -13,9 +13,19 @@ export async function POST(request) {
       return NextResponse.json({ ok: false, error: "Missing fields" }, { status: 400 });
     }
 
+    // FormSubmit rejects requests without a browser Origin/Referer.
+    const origin =
+      request.headers.get("origin") ||
+      `https://${request.headers.get("host") || "powerlinei.com"}`;
+
     const res = await fetch(`https://formsubmit.co/ajax/${formEmail}`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Origin: origin,
+        Referer: `${origin}/contact`,
+      },
       body: JSON.stringify({
         _subject: `New quotation request — ${data.name}`,
         _template: "table",

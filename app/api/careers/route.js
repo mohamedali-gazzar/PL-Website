@@ -24,8 +24,14 @@ export async function POST(request) {
     fd.append("Message", incoming.get("message") || "-");
     fd.append("attachment", cv, cv.name); // CV emailed as attachment
 
+    // FormSubmit rejects requests without a browser Origin/Referer.
+    const origin =
+      request.headers.get("origin") ||
+      `https://${request.headers.get("host") || "powerlinei.com"}`;
+
     const res = await fetch(`https://formsubmit.co/${formEmail}`, {
       method: "POST",
+      headers: { Origin: origin, Referer: `${origin}/careers` },
       body: fd,
     });
 
