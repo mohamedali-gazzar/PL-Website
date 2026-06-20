@@ -4,7 +4,7 @@ import { useState } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import { Reveal } from "@/components/Primitives";
-import { brand, locations, productLines } from "@/lib/content";
+import { brand, locations, productLines, formEmail } from "@/lib/content";
 
 export default function ContactPage() {
   const [status, setStatus] = useState("idle"); // idle | error | submitting | sent
@@ -24,12 +24,25 @@ export default function ContactPage() {
     }
     setStatus("submitting");
     try {
-      const res = await fetch("/api/contact", {
+      // Post straight to FormSubmit from the browser so a real Referer is
+      // present — server-side fetch (Vercel/undici) strips it and FormSubmit
+      // then rejects the request.
+      const res = await fetch(`https://formsubmit.co/ajax/${formEmail}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: `New quotation request — ${data.name}`,
+          _template: "table",
+          Name: data.name,
+          Company: data.company || "-",
+          Email: data.email,
+          Phone: data.phone || "-",
+          "Area of interest": data.interest || "-",
+          Message: data.message,
+        }),
       });
-      setStatus(res.ok ? "sent" : "error");
+      const out = await res.json().catch(() => ({}));
+      setStatus(out.success === "true" || out.success === true ? "sent" : "error");
     } catch {
       setStatus("error");
     }

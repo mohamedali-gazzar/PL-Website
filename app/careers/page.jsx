@@ -4,7 +4,7 @@ import { useState } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import { Reveal } from "@/components/Primitives";
-import { values, brand } from "@/lib/content";
+import { values, brand, formEmail } from "@/lib/content";
 
 const culture = [
   { t: "Engineer real impact", d: "Your work energises hospitals, communities and industries across the region — not slideware." },
@@ -33,8 +33,19 @@ export default function CareersPage() {
     }
     setStatus("submitting");
     try {
-      const res = await fetch("/api/careers", { method: "POST", body: data });
-      setStatus(res.ok ? "sent" : "error");
+      // FormSubmit's AJAX endpoint can't carry file attachments, so we post the
+      // multipart form to the standard endpoint straight from the browser (a
+      // real Referer is required — server-side fetch strips it). The response is
+      // opaque under no-cors, so we treat a completed request as success.
+      data.append("_subject", `New job application — ${data.get("name")}`);
+      data.append("_template", "table");
+      data.append("_captcha", "false");
+      await fetch(`https://formsubmit.co/${formEmail}`, {
+        method: "POST",
+        mode: "no-cors",
+        body: data,
+      });
+      setStatus("sent");
     } catch {
       setStatus("error");
     }
