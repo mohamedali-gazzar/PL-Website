@@ -87,27 +87,28 @@ export default function ProductGallery({ images, alt, badge }) {
           position: absolute;
           top: 50%;
           left: 0;
-          width: 55%;
-          height: 3px;
-          transform: translate(-130%, -50%) scaleX(2.6);
+          width: 26%;
+          height: 2px;
+          transform: translate(-160%, -50%) scaleX(1.3);
           border-radius: 99px;
           background: linear-gradient(
             90deg,
             transparent 0%,
-            rgba(255, 170, 80, 0) 18%,
-            rgba(255, 196, 120, 0.85) 78%,
+            rgba(255, 170, 80, 0) 22%,
+            rgba(255, 196, 120, 0.8) 76%,
             #fff 100%
           );
           opacity: 0;
-          filter: blur(1.1px) drop-shadow(0 0 6px rgba(241, 103, 34, 0.95))
-            drop-shadow(0 0 16px rgba(255, 170, 80, 0.7));
-          animation: boltDash 0.5s cubic-bezier(0.45, 0, 0.15, 1) 0.15s both;
+          filter: blur(0.8px) drop-shadow(0 0 5px rgba(241, 103, 34, 0.9))
+            drop-shadow(0 0 12px rgba(255, 170, 80, 0.6));
+          animation: boltDash 1.15s cubic-bezier(0.38, 0, 0.4, 1) 0.2s both;
         }
+        /* a small, slow energy pulse drifting in from the side to the centre */
         @keyframes boltDash {
-          0% { opacity: 0; transform: translate(-130%, -50%) scaleX(2.8); }
-          20% { opacity: 1; }
-          72% { opacity: 1; transform: translate(58%, -50%) scaleX(2.2); }
-          100% { opacity: 0; transform: translate(86%, -50%) scaleX(0.35); }
+          0% { opacity: 0; transform: translate(-160%, -50%) scaleX(1.4); }
+          30% { opacity: 1; }
+          82% { opacity: 1; transform: translate(48%, -50%) scaleX(1.2); }
+          100% { opacity: 0; transform: translate(64%, -50%) scaleX(0.5); }
         }
 
         /* light flash at the moment of impact */
@@ -127,12 +128,12 @@ export default function ProductGallery({ images, alt, badge }) {
           );
           opacity: 0;
           mix-blend-mode: screen;
-          animation: flashPop 0.55s ease-out 0.58s both;
+          animation: flashPop 0.8s ease-out 1.0s both;
         }
         @keyframes flashPop {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-          14% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.55); }
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15); }
+          25% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.85); }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.4); }
         }
 
         /* shockwave ring radiating from the strike point */
@@ -146,13 +147,13 @@ export default function ProductGallery({ images, alt, badge }) {
           border: 2px solid rgba(241, 103, 34, 0.85);
           border-radius: 50%;
           opacity: 0;
-          filter: drop-shadow(0 0 8px rgba(241, 103, 34, 0.7));
-          animation: shockExpand 0.7s cubic-bezier(0.2, 0.7, 0.3, 1) 0.6s both;
+          filter: drop-shadow(0 0 8px rgba(241, 103, 34, 0.6));
+          animation: shockExpand 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) 1.05s both;
         }
         @keyframes shockExpand {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); border-width: 4px; }
-          12% { opacity: 0.9; }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(2.5); border-width: 0.5px; }
+          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15); border-width: 2px; }
+          25% { opacity: 0.5; }
+          100% { opacity: 0; transform: translate(-50%, -50%) scale(2); border-width: 0.5px; }
         }
 
         /* --- the stamp, slammed onto the centre with a tilt + bounce --- */
@@ -163,15 +164,15 @@ export default function ProductGallery({ images, alt, badge }) {
           width: clamp(150px, 46%, 340px);
           transform: translate(-50%, -50%) rotate(-7deg);
           opacity: 0;
-          animation: stampImpact 0.72s cubic-bezier(0.2, 0.7, 0.2, 1) 0.6s both;
+          animation: stampGrow 0.95s cubic-bezier(0.22, 1, 0.36, 1) 1.05s both;
         }
-        @keyframes stampImpact {
-          0% { opacity: 0; transform: translate(-50%, -62%) rotate(-7deg) scale(1.6); filter: blur(7px); }
-          30% { opacity: 1; transform: translate(-50%, -50%) rotate(-7deg) scale(0.9); filter: blur(0); }
-          48% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.05); filter: blur(0); }
-          66% { transform: translate(-50%, -50%) rotate(-7deg) scale(0.98); filter: blur(0); }
-          82% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.01); filter: blur(0); }
-          100% { opacity: 1; transform: translate(-50%, -50%) rotate(-7deg) scale(1); filter: blur(0); }
+        /* the stamp materialises in the centre out of nothing and grows */
+        @keyframes stampGrow {
+          0% { opacity: 0; transform: translate(-50%, -50%) rotate(-7deg) scale(0.04); }
+          35% { opacity: 1; }
+          62% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.06); }
+          82% { transform: translate(-50%, -50%) rotate(-7deg) scale(0.98); }
+          100% { opacity: 1; transform: translate(-50%, -50%) rotate(-7deg) scale(1); }
         }
 
         .pg-seal { position: relative; display: block; }
@@ -202,7 +203,7 @@ export default function ProductGallery({ images, alt, badge }) {
           background-position: 135% 0;
           opacity: 0;
           filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-          animation: sheenSweep 1.15s cubic-bezier(0.4, 0, 0.2, 1) 1.5s both;
+          animation: sheenSweep 1.15s cubic-bezier(0.4, 0, 0.2, 1) 2.1s both;
         }
         @keyframes sheenSweep {
           0% { opacity: 0; background-position: 135% 0; }
