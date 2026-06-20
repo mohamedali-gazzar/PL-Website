@@ -14,11 +14,13 @@ import {
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",
   "Medium Voltage": "/img/line-mv.webp",
+  "Dry Transformers": "/img/prod-dry.webp",
   Supplies: "/img/line-supplies.webp",
 };
 const lineHref = {
   "Low Voltage": "/low-voltage",
   "Medium Voltage": "/medium-voltage",
+  "Dry Transformers": "/assembly-lines",
   Supplies: "/supplies",
 };
 
@@ -77,7 +79,7 @@ export default function ProductPage({ params }) {
 
           <div className="grid">
             <Reveal as="div">
-              <ProductGallery images={p.gallery || [p.img]} alt={p.title} />
+              <ProductGallery images={p.gallery || [p.img]} alt={p.title} badge={p.badge} />
             </Reveal>
 
             <Reveal as="div" className="detail" delay={120}>

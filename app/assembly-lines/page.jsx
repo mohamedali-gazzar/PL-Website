@@ -3,17 +3,18 @@ import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import ProductGrid from "@/components/ProductGrid";
 import { Reveal } from "@/components/Primitives";
-import { lowVoltage, mediumVoltage } from "@/lib/content";
+import { lowVoltage, mediumVoltage, dryTransformers } from "@/lib/content";
 
 export const metadata = {
-  title: "Assembly Lines — Powerline",
+  title: "Our Products — Powerline",
   description:
-    "Powerline's assembly lines: certified low voltage panels and medium voltage switchgear, built to international standards.",
+    "Powerline's products: certified low voltage panels, medium voltage switchgear and dry-type transformers, built to international standards.",
 };
 
 const groups = [
   { data: lowVoltage, href: "/low-voltage", img: "/img/line-lv.webp" },
   { data: mediumVoltage, href: "/medium-voltage", img: "/img/line-mv.webp" },
+  { data: dryTransformers, href: "/products/dry-type-transformers", img: "/img/prod-dry.webp" },
 ];
 
 export default function AssemblyLinesPage() {
@@ -21,9 +22,9 @@ export default function AssemblyLinesPage() {
     <PageShell>
       <PageHero
         eyebrow="What We Build"
-        title="Assembly"
-        accent="Lines"
-        lead="From certified low voltage panels to medium voltage switchgear — engineered, type-tested and assembled at our facilities to international standards."
+        title="Our"
+        accent="Products"
+        lead="From certified low voltage panels to medium voltage switchgear and dry-type transformers — engineered, type-tested and assembled at our facilities to international standards."
         img="/img/line-lv.webp"
       />
 
@@ -34,7 +35,7 @@ export default function AssemblyLinesPage() {
               <Reveal>
                 <div className="al-head sec-head">
                   <div className="al-head-text">
-                    <span className="eyebrow">Assembly Lines</span>
+                    <span className="eyebrow">Our Products</span>
                     <h2 className="section-title">{data.title}</h2>
                     <p>{data.intro}</p>
                   </div>

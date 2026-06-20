@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function ProductGallery({ images, alt }) {
+export default function ProductGallery({ images, alt, badge }) {
   const list = images && images.length ? images : [];
   const [active, setActive] = useState(0);
   if (!list.length) return null;
@@ -12,6 +12,9 @@ export default function ProductGallery({ images, alt }) {
       <div className="main">
         <img src={list[active]} alt={alt} />
         <span className="frame" />
+        {badge && (
+          <img className="pg-badge" src={badge} alt="Type Tested by Powerline" />
+        )}
       </div>
 
       {list.length > 1 && (
@@ -55,6 +58,19 @@ export default function ProductGallery({ images, alt }) {
           pointer-events: none;
           border-radius: 20px;
           box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
+        }
+        /* certification seal overlaid on the product image */
+        .main .pg-badge {
+          position: absolute;
+          top: clamp(0.8rem, 3.5%, 1.5rem);
+          right: clamp(0.8rem, 3.5%, 1.5rem);
+          width: clamp(92px, 28%, 165px);
+          height: auto;
+          object-fit: contain;
+          /* no plate — drop-shadow keeps the seal legible on the photo */
+          filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+            drop-shadow(0 6px 16px rgba(0, 0, 0, 0.45));
+          z-index: 3;
         }
         .thumbs {
           display: flex;

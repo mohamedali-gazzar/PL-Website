@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
+import { formEmail } from "@/lib/content";
 
 /**
- * Stub endpoint for quotation requests.
- * Currently logs server-side and returns success. To go live, forward `data`
- * to Powerline's email (e.g. via Resend/Nodemailer) or CRM here.
+ * Quotation / contact requests → emailed to formEmail via FormSubmit.co
+ * (no API key needed). The first submission triggers a one-time activation
+ * email to the recipient; once confirmed, all submissions are delivered.
  */
 export async function POST(request) {
   try {
@@ -11,13 +12,25 @@ export async function POST(request) {
     if (!data?.name || !data?.email || !data?.message) {
       return NextResponse.json({ ok: false, error: "Missing fields" }, { status: 400 });
     }
-    console.log("[contact] quotation request:", {
-      name: data.name,
-      company: data.company,
-      email: data.email,
-      phone: data.phone,
-      interest: data.interest,
+
+    const res = await fetch(`https://formsubmit.co/ajax/${formEmail}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({
+        _subject: `New quotation request — ${data.name}`,
+        _template: "table",
+        Name: data.name,
+        Company: data.company || "-",
+        Email: data.email,
+        Phone: data.phone || "-",
+        "Area of interest": data.interest || "-",
+        Message: data.message,
+      }),
     });
+
+    if (!res.ok) {
+      return NextResponse.json({ ok: false, error: "Email service error" }, { status: 502 });
+    }
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false, error: "Bad request" }, { status: 400 });

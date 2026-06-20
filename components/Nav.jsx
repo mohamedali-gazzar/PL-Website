@@ -37,9 +37,21 @@ export default function Nav() {
                 {item.children && (
                   <div className="dropdown">
                     {item.children.map((c) => (
-                      <Link key={c.href} href={c.href} className="drop-link">
-                        {c.label}
-                      </Link>
+                      <div key={c.href} className="drop-item">
+                        <Link href={c.href} className="drop-link">
+                          {c.label}
+                          {c.children && <span className="drop-arrow">›</span>}
+                        </Link>
+                        {c.children && (
+                          <div className="sub-dropdown">
+                            {c.children.map((g) => (
+                              <Link key={g.href} href={g.href} className="drop-link">
+                                {g.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 )}
@@ -79,9 +91,20 @@ export default function Nav() {
               {item.children && (
                 <div className="ov-children">
                   {item.children.map((c) => (
-                    <Link key={c.href} href={c.href} className="ov-child" onClick={() => setOpen(false)}>
-                      {c.label}
-                    </Link>
+                    <div key={c.href} className="ov-sub">
+                      <Link href={c.href} className="ov-child" onClick={() => setOpen(false)}>
+                        {c.label}
+                      </Link>
+                      {c.children && (
+                        <div className="ov-grand">
+                          {c.children.map((g) => (
+                            <Link key={g.href} href={g.href} className="ov-gchild" onClick={() => setOpen(false)}>
+                              {g.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
@@ -170,17 +193,47 @@ export default function Nav() {
           visibility: visible;
           transform: translateY(6px);
         }
-        .drop-link {
-          display: block;
-          padding: 0.7rem 0.9rem;
-          font-size: 0.85rem;
-          color: var(--text-dim);
-          border-radius: 9px;
-          transition: background 0.2s, color 0.2s;
+        /* second-level (products) flyout */
+        .drop-item {
+          position: relative;
         }
-        .drop-link:hover {
-          background: rgba(241, 103, 34, 0.12);
+        .drop-item :global(.drop-link) {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+        }
+        .drop-arrow {
+          color: var(--text-faint);
+          font-size: 1.1rem;
+          line-height: 1;
+        }
+        .sub-dropdown {
+          position: absolute;
+          top: -0.5rem;
+          left: 100%;
+          margin-left: 0.4rem;
+          min-width: 215px;
+          padding: 0.5rem;
+          background: rgba(12, 12, 14, 0.97);
+          backdrop-filter: blur(16px);
+          border: 1px solid var(--line);
+          border-radius: 14px;
+          opacity: 0;
+          visibility: hidden;
+          transform: translateX(8px);
+          transition: all 0.25s var(--ease);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        }
+        .drop-item:hover .sub-dropdown {
+          opacity: 1;
+          visibility: visible;
+          transform: translateX(0);
+        }
+        .drop-item:hover > :global(.drop-link),
+        .drop-item:hover > :global(.drop-link) .drop-arrow {
           color: var(--orange);
+          background: rgba(241, 103, 34, 0.12);
         }
         .actions {
           display: flex;
@@ -261,15 +314,29 @@ export default function Nav() {
         }
         .ov-children {
           display: flex;
-          flex-wrap: wrap;
-          gap: 1.2rem;
-          margin: 0.3rem 0 0.8rem;
+          flex-direction: column;
+          gap: 0.6rem;
+          margin: 0.5rem 0 0.9rem;
         }
         .ov-child {
-          font-size: 0.95rem;
-          color: var(--text-dim);
+          font-size: 1.02rem;
+          font-weight: 600;
+          color: var(--text);
         }
         .ov-child:hover {
+          color: var(--orange);
+        }
+        .ov-grand {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem 1.1rem;
+          margin: 0.4rem 0 0.2rem 1rem;
+        }
+        .ov-gchild {
+          font-size: 0.85rem;
+          color: var(--text-dim);
+        }
+        .ov-gchild:hover {
           color: var(--orange);
         }
         .ov-phone {

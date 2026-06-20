@@ -6,6 +6,7 @@ import { products } from "@/lib/content";
 
 const detailFor = (href) => products[href.replace("/products/", "")] || {};
 const imgFor = (href) => detailFor(href).img;
+const badgeFor = (href) => detailFor(href).badge;
 const hoverFor = (href) => {
   const g = detailFor(href).gallery;
   return g && g.length > 1 ? g[1] : null;
@@ -25,6 +26,9 @@ export default function ProductGrid({ items }) {
               )}
               {hover && (
                 <img className="img-hover" src={hover} alt={`${p.name} — interior`} loading="lazy" />
+              )}
+              {badgeFor(p.href) && (
+                <img className="card-badge" src={badgeFor(p.href)} alt="Type Tested by Powerline" loading="lazy" />
               )}
               <span className="num">{String(i + 1).padStart(2, "0")}</span>
             </div>
@@ -95,6 +99,18 @@ export default function ProductGrid({ items }) {
           position: absolute;
           inset: 0;
           background: linear-gradient(180deg, transparent 55%, rgba(5, 5, 6, 0.55));
+        }
+        /* type-tested seal on the card */
+        .prod-thumb .card-badge {
+          position: absolute;
+          top: 0.6rem;
+          right: 0.6rem;
+          width: 64px;
+          height: 64px;
+          object-fit: contain;
+          filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 3px 9px rgba(0, 0, 0, 0.4));
+          z-index: 3;
         }
         .num {
           position: absolute;

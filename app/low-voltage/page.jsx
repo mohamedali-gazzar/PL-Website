@@ -10,7 +10,7 @@ export default function Page() {
   return (
     <CollectionView
       data={lowVoltage}
-      eyebrow="Assembly Lines"
+      eyebrow="Our Products"
       img="/img/line-lv.webp"
       highlight={lowVoltage.highlight}
     />
