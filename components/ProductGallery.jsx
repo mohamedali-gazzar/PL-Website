@@ -14,9 +14,8 @@ export default function ProductGallery({ images, alt, badge }) {
         <span className="frame" />
         {badge && (
           <span className="pg-cert" style={{ "--seal": `url(${badge})` }} aria-hidden="false">
-            {/* one continuous event: streak → charged core → ignition → ring */}
+            {/* the stamp forms from a charged core: ignition + ring */}
             <span className="pg-fx" aria-hidden="true">
-              <span className="pg-bolt" />
               <span className="pg-core" />
               <span className="pg-flash" />
               <span className="pg-shock" />
@@ -75,13 +74,12 @@ export default function ProductGallery({ images, alt, badge }) {
           box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
         }
         /* ===== Unified certification reveal =====
-           One continuous electrical event, all sharing the centre point,
-           one colour system and one easing language:
-             0.15s  pulse converges in from the side
-             0.75s  energy condenses into a charged core
-             1.00s  core ignites (flash + ring)
-             1.00s  stamp FORMS outward from the core (circular reveal + glow)
-             1.95s  metallic sheen sweep → steady engraved glow */
+           One continuous event, all sharing the centre point, one colour
+           system and one easing language:
+             0.15s  energy condenses into a charged core
+             0.45s  core ignites (flash + ring)
+             0.45s  stamp FORMS outward from the core (circular reveal + glow)
+             1.40s  metallic sheen sweep → steady engraved glow */
         .pg-cert {
           /* shared tokens — keeps every layer on the same palette + rhythm */
           --pl: 241, 103, 34;      /* brand orange   */
@@ -96,36 +94,7 @@ export default function ProductGallery({ images, alt, badge }) {
 
         .pg-fx { position: absolute; inset: 0; overflow: hidden; }
 
-        /* energy pulse, motion-blurred, streaking in and converging on centre */
-        .pg-bolt {
-          position: absolute;
-          top: 50%;
-          left: 0;
-          width: 30%;
-          height: 2px;
-          transform: translate(-170%, -50%) scaleX(1.2);
-          border-radius: 99px;
-          background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(var(--hot), 0) 20%,
-            rgba(var(--pl), 0.85) 72%,
-            rgba(var(--hot), 1) 100%
-          );
-          opacity: 0;
-          filter: blur(0.7px) drop-shadow(0 0 6px rgba(var(--pl), 0.9))
-            drop-shadow(0 0 14px rgba(var(--hot), 0.5));
-          animation: boltIn 0.9s var(--energy) 0.15s both;
-        }
-        @keyframes boltIn {
-          0% { opacity: 0; transform: translate(-170%, -50%) scaleX(1.1); }
-          28% { opacity: 1; }
-          /* accelerate to the centre, then collapse the head into a point */
-          80% { opacity: 1; transform: translate(44%, -50%) scaleX(0.9); }
-          100% { opacity: 0; transform: translate(58%, -50%) scaleX(0.05); }
-        }
-
-        /* the pulse condenses here: a charged core that swells, then flares out */
+        /* a charged core that swells, then flares out into the stamp */
         .pg-core {
           position: absolute;
           top: 50%;
@@ -143,7 +112,7 @@ export default function ProductGallery({ images, alt, badge }) {
           opacity: 0;
           filter: blur(1px) drop-shadow(0 0 12px rgba(var(--pl), 0.9));
           mix-blend-mode: screen;
-          animation: coreCharge 0.55s var(--energy) 0.7s both;
+          animation: coreCharge 0.5s var(--energy) 0.15s both;
         }
         @keyframes coreCharge {
           0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
@@ -169,7 +138,7 @@ export default function ProductGallery({ images, alt, badge }) {
           );
           opacity: 0;
           mix-blend-mode: screen;
-          animation: flashPop 0.6s var(--energy) 1.0s both;
+          animation: flashPop 0.6s var(--energy) 0.45s both;
         }
         @keyframes flashPop {
           0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
@@ -189,7 +158,7 @@ export default function ProductGallery({ images, alt, badge }) {
           border-radius: 50%;
           opacity: 0;
           filter: drop-shadow(0 0 8px rgba(var(--pl), 0.6));
-          animation: shockExpand 0.85s var(--energy) 1.0s both;
+          animation: shockExpand 0.85s var(--energy) 0.45s both;
         }
         @keyframes shockExpand {
           0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15); border-width: 2px; }
@@ -205,7 +174,7 @@ export default function ProductGallery({ images, alt, badge }) {
           width: clamp(150px, 46%, 340px);
           transform: translate(-50%, -50%) rotate(-7deg);
           opacity: 0;
-          animation: stampRise 0.85s var(--spring) 1.0s both;
+          animation: stampRise 0.85s var(--spring) 0.45s both;
         }
         @keyframes stampRise {
           0% { opacity: 0; transform: translate(-50%, -50%) rotate(-7deg) scale(0.72); }
@@ -219,7 +188,7 @@ export default function ProductGallery({ images, alt, badge }) {
           position: relative;
           display: block;
           clip-path: circle(0% at 50% 50%);
-          animation: sealForm 0.8s var(--energy) 1.0s both;
+          animation: sealForm 0.8s var(--energy) 0.45s both;
         }
         @keyframes sealForm {
           0% { clip-path: circle(0% at 50% 50%); }
@@ -234,7 +203,7 @@ export default function ProductGallery({ images, alt, badge }) {
           filter: drop-shadow(0 0 12px rgba(var(--pl), 0.55))
             drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
           /* ignite white-hot at birth, then cool to the steady engraved glow */
-          animation: ignite 0.95s var(--energy) 1.05s both;
+          animation: ignite 0.95s var(--energy) 0.5s both;
         }
         @keyframes ignite {
           0% {
@@ -273,7 +242,7 @@ export default function ProductGallery({ images, alt, badge }) {
           background-position: 135% 0;
           opacity: 0;
           filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-          animation: sheenSweep 1.1s var(--energy) 1.95s both;
+          animation: sheenSweep 1.1s var(--energy) 1.4s both;
         }
         @keyframes sheenSweep {
           0% { opacity: 0; background-position: 135% 0; }
