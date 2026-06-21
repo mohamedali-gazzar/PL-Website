@@ -9,18 +9,32 @@ export default function Projects() {
   const root = useRef(null);
   const track = useRef(null);
   const stRef = useRef(null);
+  const dir = useRef(1); // 1 = scrolling down, -1 = up
 
-  // Jump past the pinned section so users aren't forced to scroll the whole
-  // horizontal track.
-  const skip = () => {
+  // Click anywhere on the pinned section to skip it in the direction the user
+  // is scrolling — down jumps past it, up jumps back before it.
+  const skipOnClick = () => {
     const st = stRef.current;
-    const y = st
-      ? st.end + 4
-      : window.scrollY + root.current.getBoundingClientRect().bottom;
+    if (!st) return; // not pinned (mobile / reduced-motion)
+    const y = dir.current >= 0 ? st.end + 4 : st.start - 4;
     const lenis = window.__lenis;
-    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 1.1 });
+    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 0.9 });
     else window.scrollTo({ top: y, behavior: "smooth" });
   };
+
+  // track scroll direction for the click-to-skip behaviour
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) > 1) {
+        dir.current = y > last ? 1 : -1;
+        last = y;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -71,7 +85,8 @@ export default function Projects() {
 
   return (
     <section id="projects" className="pj" ref={root}>
-      <div className="pj-vp">
+      <div className="pj-vp" onClick={skipOnClick}>
+        <span className="pj-skip-hint" aria-hidden="true">Click anywhere to skip</span>
         <div className="grid-overlay" />
 
         <div className="pj-track" ref={track}>
@@ -119,10 +134,6 @@ export default function Projects() {
           <span className="pj-rail-base" />
           <span className="pj-rail-fill" />
         </div>
-
-        <button type="button" className="pj-skip" onClick={skip} aria-label="Skip projects section">
-          Skip <span aria-hidden="true">↓</span>
-        </button>
       </div>
 
       <style jsx>{`
@@ -298,32 +309,21 @@ export default function Projects() {
           box-shadow: 0 0 18px rgba(241, 103, 34, 0.6);
         }
 
-        /* skip control — sits inside the pinned viewport */
-        .pj-skip {
+        /* click-to-skip: the whole pinned viewport is clickable */
+        .pj-vp {
+          cursor: pointer;
+        }
+        .pj-skip-hint {
           position: absolute;
           right: var(--pad);
           top: clamp(5.5rem, 12vh, 7rem);
           z-index: 5;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 0.6rem 1.1rem;
-          font-size: 0.72rem;
+          pointer-events: none;
+          font-size: 0.7rem;
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: var(--text-dim);
-          background: rgba(12, 12, 14, 0.6);
-          border: 1px solid var(--line);
-          border-radius: 999px;
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          cursor: pointer;
-          transition: color 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        .pj-skip:hover {
-          color: #fff;
-          border-color: rgba(241, 103, 34, 0.6);
-          transform: translateY(-2px);
+          color: var(--text-faint);
+          opacity: 0.7;
         }
 
         /* ── mobile / reduced-motion: vertical stack, no pin ── */
@@ -355,8 +355,11 @@ export default function Projects() {
           .pj-rail {
             display: none;
           }
-          .pj-skip {
+          .pj-skip-hint {
             display: none;
+          }
+          .pj-vp {
+            cursor: auto;
           }
         }
       `}</style>

@@ -98,7 +98,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-core {
           position: absolute;
           top: 50%;
-          left: 42%;
+          left: 50%;
           width: 9%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0);
@@ -125,7 +125,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-flash {
           position: absolute;
           top: 50%;
-          left: 42%;
+          left: 50%;
           width: 56%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0.2);
@@ -150,7 +150,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-shock {
           position: absolute;
           top: 50%;
-          left: 42%;
+          left: 50%;
           width: 35%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0.15);
@@ -170,7 +170,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-stamp {
           position: absolute;
           top: 50%;
-          left: 42%;
+          left: 50%;
           width: clamp(130px, 39%, 290px);
           transform: translate(-50%, -50%) rotate(-7deg);
           opacity: 0;

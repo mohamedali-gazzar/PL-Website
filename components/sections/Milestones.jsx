@@ -8,15 +8,35 @@ import { milestones } from "@/lib/content";
 export default function Milestones() {
   const root = useRef(null);
   const fill = useRef(null);
+  const dir = useRef(1); // 1 = scrolling down, -1 = up
   const [active, setActive] = useState(0);
 
-  // Jump past this long scroll-driven section.
-  const skip = () => {
-    const y = window.scrollY + root.current.getBoundingClientRect().bottom;
+  // Click anywhere on the section to skip it in the scroll direction —
+  // down jumps past it, up jumps back above it. (desktop only)
+  const skipOnClick = () => {
+    if (window.matchMedia("(max-width: 900px)").matches) return;
+    const r = root.current.getBoundingClientRect();
+    const topDoc = window.scrollY + r.top;
+    const bottomDoc = window.scrollY + r.bottom;
+    const y = dir.current >= 0 ? bottomDoc : Math.max(0, topDoc - window.innerHeight);
     const lenis = window.__lenis;
-    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 1.1 });
+    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 0.9 });
     else window.scrollTo({ top: y, behavior: "smooth" });
   };
+
+  // track scroll direction for click-to-skip
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      if (Math.abs(y - last) > 1) {
+        dir.current = y > last ? 1 : -1;
+        last = y;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -48,10 +68,8 @@ export default function Milestones() {
       style={{ height: `${milestones.length * 75}vh` }}
       id="milestones"
     >
-      <div className="ms-stage">
-        <button type="button" className="ms-skip" onClick={skip} aria-label="Skip milestones section">
-          Skip <span aria-hidden="true">↓</span>
-        </button>
+      <div className="ms-stage" onClick={skipOnClick}>
+        <span className="ms-skip-hint" aria-hidden="true">Click anywhere to skip</span>
         <div className="container ms-inner">
           {/* top: horizontal year timeline */}
           <div className="ms-top">
@@ -116,31 +134,20 @@ export default function Milestones() {
           align-items: center;
           overflow: hidden;
         }
-        .ms-skip {
+        .ms-stage {
+          cursor: pointer;
+        }
+        .ms-skip-hint {
           position: absolute;
           right: clamp(1.2rem, 4vw, 3rem);
           top: clamp(5.5rem, 12vh, 7rem);
           z-index: 5;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.4rem;
-          padding: 0.6rem 1.1rem;
-          font-size: 0.72rem;
+          pointer-events: none;
+          font-size: 0.7rem;
           letter-spacing: 0.18em;
           text-transform: uppercase;
-          color: var(--text-dim);
-          background: rgba(12, 12, 14, 0.6);
-          border: 1px solid var(--line);
-          border-radius: 999px;
-          backdrop-filter: blur(8px);
-          -webkit-backdrop-filter: blur(8px);
-          cursor: pointer;
-          transition: color 0.25s, border-color 0.25s, transform 0.25s;
-        }
-        .ms-skip:hover {
-          color: #fff;
-          border-color: rgba(241, 103, 34, 0.6);
-          transform: translateY(-2px);
+          color: var(--text-faint);
+          opacity: 0.7;
         }
         .ms-inner {
           width: 100%;
@@ -318,8 +325,11 @@ export default function Milestones() {
           .yr-label {
             font-size: 0.72rem;
           }
-          .ms-skip {
+          .ms-skip-hint {
             display: none;
+          }
+          .ms-stage {
+            cursor: auto;
           }
         }
       `}</style>

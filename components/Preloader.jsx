@@ -156,7 +156,11 @@ export default function Preloader({ onComplete }) {
           opacity: 0.85;
         }
         .pre-stage {
-          position: relative;
+          /* the P is the source: bottom-centre of the scene */
+          position: absolute;
+          left: 50%;
+          bottom: 5%;
+          margin-left: -105px; /* half the 210px svg — centred without transform */
           /* zoom origin = the interior (counter) of the P */
           transform-origin: 55% 42%;
           will-change: transform, filter;
@@ -180,13 +184,8 @@ export default function Preloader({ onComplete }) {
           will-change: transform, opacity;
         }
         .pre-word {
-          position: relative;
-          font-family: var(--font-head);
-          font-weight: 800;
-          letter-spacing: 0.5em;
-          font-size: clamp(1rem, 2vw, 1.4rem);
-          padding-left: 0.5em;
-          color: #fff;
+          /* keep the wordmark out of the network scene — the P is the hub */
+          display: none;
         }
         .pre-word span {
           color: var(--orange);
