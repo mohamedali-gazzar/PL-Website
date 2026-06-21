@@ -73,17 +73,16 @@ export default function EnergyNetwork() {
         .en { position: absolute; inset: 0; overflow: hidden; }
         .en-svg { width: 100%; height: 100%; display: block; }
 
-        /* the P grows up at the centre — the hero of one continuous motion;
-           the conductors below emerge from it as it settles. */
+        /* the P settles in at its network size (not ballooning from zero);
+           the conductors emerge from it, and the closing zoom is what grows
+           the P up — starting from this same network size. */
         .en-p {
           transform-box: fill-box;
           transform-origin: center;
-          animation: enGrow 1s cubic-bezier(0.34, 1.4, 0.5, 1) 0.1s both;
+          animation: enGrow 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
         }
         @keyframes enGrow {
-          0% { opacity: 0; transform: scale(0.1); }
-          55% { opacity: 1; }
-          72% { transform: scale(1.05); }
+          0% { opacity: 0; transform: scale(0.9); }
           100% { opacity: 1; transform: scale(1); }
         }
 
