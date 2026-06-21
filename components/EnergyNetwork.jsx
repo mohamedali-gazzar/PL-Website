@@ -38,7 +38,7 @@ function pathFor({ x, y }) {
 export default function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
-      <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className="en-svg">
+      <svg viewBox="0 0 1200 820" preserveAspectRatio="xMidYMid meet" className="en-svg">
         {/* branches emerge from the logo */}
         {NODES.map((n, i) => {
           const d = pathFor(n);
