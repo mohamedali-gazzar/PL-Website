@@ -39,21 +39,22 @@ export default function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
       <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" className="en-svg">
-        {/* one stage: the P and the whole network grow together as one motion */}
-        <g className="en-stage">
-          {EDGES.map((d, i) => (
-            <g key={`e${i}`} style={{ "--d": `${0.5 + i * 0.07}s` }}>
-              <path className="en-path" d={d} pathLength="1" />
-              <path className="en-flow" d={d} pathLength="1" />
-            </g>
-          ))}
-          {NODES.map((n, i) => (
-            <g key={`n${i}`} style={{ "--d": `${1.05 + i * 0.05}s` }}>
-              <circle className="en-ring" cx={n.x} cy={n.y} r="14" pathLength="1" />
-              <circle className="en-node" cx={n.x} cy={n.y} r="7" />
-            </g>
-          ))}
-          {/* the logo = the power source, at the heart of the network */}
+        {/* conductors flow out of the P as it finishes growing */}
+        {EDGES.map((d, i) => (
+          <g key={`e${i}`} style={{ "--d": `${0.75 + i * 0.06}s` }}>
+            <path className="en-path" d={d} pathLength="1" />
+            <path className="en-flow" d={d} pathLength="1" />
+          </g>
+        ))}
+        {NODES.map((n, i) => (
+          <g key={`n${i}`} style={{ "--d": `${1.25 + i * 0.05}s` }}>
+            <circle className="en-ring" cx={n.x} cy={n.y} r="14" pathLength="1" />
+            <circle className="en-node" cx={n.x} cy={n.y} r="7" />
+          </g>
+        ))}
+        {/* THE P — grows up at the centre and is the hub of the whole network.
+           The same element carries through to the closing zoom. */}
+        <g className="en-p">
           <g transform={P_TF}>
             <path className="en-p-glow" d={P_PATH} pathLength="1" />
             <path className="en-p-fill" d={P_PATH} fillRule="evenodd" />
@@ -72,16 +73,17 @@ export default function EnergyNetwork() {
         .en { position: absolute; inset: 0; overflow: hidden; }
         .en-svg { width: 100%; height: 100%; display: block; }
 
-        /* the single growth: the whole network blooms outward from its centre */
-        .en-stage {
+        /* the P grows up at the centre — the hero of one continuous motion;
+           the conductors below emerge from it as it settles. */
+        .en-p {
           transform-box: fill-box;
           transform-origin: center;
-          animation: enGrow 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+          animation: enGrow 1s cubic-bezier(0.34, 1.4, 0.5, 1) 0.1s both;
         }
         @keyframes enGrow {
-          0% { opacity: 0; transform: scale(0.42); }
-          35% { opacity: 1; }
-          70% { transform: scale(1.03); }
+          0% { opacity: 0; transform: scale(0.1); }
+          55% { opacity: 1; }
+          72% { transform: scale(1.05); }
           100% { opacity: 1; transform: scale(1); }
         }
 
