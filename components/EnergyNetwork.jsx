@@ -47,7 +47,9 @@ export default function EnergyNetwork() {
           </g>
         ))}
         {NODES.map((n, i) => (
-          <g key={`n${i}`} style={{ "--d": `${1.25 + i * 0.05}s` }}>
+          // --d = when this node's conductor delivers energy (it powers ON then)
+          <g key={`n${i}`} style={{ "--d": `${1.85 + i * 0.06}s` }}>
+            <circle className="en-node-off" cx={n.x} cy={n.y} r="7" />
             <circle className="en-ring" cx={n.x} cy={n.y} r="14" pathLength="1" />
             <circle className="en-node" cx={n.x} cy={n.y} r="7" />
           </g>
@@ -151,14 +153,33 @@ export default function EnergyNetwork() {
           to { stroke-dashoffset: 0; }
         }
 
-        /* ── nodes light up as the energy reaches them ── */
+        /* nodes sit OFF (dim, unlit) until the line's energy reaches them,
+           then Powerline switches them ON. */
+        .en-node-off {
+          fill: rgba(241, 103, 34, 0.16);
+          stroke: rgba(241, 103, 34, 0.4);
+          stroke-width: 1;
+          opacity: 0;
+          animation: enReveal 0.5s ease forwards 0.8s;
+        }
         .en-node {
           fill: #f16722;
-          filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.95));
+          transform-box: fill-box;
+          transform-origin: center;
           opacity: 0;
-          animation: enPop 0.5s ease forwards;
+          animation: enPowerOn 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both;
           animation-delay: var(--d);
         }
+        /* turn-on: a quick bright flash that settles to the steady lit dot */
+        @keyframes enPowerOn {
+          0% { opacity: 0; transform: scale(1.9);
+               filter: drop-shadow(0 0 0 rgba(255, 230, 200, 0)); }
+          35% { opacity: 1; transform: scale(1);
+                filter: drop-shadow(0 0 14px rgba(255, 220, 170, 1)); }
+          100% { opacity: 1; transform: scale(1);
+                 filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.95)); }
+        }
+        /* the power-on ripple — fires once the node lights, then keeps pulsing */
         .en-ring {
           fill: none;
           stroke: rgba(241, 103, 34, 0.7);
@@ -167,15 +188,11 @@ export default function EnergyNetwork() {
           transform-origin: center;
           opacity: 0;
           animation: enPing 2.6s ease-out infinite;
-          animation-delay: calc(var(--d) + 0.1s);
-        }
-        @keyframes enPop {
-          from { opacity: 0; transform: scale(0); }
-          to { opacity: 1; transform: scale(1); }
+          animation-delay: var(--d);
         }
         @keyframes enPing {
-          0% { opacity: 0.8; transform: scale(0.4); }
-          100% { opacity: 0; transform: scale(2.4); }
+          0% { opacity: 0.85; transform: scale(0.3); }
+          100% { opacity: 0; transform: scale(2.6); }
         }
 
         /* ── wordmark ── */
