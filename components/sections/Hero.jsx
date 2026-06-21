@@ -19,7 +19,6 @@ export default function Hero({ ready }) {
       gsap.set(".h-sub", { opacity: 0, y: 24 });
       gsap.set(".h-actions > *", { opacity: 0, y: 20 });
       gsap.set(".h-stat", { opacity: 0, y: 30 });
-      gsap.set(".h-scroll", { opacity: 0 });
     }, root);
     return () => ctx.revert();
   }, []);
@@ -35,8 +34,7 @@ export default function Hero({ ready }) {
         .to(".h-eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0)
         .to(".h-sub", { opacity: 1, y: 0, duration: 0.7 }, "-=0.45")
         .to(".h-actions > *", { opacity: 1, y: 0, stagger: 0.08, duration: 0.5 }, "-=0.4")
-        .to(".h-stat", { opacity: 1, y: 0, stagger: 0.08, duration: 0.6 }, "-=0.35")
-        .to(".h-scroll", { opacity: 1, duration: 0.5 }, "-=0.3");
+        .to(".h-stat", { opacity: 1, y: 0, stagger: 0.08, duration: 0.6 }, "-=0.35");
     }, root);
     return () => ctx.revert();
   }, [ready]);
@@ -74,10 +72,10 @@ export default function Hero({ ready }) {
         </p>
 
         <div className="h-actions">
-          <MagneticButton href="/about" className="btn btn-primary" floatDelay={0}>
+          <MagneticButton href="/about" className="btn btn-primary" float={false}>
             Discover Powerline
           </MagneticButton>
-          <MagneticButton href="/low-voltage" className="btn btn-ghost" floatDelay={1.4}>
+          <MagneticButton href="/low-voltage" className="btn btn-ghost" float={false}>
             Explore Solutions
           </MagneticButton>
         </div>
@@ -92,11 +90,6 @@ export default function Hero({ ready }) {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="h-scroll">
-        <span>Scroll</span>
-        <i />
       </div>
 
       <style jsx>{`

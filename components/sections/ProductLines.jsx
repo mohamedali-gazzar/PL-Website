@@ -4,7 +4,7 @@ import Link from "next/link";
 import { productLines } from "@/lib/content";
 import { Reveal, CountUp } from "@/components/Primitives";
 
-const OFFSETS = ["0rem", "3.5rem", "0rem"]; // gentle wave for a "flowing" feel
+const OFFSETS = ["0rem", "3rem", "0rem", "3rem"]; // gentle wave for a "flowing" feel
 
 export default function ProductLines() {
   return (
@@ -14,7 +14,7 @@ export default function ProductLines() {
           <div className="head sec-head">
             <span className="eyebrow">Product Lines</span>
             <h2 className="section-title">
-              Three lines.
+              Four lines.
               <br />
               <span>One flow of power.</span>
             </h2>
@@ -75,8 +75,8 @@ export default function ProductLines() {
         .flow {
           position: relative;
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: clamp(1.2rem, 2vw, 2rem);
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(1rem, 1.5vw, 1.6rem);
           align-items: start;
         }
         /* flowing energy line behind the cards */
@@ -233,10 +233,10 @@ export default function ProductLines() {
           color: var(--orange);
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 1200px) {
           .flow {
-            grid-template-columns: 1fr;
-            max-width: 460px;
+            grid-template-columns: repeat(2, 1fr);
+            max-width: 780px;
             margin: 0 auto;
             gap: 1.5rem;
           }
@@ -245,6 +245,12 @@ export default function ProductLines() {
           }
           .flow-line {
             display: none;
+          }
+        }
+        @media (max-width: 620px) {
+          .flow {
+            grid-template-columns: 1fr;
+            max-width: 460px;
           }
           .fcard-body p {
             min-height: 0;

@@ -10,6 +10,14 @@ export default function Milestones() {
   const fill = useRef(null);
   const [active, setActive] = useState(0);
 
+  // Jump past this long scroll-driven section.
+  const skip = () => {
+    const y = window.scrollY + root.current.getBoundingClientRect().bottom;
+    const lenis = window.__lenis;
+    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 1.1 });
+    else window.scrollTo({ top: y, behavior: "smooth" });
+  };
+
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     gsap.registerPlugin(ScrollTrigger);
@@ -41,6 +49,9 @@ export default function Milestones() {
       id="milestones"
     >
       <div className="ms-stage">
+        <button type="button" className="ms-skip" onClick={skip} aria-label="Skip milestones section">
+          Skip <span aria-hidden="true">↓</span>
+        </button>
         <div className="container ms-inner">
           {/* top: horizontal year timeline */}
           <div className="ms-top">
@@ -104,6 +115,32 @@ export default function Milestones() {
           display: flex;
           align-items: center;
           overflow: hidden;
+        }
+        .ms-skip {
+          position: absolute;
+          right: clamp(1.2rem, 4vw, 3rem);
+          top: clamp(5.5rem, 12vh, 7rem);
+          z-index: 5;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.6rem 1.1rem;
+          font-size: 0.72rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          background: rgba(12, 12, 14, 0.6);
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          cursor: pointer;
+          transition: color 0.25s, border-color 0.25s, transform 0.25s;
+        }
+        .ms-skip:hover {
+          color: #fff;
+          border-color: rgba(241, 103, 34, 0.6);
+          transform: translateY(-2px);
         }
         .ms-inner {
           width: 100%;
@@ -280,6 +317,9 @@ export default function Milestones() {
           }
           .yr-label {
             font-size: 0.72rem;
+          }
+          .ms-skip {
+            display: none;
           }
         }
       `}</style>

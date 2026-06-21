@@ -98,7 +98,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-core {
           position: absolute;
           top: 50%;
-          left: 50%;
+          left: 42%;
           width: 9%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0);
@@ -125,8 +125,8 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-flash {
           position: absolute;
           top: 50%;
-          left: 50%;
-          width: 64%;
+          left: 42%;
+          width: 56%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0.2);
           border-radius: 50%;
@@ -150,8 +150,8 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-shock {
           position: absolute;
           top: 50%;
-          left: 50%;
-          width: 40%;
+          left: 42%;
+          width: 35%;
           aspect-ratio: 1;
           transform: translate(-50%, -50%) scale(0.15);
           border: 2px solid rgba(var(--pl), 0.85);
@@ -170,8 +170,8 @@ export default function ProductGallery({ images, alt, badge }) {
         .pg-stamp {
           position: absolute;
           top: 50%;
-          left: 50%;
-          width: clamp(150px, 46%, 340px);
+          left: 42%;
+          width: clamp(130px, 39%, 290px);
           transform: translate(-50%, -50%) rotate(-7deg);
           opacity: 0;
           animation: stampRise 0.85s var(--spring) 0.45s both;

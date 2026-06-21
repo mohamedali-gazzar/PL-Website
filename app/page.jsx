@@ -56,8 +56,8 @@ export default function Home() {
         <Safety />
         <PowerlineEffect />
         <Logos />
-        <Memorial />
         <CTA />
+        <Memorial />
       </main>
       <Footer />
     </SmoothScroll>

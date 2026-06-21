@@ -18,6 +18,7 @@ export default function MagneticButton({
   children,
   floatDelay = 0,
   strength = 0.35,
+  float = true,
 }) {
   const mag = useRef(null);
 
@@ -41,7 +42,7 @@ export default function MagneticButton({
   return (
     <span className="mb-root">
       <span
-        className="mb-mag"
+        className={`mb-mag ${float ? "is-float" : ""}`}
         ref={mag}
         onMouseMove={onMove}
         onMouseLeave={reset}
@@ -61,11 +62,14 @@ export default function MagneticButton({
           /* magnetic offset toward the cursor */
           transform: translate(var(--mx, 0px), var(--my, 0px));
           transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-          /* idle float — uses the standalone translate property so it
-             composes with the transform above instead of overriding it */
+          will-change: transform, translate;
+        }
+        /* idle float — uses the standalone translate property so it
+           composes with the transform above instead of overriding it.
+           Opt-in: omitted on buttons that should stay perfectly still. */
+        .mb-mag.is-float {
           animation: mb-float 4.5s ease-in-out infinite;
           animation-delay: var(--fd, 0s);
-          will-change: transform, translate;
         }
         @keyframes mb-float {
           0%,

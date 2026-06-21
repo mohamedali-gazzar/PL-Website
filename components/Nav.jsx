@@ -60,8 +60,8 @@ export default function Nav() {
           </nav>
 
           <div className="actions">
-            <a href={`tel:${brand.phone}`} className="phone hide-mobile" aria-label="Call Powerline">
-              {brand.phoneDisplay}
+            <a href={`tel:${brand.phone}`} className="btn btn-ghost call hide-mobile" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>
+              Call Us
             </a>
             <Link href="/contact" className="btn btn-primary cta hide-mobile">
               Request Quotation
@@ -240,14 +240,9 @@ export default function Nav() {
           align-items: center;
           gap: 1.1rem;
         }
-        .phone {
+        .call {
+          padding: 0.7rem 1.2rem;
           font-size: 0.82rem;
-          font-weight: 500;
-          color: var(--text-dim);
-          transition: color 0.25s;
-        }
-        .phone:hover {
-          color: var(--orange);
         }
         .cta {
           padding: 0.7rem 1.3rem;
@@ -348,7 +343,7 @@ export default function Nav() {
 
         @media (max-width: 1024px) {
           .links,
-          .phone,
+          .call,
           .cta {
             display: none;
           }

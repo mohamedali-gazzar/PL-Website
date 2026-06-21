@@ -57,7 +57,14 @@ export default function AboutPage() {
             <div className="partner">
               <div className="partner-text">
                 <span className="eyebrow">Trusted Partners</span>
-                <h2>{aboutCopy.partnerStatement}</h2>
+                <h2>
+                  We are the <span className="kw">trusted partners</span> to{" "}
+                  <span className="kw">global leaders</span> — offering{" "}
+                  <span className="kw">technical expertise</span>,{" "}
+                  <span className="kw">product support</span>, and{" "}
+                  <span className="kw">performance optimization</span> to keep
+                  power systems running smoothly.
+                </h2>
               </div>
               <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" className="ps-logos" />
             </div>
@@ -116,8 +123,9 @@ export default function AboutPage() {
 
         .partner { display:flex; justify-content:space-between; align-items:center; gap:2.5rem; flex-wrap:wrap; margin-bottom: clamp(3rem,8vh,5rem); padding: clamp(2rem,4vw,3rem); border:1px solid var(--line); border-radius:20px; background: radial-gradient(120% 140% at 0% 0%, rgba(241,103,34,.14), transparent 55%), var(--bg-2); }
         .partner-text { flex:1 1 420px; }
-        .partner h2 { font-size: clamp(1.3rem,2.6vw,2rem); text-transform:uppercase; color:var(--orange); max-width:none; margin-top:0.8rem; }
-        .ps-logos { max-height:64px; width:auto; flex:0 0 auto; }
+        .partner h2 { font-size: clamp(1.3rem,2.6vw,2rem); text-transform:uppercase; color:#fff; max-width:none; margin-top:0.8rem; line-height:1.3; }
+        .partner h2 .kw { color:var(--orange); }
+        .ps-logos { max-height: clamp(78px, 11vw, 124px); width:auto; flex:0 0 auto; }
 
         .vhead h2 { margin-top:1rem; }
         .vgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.2rem; margin-bottom: clamp(3rem,8vh,5rem); }

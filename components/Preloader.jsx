@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import ElectricBackground from "./ElectricBackground";
+import EnergyNetwork from "./EnergyNetwork";
 
 // Vectorized from the favicon (the brand P mark) so the opener matches the
 // favicon exactly, while keeping the original draw-on + pulse behaviour.
@@ -94,7 +94,7 @@ export default function Preloader({ onComplete }) {
   return (
     <div className="pre" ref={root}>
       <div className="pre-bg">
-        <ElectricBackground opacity={0.7} />
+        <EnergyNetwork />
       </div>
 
       <div className="pre-stage" ref={stage}>

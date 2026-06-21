@@ -8,6 +8,19 @@ import { projects } from "@/lib/content";
 export default function Projects() {
   const root = useRef(null);
   const track = useRef(null);
+  const stRef = useRef(null);
+
+  // Jump past the pinned section so users aren't forced to scroll the whole
+  // horizontal track.
+  const skip = () => {
+    const st = stRef.current;
+    const y = st
+      ? st.end + 4
+      : window.scrollY + root.current.getBoundingClientRect().bottom;
+    const lenis = window.__lenis;
+    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 1.1 });
+    else window.scrollTo({ top: y, behavior: "smooth" });
+  };
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -33,6 +46,7 @@ export default function Projects() {
           invalidateOnRefresh: true,
         },
       });
+      stRef.current = tween.scrollTrigger;
 
       // energy rail fills as you advance
       gsap.fromTo(
@@ -105,6 +119,10 @@ export default function Projects() {
           <span className="pj-rail-base" />
           <span className="pj-rail-fill" />
         </div>
+
+        <button type="button" className="pj-skip" onClick={skip} aria-label="Skip projects section">
+          Skip <span aria-hidden="true">↓</span>
+        </button>
       </div>
 
       <style jsx>{`
@@ -280,6 +298,34 @@ export default function Projects() {
           box-shadow: 0 0 18px rgba(241, 103, 34, 0.6);
         }
 
+        /* skip control — sits inside the pinned viewport */
+        .pj-skip {
+          position: absolute;
+          right: var(--pad);
+          top: clamp(5.5rem, 12vh, 7rem);
+          z-index: 5;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          padding: 0.6rem 1.1rem;
+          font-size: 0.72rem;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+          color: var(--text-dim);
+          background: rgba(12, 12, 14, 0.6);
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
+          cursor: pointer;
+          transition: color 0.25s, border-color 0.25s, transform 0.25s;
+        }
+        .pj-skip:hover {
+          color: #fff;
+          border-color: rgba(241, 103, 34, 0.6);
+          transform: translateY(-2px);
+        }
+
         /* ── mobile / reduced-motion: vertical stack, no pin ── */
         @media (max-width: 900px) {
           .pj-vp {
@@ -306,6 +352,9 @@ export default function Projects() {
             padding: 1rem 0;
           }
           .pj-rail {
+            display: none;
+          }
+          .pj-skip {
             display: none;
           }
         }
