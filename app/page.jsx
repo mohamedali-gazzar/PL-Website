@@ -27,15 +27,19 @@ let introPlayed = false;
 
 export default function Home() {
   const [ready, setReady] = useState(introPlayed);
+  const [showIntro, setShowIntro] = useState(!introPlayed);
 
   return (
     <SmoothScroll>
-      {!introPlayed && (
+      {showIntro && (
         <Preloader
-          onComplete={() => {
+          // reveal the site behind the preloader as the closing zoom begins,
+          // so the two cross-fade (no disappear-then-reappear)
+          onReveal={() => {
             introPlayed = true;
             setReady(true);
           }}
+          onComplete={() => setShowIntro(false)}
         />
       )}
 

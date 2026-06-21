@@ -10,9 +10,11 @@ import EnergyNetwork from "./EnergyNetwork";
  * branches emerge from the logo and power a distribution network of nodes →
  * the scene holds, then fades to reveal the site.
  */
-export default function Preloader({ onComplete }) {
+export default function Preloader({ onReveal, onComplete }) {
   const root = useRef(null);
   const [hidden, setHidden] = useState(false);
+  const onRevealRef = useRef(onReveal);
+  onRevealRef.current = onReveal;
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -31,24 +33,25 @@ export default function Preloader({ onComplete }) {
     };
 
     if (reduce) {
+      onRevealRef.current?.();
       finish();
       return;
     }
 
     // hold while the network powers up, then the whole scene gently dollies
-    // toward the viewer (the P comes closer) and fades out together — one
-    // smooth motion — to reveal the site.
+    // toward the viewer (the P comes closer) while the site fades in behind it
+    // — one smooth cross-fade, no disappear-then-reappear.
     const tl = gsap.timeline({ onComplete: finish });
-    tl.to(".en-svg", {
-      scale: 2.4,
-      transformOrigin: "49% 48%",
-      duration: 1.4,
-      ease: "power2.inOut",
-      delay: 3.3,
-    }).to(
+    tl.call(() => onRevealRef.current?.(), null, 3.3);
+    tl.to(
+      ".en-svg",
+      { scale: 2.2, transformOrigin: "49% 48%", duration: 1.5, ease: "power2.inOut" },
+      3.3
+    );
+    tl.to(
       root.current,
-      { autoAlpha: 0, duration: 1.0, ease: "power2.out" },
-      "<0.35"
+      { autoAlpha: 0, duration: 1.2, ease: "power2.out" },
+      3.55
     );
 
     return () => tl.kill();
