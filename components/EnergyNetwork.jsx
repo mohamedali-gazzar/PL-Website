@@ -38,7 +38,7 @@ function pathFor({ x, y }) {
 export default function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
-      <svg viewBox="0 0 1200 820" preserveAspectRatio="xMidYMid meet" className="en-svg">
+      <svg viewBox="0 0 1200 870" preserveAspectRatio="xMidYMid meet" className="en-svg">
         {/* branches emerge from the logo */}
         {NODES.map((n, i) => {
           const d = pathFor(n);
@@ -60,6 +60,11 @@ export default function EnergyNetwork() {
           <path className="en-p-stroke" d={P_PATH} pathLength="1" />
           <path className="en-p-pulse" d={P_PATH} pathLength="1" />
         </g>
+
+        {/* wordmark under the logo */}
+        <text className="en-word" x="600" y="828" textAnchor="middle">
+          POWER<tspan className="en-word-accent">LINE</tspan>
+        </text>
       </svg>
 
       <style jsx>{`
@@ -170,9 +175,24 @@ export default function EnergyNetwork() {
           100% { opacity: 0; transform: scale(2.4); }
         }
 
+        /* wordmark */
+        .en-word {
+          fill: #fff;
+          font-family: var(--font-head), sans-serif;
+          font-weight: 800;
+          font-size: 30px;
+          letter-spacing: 7px;
+          opacity: 0;
+          animation: enReveal 0.7s ease forwards 1.3s;
+        }
+        .en-word-accent {
+          fill: #f16722;
+        }
+
         @media (prefers-reduced-motion: reduce) {
           .en-path, .en-flow, .en-node, .en-ring,
-          .en-p-fill, .en-p-glow, .en-p-stroke, .en-p-pulse { animation: none; opacity: 1; }
+          .en-p-fill, .en-p-glow, .en-p-stroke, .en-p-pulse,
+          .en-word { animation: none; opacity: 1; }
           .en-p-stroke { stroke-dashoffset: 0; }
         }
       `}</style>
