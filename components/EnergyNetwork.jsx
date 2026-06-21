@@ -1,5 +1,7 @@
 "use client";
 
+import { memo } from "react";
+
 /**
  * Opening scene — ONE continuous narrative, not separate beats.
  * The whole power-network (the Powerline "P" at its heart + the conductors)
@@ -35,25 +37,28 @@ const NODES = [
   { x: 470, y: 760 }, { x: 970, y: 760 },
 ];
 
-export default function EnergyNetwork() {
+function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
       <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" className="en-svg">
         {/* conductors flow out of the P as it finishes growing */}
-        {EDGES.map((d, i) => (
-          <g key={`e${i}`} style={{ "--d": `${0.75 + i * 0.06}s` }}>
-            <path className="en-path" d={d} pathLength="1" />
-            <path className="en-flow" d={d} pathLength="1" />
-          </g>
-        ))}
-        {NODES.map((n, i) => (
-          // --d = when this node's conductor delivers energy (it powers ON then)
-          <g key={`n${i}`} style={{ "--d": `${1.85 + i * 0.06}s` }}>
-            <circle className="en-node-off" cx={n.x} cy={n.y} r="7" />
-            <circle className="en-ring" cx={n.x} cy={n.y} r="14" pathLength="1" />
-            <circle className="en-node" cx={n.x} cy={n.y} r="7" />
-          </g>
-        ))}
+        {/* the conductors + nodes — fade away as the P comes closer */}
+        <g className="en-net">
+          {EDGES.map((d, i) => (
+            <g key={`e${i}`} style={{ "--d": `${0.75 + i * 0.06}s` }}>
+              <path className="en-path" d={d} pathLength="1" />
+              <path className="en-flow" d={d} pathLength="1" />
+            </g>
+          ))}
+          {NODES.map((n, i) => (
+            // --d = when this node's conductor delivers energy (it powers ON then)
+            <g key={`n${i}`} style={{ "--d": `${1.85 + i * 0.06}s` }}>
+              <circle className="en-node-off" cx={n.x} cy={n.y} r="7" />
+              <circle className="en-ring" cx={n.x} cy={n.y} r="14" pathLength="1" />
+              <circle className="en-node" cx={n.x} cy={n.y} r="7" />
+            </g>
+          ))}
+        </g>
         {/* THE P — grows up at the centre and is the hub of the whole network.
            The same element carries through to the closing zoom. */}
         <g className="en-p">
@@ -66,9 +71,11 @@ export default function EnergyNetwork() {
         </g>
 
         {/* wordmark under the logo */}
-        <text className="en-word" x="720" y="610" textAnchor="middle">
-          POWER<tspan className="en-word-accent">LINE</tspan>
-        </text>
+        <g className="en-word-wrap">
+          <text className="en-word" x="720" y="610" textAnchor="middle">
+            POWER<tspan className="en-word-accent">LINE</tspan>
+          </text>
+        </g>
       </svg>
 
       <style jsx>{`
@@ -208,11 +215,14 @@ export default function EnergyNetwork() {
         .en-word-accent { fill: #f16722; }
 
         @media (prefers-reduced-motion: reduce) {
-          .en-stage, .en-path, .en-flow, .en-node, .en-ring,
-          .en-p-pulse, .en-word { animation: none; opacity: 1; }
+          .en-p, .en-net, .en-path, .en-flow, .en-node, .en-node-off,
+          .en-ring, .en-p-pulse, .en-word { animation: none; opacity: 1; }
           .en-path { stroke-dashoffset: 0; }
         }
       `}</style>
     </div>
   );
 }
+
+// Render once and never again — no parent re-render can restart the animation.
+export default memo(EnergyNetwork);
