@@ -43,7 +43,7 @@ export default function Preloader({ onComplete }) {
       transformOrigin: "50% 48%",
       duration: 1.1,
       ease: "power3.in",
-      delay: 4,
+      delay: 3.6,
     }).to(
       root.current,
       { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" },
