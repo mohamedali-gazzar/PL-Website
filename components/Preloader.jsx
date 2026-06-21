@@ -35,19 +35,20 @@ export default function Preloader({ onComplete }) {
       return;
     }
 
-    // hold while the network powers up, then the P grows/zooms in and the
-    // scene fades to reveal the site.
+    // hold while the network powers up, then the whole scene gently dollies
+    // toward the viewer (the P comes closer) and fades out together — one
+    // smooth motion — to reveal the site.
     const tl = gsap.timeline({ onComplete: finish });
     tl.to(".en-svg", {
-      scale: 9,
-      transformOrigin: "50% 48%",
-      duration: 1.1,
-      ease: "power3.in",
-      delay: 3.6,
+      scale: 2.4,
+      transformOrigin: "49% 48%",
+      duration: 1.4,
+      ease: "power2.inOut",
+      delay: 3.3,
     }).to(
       root.current,
-      { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" },
-      "-=0.45"
+      { autoAlpha: 0, duration: 1.0, ease: "power2.out" },
+      "<0.35"
     );
 
     return () => tl.kill();
