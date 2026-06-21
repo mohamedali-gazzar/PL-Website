@@ -35,14 +35,20 @@ export default function Preloader({ onComplete }) {
       return;
     }
 
-    // hold while the network powers up, then fade out to reveal the site
+    // hold while the network powers up, then the P grows/zooms in and the
+    // scene fades to reveal the site.
     const tl = gsap.timeline({ onComplete: finish });
-    tl.to(root.current, {
-      autoAlpha: 0,
-      duration: 0.8,
-      ease: "power2.inOut",
-      delay: 5,
-    });
+    tl.to(".en-svg", {
+      scale: 9,
+      transformOrigin: "50% 48%",
+      duration: 1.1,
+      ease: "power3.in",
+      delay: 4,
+    }).to(
+      root.current,
+      { autoAlpha: 0, duration: 0.6, ease: "power2.inOut" },
+      "-=0.45"
+    );
 
     return () => tl.kill();
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -14,27 +14,25 @@ const P_PATH =
 // P centred at (720, 430) on a 1440×900 landscape stage that fills the page.
 const P_TF = "translate(510 223) scale(2.15)";
 
-// Conductors emerge from every side of the P and reach toward the page edges.
+// Short conductors emerge from every side of the P out to glowing nodes.
 const EDGES = [
-  "M 645 330 C 560 270 380 200 140 110", // NW
-  "M 720 315 C 736 230 704 150 720 55", // N
-  "M 795 330 C 880 270 1060 200 1300 110", // NE
-  "M 608 425 C 470 415 280 440 70 430", // W
-  "M 833 420 C 980 420 1170 410 1370 420", // E
-  "M 625 520 C 480 580 280 660 110 720", // WSW
-  "M 815 520 C 960 580 1160 660 1330 720", // ESE
-  "M 655 545 C 560 640 400 740 260 840", // SW
-  "M 785 545 C 880 640 1040 740 1180 840", // SE
+  "M 645 330 C 580 280 500 230 430 180", // NW
+  "M 720 315 C 730 250 712 200 720 150", // N
+  "M 795 330 C 860 280 940 230 1010 180", // NE
+  "M 608 425 C 530 418 430 430 350 425", // W
+  "M 833 420 C 920 420 1010 414 1090 420", // E
+  "M 625 520 C 560 565 460 610 380 650", // WSW
+  "M 815 520 C 880 565 980 610 1060 650", // ESE
+  "M 655 545 C 600 615 530 695 470 760", // SW
+  "M 785 545 C 840 615 910 695 970 760", // SE
 ];
 
-// Glowing nodes — path ends plus a few junctions along the way.
+// One glowing node at the end of each conductor (no free-floating dots).
 const NODES = [
-  { x: 140, y: 110 }, { x: 720, y: 55 }, { x: 1300, y: 110 },
-  { x: 70, y: 430 }, { x: 1370, y: 420 },
-  { x: 110, y: 720 }, { x: 1330, y: 720 },
-  { x: 260, y: 840 }, { x: 1180, y: 840 },
-  { x: 370, y: 250 }, { x: 1070, y: 250 },
-  { x: 230, y: 430 }, { x: 330, y: 690 }, { x: 1110, y: 690 },
+  { x: 430, y: 180 }, { x: 720, y: 150 }, { x: 1010, y: 180 },
+  { x: 350, y: 425 }, { x: 1090, y: 420 },
+  { x: 380, y: 650 }, { x: 1060, y: 650 },
+  { x: 470, y: 760 }, { x: 970, y: 760 },
 ];
 
 export default function EnergyNetwork() {
