@@ -58,7 +58,6 @@ export default function Values() {
               </span>
               <div className="vtop">
                 <span className="n">{v.n}</span>
-                <span className="node" />
               </div>
               <h3>{v.title}</h3>
               {v.desc && <p className="vdesc">{v.desc}</p>}
@@ -128,7 +127,6 @@ export default function Values() {
         .vtop {
           display: flex;
           align-items: center;
-          justify-content: space-between;
           margin-bottom: 0.7rem;
         }
         .n {
@@ -137,18 +135,6 @@ export default function Values() {
           color: var(--orange);
           font-size: 1.05rem;
           letter-spacing: 0.04em;
-        }
-        .node {
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          border: 1px solid var(--text-faint);
-          transition: all 0.4s var(--ease);
-        }
-        .vcard:hover .node {
-          background: var(--orange);
-          border-color: var(--orange);
-          box-shadow: 0 0 16px var(--orange);
         }
         .vcard h3 {
           font-size: clamp(1.2rem, 1.5vw, 1.5rem);

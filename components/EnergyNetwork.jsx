@@ -1,85 +1,115 @@
 "use client";
 
 /**
- * Opening-sequence network, modelled on a real power-distribution map.
- * The Powerline "P" (rendered above this by the Preloader) sits at the
- * BOTTOM CENTRE and is the energy source; glowing orange branches route
- * upward and outward to strategic nodes, and pulses travel continuously
- * from the source to each node. Glow lives on the network only.
+ * Opening scene — a real power-distribution network powered by the logo.
+ * The Powerline "P" sits at the BOTTOM CENTRE and is the source: energy
+ * charges inside its internal pathways (the strokes light up and a pulse
+ * loops through them), then branches emerge from the top of the P and route
+ * outward to glowing destination nodes, with pulses continuously flowing from
+ * the logo out along every branch. Glow lives on the network + logo strokes.
  */
 
-const HUB = { x: 600, y: 720 };
+// The brand P mark (same vector as the favicon), drawn at bottom centre.
+const P_PATH =
+  "M 45.955 44.083 C 44.205 47.355, 45.082 70.813, 47 72.023 C 47.839 72.553, 59.637 72.976, 73.782 72.985 C 100.907 73.001, 104.131 73.494, 107.369 78.117 C 109.205 80.737, 109.527 87.146, 107.970 90.055 C 106.135 93.484, 101.609 95, 93.205 95 C 82.182 95, 82 95.263, 82 111.174 C 82 127.156, 81.872 127.007, 95.579 126.983 C 123.215 126.934, 141.900 115.285, 146.640 95.147 C 151.347 75.148, 142.535 55.952, 124.593 47.121 C 115.027 42.412, 111.742 42.051, 78.285 42.024 C 47.665 42, 47.049 42.040, 45.955 44.083 M 54.202 57.250 L 54.500 63.500 79 64 C 106.298 64.557, 108.105 64.939, 113.724 71.338 C 119.421 77.827, 120.180 85.807, 115.897 94.202 C 112.907 100.062, 107.221 103.276, 98.660 103.942 L 91.500 104.500 91.500 111 L 91.500 117.500 95.846 117.812 C 98.236 117.984, 103.398 117.627, 107.318 117.019 C 127.223 113.930, 138.470 102.190, 138.470 84.500 C 138.470 74.861, 136.060 68.723, 129.702 62.167 C 120.156 52.325, 114.454 51.027, 80.702 51.012 L 53.905 51 54.202 57.250 M 46.035 78.934 C 44.626 81.568, 44.626 146.432, 46.035 149.066 C 46.980 150.830, 48.246 151, 60.464 151 C 71.306 151, 74.156 150.701, 75.429 149.429 C 76.786 148.071, 77 143.848, 77 118.429 L 77 89 88.800 89 C 101.191 89, 103 88.427, 103 84.500 C 103 80.421, 101.350 80, 85.371 80 C 72.861 80, 69.862 80.280, 68.571 81.571 C 67.214 82.929, 67 87.156, 67 112.619 L 67 142.095 60.750 141.798 L 54.500 141.500 54.235 110.585 C 54.057 89.810, 53.607 79.232, 52.863 78.335 C 51.226 76.362, 47.224 76.713, 46.035 78.934";
+
+// Source = the top-centre of the P. Branches grow out of the logo from here.
+const ORIGIN = { x: 600, y: 624 };
+// place the 192-unit P so its top sits at the origin, centred at x=600.
+const P_TF = "translate(468 561) scale(1.35)";
 
 const NODES = [
-  { x: 200, y: 470, label: "Alexandria", sub: "Coastal Hub" },
-  { x: 400, y: 248, label: "North Coast", sub: "Resorts" },
-  { x: 600, y: 165, label: "New Capital", sub: "Smart City" },
-  { x: 800, y: 248, label: "6th of October", sub: "Industry" },
-  { x: 1000, y: 470, label: "New Cairo", sub: "Developments" },
+  { x: 200, y: 470 },
+  { x: 400, y: 248 },
+  { x: 600, y: 165 },
+  { x: 800, y: 248 },
+  { x: 1000, y: 470 },
 ];
 
-// Smooth, elegant routing: rise from the source, then bend toward the node.
+// Smooth routing: rise out of the logo, then bend toward the node.
 function pathFor({ x, y }) {
-  const cp1x = HUB.x + (x - HUB.x) * 0.18;
-  const cp1y = HUB.y - 160;
+  const cp1x = ORIGIN.x + (x - ORIGIN.x) * 0.18;
+  const cp1y = ORIGIN.y - 150;
   const cp2x = x;
-  const cp2y = y + 130;
-  return `M ${HUB.x} ${HUB.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x} ${y}`;
+  const cp2y = y + 120;
+  return `M ${ORIGIN.x} ${ORIGIN.y} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x} ${y}`;
 }
 
 export default function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
       <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" className="en-svg">
+        {/* branches emerge from the logo */}
         {NODES.map((n, i) => {
           const d = pathFor(n);
-          const delay = `${0.2 + i * 0.18}s`;
-          const pillW = Math.max(n.label.length, n.sub.length) * 9 + 28;
+          const delay = `${1.1 + i * 0.16}s`;
           return (
-            <g key={n.label} style={{ "--d": delay }}>
+            <g key={i} style={{ "--d": delay }}>
               <path className="en-path" d={d} pathLength="1" />
               <path className="en-flow" d={d} pathLength="1" />
-              {/* node */}
               <circle className="en-ring" cx={n.x} cy={n.y} r="11" pathLength="1" />
               <circle className="en-node" cx={n.x} cy={n.y} r="5.5" />
-              {/* label pill above the node */}
-              <g className="en-lab">
-                <line x1={n.x} y1={n.y - 12} x2={n.x} y2={n.y - 30} className="en-stem" />
-                <rect
-                  x={n.x - pillW / 2}
-                  y={n.y - 76}
-                  width={pillW}
-                  height="46"
-                  rx="10"
-                  className="en-pill"
-                />
-                <text x={n.x} y={n.y - 52} textAnchor="middle" className="en-title">
-                  {n.label}
-                </text>
-                <text x={n.x} y={n.y - 38} textAnchor="middle" className="en-sub">
-                  {n.sub}
-                </text>
-              </g>
             </g>
           );
         })}
-        {/* the source seat under the logo */}
-        <circle className="en-hub-ring" cx={HUB.x} cy={HUB.y} r="46" />
-        <circle className="en-hub" cx={HUB.x} cy={HUB.y} r="8" />
+
+        {/* the logo = the power source */}
+        <g transform={P_TF}>
+          <path className="en-p-glow" d={P_PATH} pathLength="1" />
+          <path className="en-p-fill" d={P_PATH} fillRule="evenodd" />
+          <path className="en-p-stroke" d={P_PATH} pathLength="1" />
+          <path className="en-p-pulse" d={P_PATH} pathLength="1" />
+        </g>
       </svg>
 
       <style jsx>{`
-        .en {
-          position: absolute;
-          inset: 0;
-          overflow: hidden;
+        .en { position: absolute; inset: 0; overflow: hidden; }
+        .en-svg { width: 100%; height: 100%; display: block; }
+
+        /* ── the logo (energy generated inside) ── */
+        .en-p-fill {
+          fill: rgba(241, 103, 34, 0.10);
+          opacity: 0;
+          animation: enReveal 0.8s ease forwards 0.7s;
         }
-        .en-svg {
-          width: 100%;
-          height: 100%;
-          display: block;
+        .en-p-glow {
+          fill: none;
+          stroke: rgba(241, 103, 34, 0.5);
+          stroke-width: 7;
+          filter: blur(5px);
+          opacity: 0;
+          animation: enReveal 0.8s ease forwards 0.8s;
         }
-        /* conductors */
+        .en-p-stroke {
+          fill: none;
+          stroke: #f16722;
+          stroke-width: 3;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          filter: drop-shadow(0 0 4px rgba(241, 103, 34, 0.8));
+          animation: enDraw 1.1s ease forwards 0.1s;
+        }
+        /* bright pulse looping through the P's internal pathways */
+        .en-p-pulse {
+          fill: none;
+          stroke: #ffe2cd;
+          stroke-width: 3.4;
+          stroke-linecap: round;
+          stroke-dasharray: 0.08 0.92;
+          stroke-dashoffset: 1;
+          opacity: 0;
+          filter: drop-shadow(0 0 5px rgba(255, 200, 140, 0.95));
+          animation: enReveal 0.3s ease forwards 0.9s,
+            enPulse 1.6s linear infinite 0.9s;
+        }
+        @keyframes enPulse {
+          from { stroke-dashoffset: 1; }
+          to { stroke-dashoffset: 0; }
+        }
+
+        /* ── branches ── */
         .en-path {
           fill: none;
           stroke: rgba(241, 103, 34, 0.28);
@@ -88,13 +118,12 @@ export default function EnergyNetwork() {
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
           filter: drop-shadow(0 0 3px rgba(241, 103, 34, 0.5));
-          animation: enDraw 1.4s ease forwards;
+          animation: enDraw 1.3s ease forwards;
           animation-delay: var(--d);
         }
-        @keyframes enDraw {
-          to { stroke-dashoffset: 0; }
-        }
-        /* energy pulses travelling from the source out to the node */
+        @keyframes enDraw { to { stroke-dashoffset: 0; } }
+
+        /* energy travelling from the logo out to each node */
         .en-flow {
           fill: none;
           stroke: #ffb069;
@@ -108,20 +137,19 @@ export default function EnergyNetwork() {
           animation: enReveal 0.4s ease forwards, enFlow 2.4s linear infinite;
           animation-delay: var(--d), calc(var(--d) + 0.7s);
         }
-        @keyframes enReveal {
-          to { opacity: 1; }
-        }
+        @keyframes enReveal { to { opacity: 1; } }
         @keyframes enFlow {
           from { stroke-dashoffset: 1; }
           to { stroke-dashoffset: 0; }
         }
-        /* nodes */
+
+        /* ── nodes (no labels) ── */
         .en-node {
           fill: #f16722;
           filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.95));
           opacity: 0;
           animation: enPop 0.5s ease forwards;
-          animation-delay: calc(var(--d) + 1.05s);
+          animation-delay: calc(var(--d) + 1s);
         }
         .en-ring {
           fill: none;
@@ -131,7 +159,7 @@ export default function EnergyNetwork() {
           transform-origin: center;
           opacity: 0;
           animation: enPing 2.6s ease-out infinite;
-          animation-delay: calc(var(--d) + 1.1s);
+          animation-delay: calc(var(--d) + 1.05s);
         }
         @keyframes enPop {
           from { opacity: 0; transform: scale(0); }
@@ -141,53 +169,11 @@ export default function EnergyNetwork() {
           0% { opacity: 0.8; transform: scale(0.4); }
           100% { opacity: 0; transform: scale(2.4); }
         }
-        /* source seat */
-        .en-hub {
-          fill: #f16722;
-          filter: drop-shadow(0 0 10px rgba(241, 103, 34, 0.95));
-          opacity: 0;
-          animation: enReveal 0.6s ease forwards 0.1s;
-        }
-        .en-hub-ring {
-          fill: none;
-          stroke: rgba(241, 103, 34, 0.4);
-          stroke-width: 1.4;
-          transform-box: fill-box;
-          transform-origin: center;
-          animation: enPing 3s ease-out infinite 0.3s;
-        }
-        /* labels */
-        .en-lab {
-          opacity: 0;
-          animation: enReveal 0.6s ease forwards;
-          animation-delay: calc(var(--d) + 1.25s);
-        }
-        .en-stem {
-          stroke: rgba(241, 103, 34, 0.6);
-          stroke-width: 1.4;
-        }
-        .en-pill {
-          fill: rgba(8, 8, 10, 0.82);
-          stroke: rgba(241, 103, 34, 0.45);
-          stroke-width: 1;
-        }
-        .en-title {
-          fill: #fff;
-          font-family: var(--font-head), sans-serif;
-          font-weight: 700;
-          font-size: 16px;
-          letter-spacing: 0.02em;
-        }
-        .en-sub {
-          fill: rgba(241, 103, 34, 0.95);
-          font-family: var(--font-body), sans-serif;
-          font-size: 11px;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-        }
+
         @media (prefers-reduced-motion: reduce) {
-          .en-path, .en-flow, .en-node, .en-ring, .en-hub, .en-hub-ring,
-          .en-lab { animation: none; }
+          .en-path, .en-flow, .en-node, .en-ring,
+          .en-p-fill, .en-p-glow, .en-p-stroke, .en-p-pulse { animation: none; opacity: 1; }
+          .en-p-stroke { stroke-dashoffset: 0; }
         }
       `}</style>
     </div>
