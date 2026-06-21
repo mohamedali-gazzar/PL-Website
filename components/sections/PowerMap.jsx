@@ -5,9 +5,11 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { powerLocations as LOCATIONS } from "@/lib/content";
 
-// stylized Egypt landmass (abstract, low-poly silhouette)
+// Egypt outline (real geography, simplified) on a 940×820 viewBox — traces the
+// Mediterranean coast, the Sinai peninsula + Gulf of Suez/Aqaba, the Red Sea
+// coast, and the straight southern/western borders.
 const EGYPT =
-  "M438 196 L702 176 L712 250 L688 300 L724 372 Q700 392 672 374 L654 470 L600 560 L470 558 L452 470 L430 380 L444 300 Z";
+  "M40 27 L190 43 L382 55 L418 35 L520 30 L554 49 L662 60 L695 45 L742 188 L698 316 L583 180 L572 148 L558 193 L663 362 L697 452 L742 533 L886 772 L29 772 L29 226 Z";
 
 export default function PowerMap() {
   const root = useRef(null);
@@ -83,7 +85,7 @@ export default function PowerMap() {
         </div>
 
         <div className="pm-map">
-          <svg viewBox="0 0 1000 760" className="pm-svg">
+          <svg viewBox="0 0 940 820" className="pm-svg">
             <defs>
               <radialGradient id="pmLand" cx="50%" cy="40%" r="70%">
                 <stop offset="0%" stopColor="#1a1207" />

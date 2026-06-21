@@ -4,7 +4,7 @@ import Link from "next/link";
 import { productLines } from "@/lib/content";
 import { Reveal, CountUp } from "@/components/Primitives";
 
-const OFFSETS = ["0rem", "3rem", "0rem", "3rem"]; // gentle wave for a "flowing" feel
+const OFFSETS = ["0rem", "0rem", "0rem", "0rem"]; // aligned on one line
 
 export default function ProductLines() {
   return (

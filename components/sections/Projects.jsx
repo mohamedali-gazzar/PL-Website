@@ -349,6 +349,7 @@ export default function Projects() {
           .pj-outro {
             width: 100%;
             height: auto;
+            min-height: 0;
             padding: 1rem 0;
           }
           .pj-rail {

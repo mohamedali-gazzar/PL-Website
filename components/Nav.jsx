@@ -25,7 +25,7 @@ export default function Nav() {
       <header className={`nav ${scrolled ? "is-scrolled" : ""}`}>
         <div className="nav-inner">
           <Link href="/" className="brand" aria-label="Powerline home">
-            <img src="/img/logo.webp" alt="Powerline" className="brand-logo" />
+            <img src="/img/logo-white.webp" alt="Powerline" className="brand-logo" />
           </Link>
 
           <nav className="links" aria-label="Primary">

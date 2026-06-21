@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { gsap } from "gsap";
 import { brand, heroStats } from "@/lib/content";
 import { CountUp } from "@/components/Primitives";
-import MagneticButton from "@/components/MagneticButton";
 
 export default function Hero({ ready }) {
   const root = useRef(null);
@@ -72,12 +72,12 @@ export default function Hero({ ready }) {
         </p>
 
         <div className="h-actions">
-          <MagneticButton href="/about" className="btn btn-primary" float={false}>
+          <Link href="/about" className="btn btn-primary">
             Discover Powerline
-          </MagneticButton>
-          <MagneticButton href="/low-voltage" className="btn btn-ghost" float={false}>
+          </Link>
+          <Link href="/low-voltage" className="btn btn-ghost">
             Explore Solutions
-          </MagneticButton>
+          </Link>
         </div>
 
         <div className="h-stats">

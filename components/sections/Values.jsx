@@ -115,6 +115,13 @@ export default function Values() {
           .row-grid {
             grid-template-columns: repeat(2, 1fr);
           }
+          /* keep the number + node together on the left so they line up
+             across the grid instead of drifting to the right edge */
+          .vtop {
+            justify-content: flex-start;
+            gap: 0.6rem;
+            margin-bottom: 1.4rem;
+          }
         }
       `}</style>
     </section>
