@@ -38,26 +38,22 @@ export default function Preloader({ onReveal, onComplete }) {
       return;
     }
 
-    // Hold while the network powers up. Then: the conductors + nodes recede
-    // (fade) while the BRIGHT P dollies toward the viewer (comes closer); the
-    // site cross-fades in behind it; finally the bright P hands off to the now
-    // revealed site. The P never dims-and-restarts.
+    // Hold while the network powers up. Then the WHOLE lit network (bright P +
+    // lit lines + lit dots + POWERLINE) dollies toward the viewer together —
+    // nothing fades out early, nothing restarts. The site cross-fades in behind
+    // as it comes closer, and only at the very end does the lit scene hand off
+    // to the now-revealed site.
     const tl = gsap.timeline({ onComplete: finish });
     tl.to(
-      [".en-net", ".en-word-wrap"],
-      { opacity: 0, duration: 0.7, ease: "power2.out" },
-      3.3
-    );
-    tl.to(
       ".en-svg",
-      { scale: 2.3, transformOrigin: "49% 48%", duration: 1.6, ease: "power2.inOut" },
+      { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut" },
       3.3
     );
-    tl.call(() => onRevealRef.current?.(), null, 3.6);
+    tl.call(() => onRevealRef.current?.(), null, 3.8);
     tl.to(
       root.current,
-      { autoAlpha: 0, duration: 0.9, ease: "power2.out" },
-      4.1
+      { autoAlpha: 0, duration: 1.0, ease: "power2.out" },
+      4.3
     );
 
     return () => tl.kill();
