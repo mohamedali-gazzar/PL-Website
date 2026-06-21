@@ -41,7 +41,7 @@ export default function Preloader({ onComplete }) {
       autoAlpha: 0,
       duration: 0.8,
       ease: "power2.inOut",
-      delay: 4.6,
+      delay: 5,
     });
 
     return () => tl.kill();
