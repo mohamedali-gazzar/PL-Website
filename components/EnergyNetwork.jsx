@@ -251,12 +251,6 @@ function EnergyNetwork() {
           </g>
         </g>
 
-        {/* 4 — wordmark */}
-        <g className="en-word-wrap">
-          <text className="en-word" x="720" y="618" textAnchor="middle">
-            POWER<tspan className="en-word-accent">LINE</tspan>
-          </text>
-        </g>
       </svg>
 
       <style jsx>{`
@@ -283,8 +277,7 @@ function EnergyNetwork() {
         .en.en-closing .en-wire,
         .en.en-closing .en-pulse,
         .en.en-closing .en-p-pulse,
-        .en.en-closing .en-node,
-        .en.en-closing .en-word {
+        .en.en-closing .en-node {
           animation: none !important;
           opacity: 1;
         }
@@ -392,20 +385,8 @@ function EnergyNetwork() {
         }
         @keyframes enPPulse { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-        /* ── wordmark ── */
-        .en-word {
-          fill: #fff;
-          font-family: var(--font-head), sans-serif;
-          font-weight: 800;
-          font-size: 44px;
-          letter-spacing: 11px;
-          opacity: 0;
-          animation: enReveal 0.7s ease forwards 1s;
-        }
-        .en-word-accent { fill: #f16722; }
-
         @media (prefers-reduced-motion: reduce) {
-          .en-p, .en-wire, .en-pulse, .en-node, .en-p-pulse, .en-word {
+          .en-p, .en-wire, .en-pulse, .en-node, .en-p-pulse {
             animation: none; opacity: 1;
           }
           .en-wire { stroke-dashoffset: 0; }
