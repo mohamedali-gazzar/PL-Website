@@ -13,14 +13,15 @@ import { useEffect, useRef } from "react";
  * as they live and die.
  */
 
-const SPAWN_S        = 3.0;   // seconds between spawn batches
-const SPAWN_COUNT    = 4;     // dots per batch
+const SPAWN_S        = 4.5;   // seconds between spawn batches (was 3.0)
+const SPAWN_COUNT    = 2;     // dots per batch (was 4)
 const CONNECTIONS    = 2;     // wires from each new dot to nearest existing dots
-const MAX_DOTS       = 16;    // population cap (oldest are retired when full)
-const DRAW_S         = 0.65;  // how long a wire takes to draw on
-const LIFE_S         = 18;    // how long a dot/wire stays visible
-const FADE_S         = 2.0;   // fade-out duration
-const MIN_DOT_DIST   = 110;   // minimum spacing between dots
+const MAX_DOTS       = 8;     // population cap (was 16)
+const DRAW_S         = 0.7;
+const LIFE_S         = 14;
+const FADE_S         = 2.0;
+const MIN_DOT_DIST   = 140;
+const UPDATE_MS      = 120;   // throttle per-frame opacity work to ~8fps
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -118,7 +119,15 @@ export default function EnergyField() {
     let lastSpawn = performance.now();
 
     let raf;
+    let lastUpdate = 0;
     const tick = (now) => {
+      // throttle the per-frame DOM work to ~8fps — dots/wires fade slowly
+      // enough that this is imperceptible, and it cuts GPU/CPU dramatically
+      if (now - lastUpdate < UPDATE_MS) {
+        raf = requestAnimationFrame(tick);
+        return;
+      }
+      lastUpdate = now;
       // age + fade dots
       for (const d of dots) {
         const age = (now - d.born) / 1000;
@@ -189,11 +198,12 @@ export default function EnergyField() {
           stroke: #f16722;
           stroke-width: 1.6;
           stroke-linecap: round;
-          filter: drop-shadow(0 0 4px rgba(241, 103, 34, 0.7));
+          /* softer glow — half the blur radius is roughly half the GPU cost */
+          filter: drop-shadow(0 0 2px rgba(241, 103, 34, 0.7));
         }
         :global(.ef-dot) {
           fill: #f16722;
-          filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.85));
+          filter: drop-shadow(0 0 3px rgba(241, 103, 34, 0.9));
         }
       `}</style>
     </svg>
