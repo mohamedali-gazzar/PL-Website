@@ -43,16 +43,18 @@ export default function Preloader({ onComplete }) {
     const tl = gsap.timeline({ onComplete: finish });
     // Kill all the infinite stroke/pulse loops the instant the dolly starts so
     // the browser has the headroom to scale the SVG smoothly at 60fps.
-    tl.call(() => document.querySelector(".en")?.classList.add("en-closing"), null, 3.4);
+    // (Pushed to 4.2s — the cascade now reveals more gradually, so we hold a
+    // touch longer to let it finish before the dolly.)
+    tl.call(() => document.querySelector(".en")?.classList.add("en-closing"), null, 4.2);
     tl.to(
       ".en-svg",
       { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut", force3D: true },
-      3.4
+      4.2
     );
     tl.to(
       root.current,
       { autoAlpha: 0, duration: 1.0, ease: "power2.out" },
-      4.4
+      5.2
     );
 
     return () => tl.kill();

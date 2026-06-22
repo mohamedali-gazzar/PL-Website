@@ -85,21 +85,26 @@ function scatterAround(n, minDist) {
   return pts;
 }
 
-const OUTER = scatterAround(38, 120)
+// Fewer, better-spaced outer nodes (was 38 @120) — lighter to animate and the
+// wave reads more clearly.
+const OUTER = scatterAround(28, 140)
   .map((p) => ({ ...p, x: +p.x.toFixed(1), y: +p.y.toFixed(1) }));
 
 // Cascade timing: P fires → feeders draw → 5 inner dots light → wave outward.
+// Spread out so only a few nodes/wires light per frame (smoother, no lag):
+// the 5 inner dots stagger one-by-one, and the outer wave runs over a wider
+// window. The Preloader's close is timed after this finishes.
 const P_END = 0.45;
-const FEEDER_T = 0.55;
-const INNER_T = 0.95;
-const OUTER_T0 = 1.2;
+const FEEDER_T = 0.6;
+const INNER_T = 0.9;     // first inner dot; the rest follow in order
+const OUTER_T0 = 1.5;
 
-INNER.forEach((p) => { p.d = 0; p.delay = INNER_T; });
+INNER.forEach((p, i) => { p.d = 0; p.delay = +(INNER_T + i * 0.12).toFixed(3); });
 const distToInner = (p) =>
   Math.min(...INNER.map((i) => Math.hypot(p.x - i.x, p.y - i.y)));
 OUTER.forEach((p) => { p.d = distToInner(p); });
 const MAXD = Math.max(1, ...OUTER.map((p) => p.d));
-OUTER.forEach((p) => { p.delay = +(OUTER_T0 + (p.d / MAXD) * 1.45).toFixed(3); });
+OUTER.forEach((p) => { p.delay = +(OUTER_T0 + (p.d / MAXD) * 1.9).toFixed(3); });
 
 const NODES = [...INNER, ...OUTER];
 
@@ -283,12 +288,12 @@ function EnergyNetwork() {
           stroke-linecap: round;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
-          /* thick neon TUBE like the reference — a layered halo glow. The glow
-             only re-rasterises during the 0.55s draw; once drawn the wire is
-             static and the filter result is cached, so steady cost is ~zero. */
-          filter: drop-shadow(0 0 3px rgba(var(--pl), 0.9))
-                  drop-shadow(0 0 9px rgba(var(--pl), 0.5));
-          animation: enDraw 0.55s ease forwards;
+          /* thick neon TUBE like the reference — a single halo glow (one
+             drop-shadow, not two, to halve the rasterisation work while the
+             wire draws). Once drawn the wire is static and the filter result
+             is cached, so steady cost is ~zero. */
+          filter: drop-shadow(0 0 5px rgba(var(--pl), 0.7));
+          animation: enDraw 0.6s ease forwards;
           animation-delay: var(--d);
         }
         @keyframes enDraw { to { stroke-dashoffset: 0; } }
@@ -305,10 +310,11 @@ function EnergyNetwork() {
           stroke-dasharray: 0.09 0.91;
           stroke-dashoffset: 1;
           opacity: 0;
-          /* a bright hot pulse races along every (now thicker) wire so the
-             whole network feels alive — like the reference. A small glow makes
-             it pop; it's on the brief loading screen only. */
-          filter: drop-shadow(0 0 4px rgba(255, 210, 160, 0.9));
+          /* a bright hot pulse races along every wire so the network feels
+             alive. NO drop-shadow here: these ~50 pulses loop continuously
+             during the hold, and re-rasterising a blur on each one every frame
+             was the main loading-page lag. The bright #fff0e0 stroke reads
+             clearly on the dark bg without it. */
           animation: enReveal 0.4s ease forwards, enFlow 2.2s linear infinite;
           animation-delay: calc(var(--d) + 0.6s), calc(var(--d) + 0.6s);
         }
