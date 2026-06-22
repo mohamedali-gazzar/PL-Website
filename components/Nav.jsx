@@ -7,6 +7,7 @@ import { nav, brand } from "@/lib/content";
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(null); // which drawer group is open
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -18,6 +19,14 @@ export default function Nav() {
   useEffect(() => {
     document.documentElement.style.overflow = open ? "hidden" : "";
     return () => (document.documentElement.style.overflow = "");
+  }, [open]);
+
+  // close on Escape; collapse any open accordion when the drawer closes
+  useEffect(() => {
+    if (!open) { setExpanded(null); return; }
+    const onKey = (e) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, [open]);
 
   return (
@@ -80,40 +89,90 @@ export default function Nav() {
         </div>
       </header>
 
-      {/* Mobile / overlay menu */}
-      <div className={`overlay ${open ? "show" : ""}`} role="dialog" aria-modal="true">
-        <div className="overlay-inner">
-          {nav.map((item) => (
-            <div key={item.label} className="ov-group">
-              <Link href={item.href} className="ov-link" onClick={() => setOpen(false)}>
-                {item.label}
-              </Link>
-              {item.children && (
-                <div className="ov-children">
-                  {item.children.map((c) => (
-                    <div key={c.href} className="ov-sub">
-                      <Link href={c.href} className="ov-child" onClick={() => setOpen(false)}>
-                        {c.label}
-                      </Link>
-                      {c.children && (
-                        <div className="ov-grand">
-                          {c.children.map((g) => (
-                            <Link key={g.href} href={g.href} className="ov-gchild" onClick={() => setOpen(false)}>
-                              {g.label}
+      {/* Mobile drawer menu */}
+      <div
+        className={`overlay ${open ? "show" : ""}`}
+        aria-hidden={!open}
+        onClick={() => setOpen(false)}
+      >
+        <aside
+          className="drawer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Menu"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="dr-head">
+            <img src="/img/logo-white.webp" alt="Powerline" className="dr-logo" />
+            <button className="dr-close" aria-label="Close menu" onClick={() => setOpen(false)}>
+              <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            </button>
+          </div>
+
+          <nav className="dr-nav" aria-label="Mobile">
+            {nav.map((item, i) => {
+              const isOpen = expanded === item.label;
+              return (
+                <div key={item.label} className="dr-group" style={{ "--i": i }}>
+                  <div className="dr-row">
+                    <Link href={item.href} className="dr-link" onClick={() => setOpen(false)}>
+                      {item.label}
+                    </Link>
+                    {item.children && (
+                      <button
+                        className={`dr-exp ${isOpen ? "on" : ""}`}
+                        aria-label={`Show ${item.label} pages`}
+                        aria-expanded={isOpen}
+                        onClick={() => setExpanded(isOpen ? null : item.label)}
+                      >
+                        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  {item.children && (
+                    <div className={`dr-children ${isOpen ? "open" : ""}`}>
+                      <div className="dr-children-inner">
+                        {item.children.map((c) => (
+                          <div key={c.href} className="dr-sub">
+                            <Link href={c.href} className="dr-child" onClick={() => setOpen(false)}>
+                              {c.label}
                             </Link>
-                          ))}
-                        </div>
-                      )}
+                            {c.children && (
+                              <div className="dr-grand">
+                                {c.children.map((g) => (
+                                  <Link key={g.href} href={g.href} className="dr-gchild" onClick={() => setOpen(false)}>
+                                    {g.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              );
+            })}
+          </nav>
+
+          <div className="dr-foot">
+            <a href={`tel:${brand.phone}`} className="btn btn-ghost dr-cta" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>
+              Call Us
+            </a>
+            <Link href="/contact" className="btn btn-primary dr-cta" onClick={() => setOpen(false)}>
+              Request Quotation
+            </Link>
+            <div className="dr-social">
+              <a href={brand.facebook} target="_blank" rel="noreferrer">Facebook</a>
+              <a href={brand.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
             </div>
-          ))}
-          <a href={`tel:${brand.phone}`} className="ov-phone">
-            {brand.phoneDisplay}
-          </a>
-        </div>
+          </div>
+        </aside>
       </div>
 
       <style jsx>{`
@@ -276,69 +335,203 @@ export default function Nav() {
           transform: translateY(-7px) rotate(-45deg);
         }
 
+        /* ── mobile drawer ── */
         .overlay {
           position: fixed;
           inset: 0;
           z-index: 90;
-          background: rgba(5, 5, 6, 0.98);
-          backdrop-filter: blur(20px);
+          background: rgba(3, 3, 4, 0.55);
+          backdrop-filter: blur(5px);
           opacity: 0;
           visibility: hidden;
-          transition: opacity 0.4s var(--ease), visibility 0.4s;
+          transition: opacity 0.45s var(--ease), visibility 0.45s;
         }
         .overlay.show {
           opacity: 1;
           visibility: visible;
         }
-        .overlay-inner {
+        .drawer {
+          position: absolute;
+          top: 0;
+          right: 0;
           height: 100%;
+          width: min(420px, 87vw);
           display: flex;
           flex-direction: column;
-          justify-content: center;
-          gap: 0.4rem;
-          padding: 6rem clamp(1.5rem, 8vw, 5rem) 3rem;
-          overflow-y: auto;
+          background: linear-gradient(165deg, #101013 0%, #060607 100%);
+          border-left: 1px solid var(--line);
+          box-shadow: -34px 0 90px rgba(0, 0, 0, 0.65);
+          transform: translateX(102%);
+          transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
         }
-        .ov-link {
+        .overlay.show .drawer {
+          transform: translateX(0);
+        }
+        /* orange edge glow on the leading border */
+        .drawer::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          left: -1px;
+          width: 2px;
+          background: linear-gradient(180deg, transparent, var(--orange), transparent);
+          opacity: 0.55;
+        }
+        .dr-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1.05rem clamp(1.2rem, 5vw, 1.8rem);
+          border-bottom: 1px solid var(--line);
+          flex: 0 0 auto;
+        }
+        .dr-logo {
+          height: 30px;
+          width: auto;
+        }
+        .dr-close {
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          background: rgba(255, 255, 255, 0.04);
+          border: 1px solid var(--line);
+          color: #fff;
+          cursor: pointer;
+          transition: color 0.25s, border-color 0.25s, transform 0.35s var(--ease);
+        }
+        .dr-close:hover {
+          color: var(--orange);
+          border-color: rgba(241, 103, 34, 0.5);
+          transform: rotate(90deg);
+        }
+        .dr-nav {
+          flex: 1 1 auto;
+          overflow-y: auto;
+          padding: 0.4rem clamp(1.2rem, 5vw, 1.8rem) 1rem;
+        }
+        .dr-group {
+          border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+          /* staggered slide-in when the drawer opens */
+          opacity: 0;
+          transform: translateX(26px);
+          transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+          transition-delay: calc(var(--i) * 0.05s + 0.14s);
+        }
+        .overlay.show .dr-group {
+          opacity: 1;
+          transform: none;
+        }
+        .dr-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .dr-row :global(.dr-link) {
+          flex: 1;
+          padding: 1rem 0;
           font-family: var(--font-head);
-          font-weight: 800;
-          font-size: clamp(1.8rem, 7vw, 3rem);
+          font-weight: 700;
+          font-size: 1.32rem;
           text-transform: uppercase;
           color: #fff;
-          letter-spacing: -0.01em;
+          letter-spacing: 0.01em;
+          transition: color 0.2s;
         }
-        .ov-children {
-          display: flex;
-          flex-direction: column;
-          gap: 0.6rem;
-          margin: 0.5rem 0 0.9rem;
-        }
-        .ov-child {
-          font-size: 1.02rem;
-          font-weight: 600;
-          color: var(--text);
-        }
-        .ov-child:hover {
+        .dr-row :global(.dr-link:hover) {
           color: var(--orange);
         }
-        .ov-grand {
+        .dr-exp {
+          width: 40px;
+          height: 40px;
+          display: grid;
+          place-items: center;
+          background: none;
+          border: none;
+          color: var(--text-faint);
+          cursor: pointer;
+          transition: transform 0.3s var(--ease), color 0.2s;
+        }
+        .dr-exp.on {
+          transform: rotate(180deg);
+          color: var(--orange);
+        }
+        /* grid-rows accordion (animates height smoothly) */
+        .dr-children {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.38s var(--ease);
+        }
+        .dr-children.open {
+          grid-template-rows: 1fr;
+        }
+        .dr-children-inner {
+          overflow: hidden;
+        }
+        .dr-sub {
+          padding: 0.1rem 0 0.5rem 0.85rem;
+          margin-bottom: 0.5rem;
+          border-left: 2px solid rgba(241, 103, 34, 0.35);
+        }
+        .dr-sub :global(.dr-child) {
+          display: block;
+          padding: 0.4rem 0;
+          font-weight: 600;
+          font-size: 1rem;
+          color: var(--text);
+          transition: color 0.2s;
+        }
+        .dr-sub :global(.dr-child:hover) {
+          color: var(--orange);
+        }
+        .dr-grand {
           display: flex;
           flex-wrap: wrap;
-          gap: 0.4rem 1.1rem;
-          margin: 0.4rem 0 0.2rem 1rem;
+          gap: 0.4rem;
+          margin-top: 0.35rem;
         }
-        .ov-gchild {
-          font-size: 0.85rem;
+        .dr-grand :global(.dr-gchild) {
+          font-size: 0.76rem;
           color: var(--text-dim);
+          padding: 0.25rem 0.6rem;
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          transition: color 0.2s, border-color 0.2s;
         }
-        .ov-gchild:hover {
+        .dr-grand :global(.dr-gchild:hover) {
           color: var(--orange);
+          border-color: rgba(241, 103, 34, 0.5);
         }
-        .ov-phone {
-          margin-top: 1.5rem;
+        .dr-foot {
+          flex: 0 0 auto;
+          padding: 1.1rem clamp(1.2rem, 5vw, 1.8rem) calc(1.3rem + env(safe-area-inset-bottom));
+          border-top: 1px solid var(--line);
+          background: rgba(0, 0, 0, 0.25);
+          display: flex;
+          flex-direction: column;
+          gap: 0.7rem;
+        }
+        .dr-foot :global(.dr-cta) {
+          width: 100%;
+          justify-content: center;
+          padding: 0.85rem 1rem;
+          font-size: 0.84rem;
+        }
+        .dr-social {
+          display: flex;
+          justify-content: center;
+          gap: 1.4rem;
+          margin-top: 0.3rem;
+        }
+        .dr-social a {
+          font-size: 0.82rem;
+          color: var(--text-dim);
+          transition: color 0.2s;
+        }
+        .dr-social a:hover {
           color: var(--orange);
-          font-weight: 600;
-          font-size: 1.1rem;
         }
 
         @media (max-width: 1024px) {

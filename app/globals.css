@@ -181,6 +181,16 @@ button {
   z-index: 1;
 }
 
+/* Mobile: the home sections each ship their own padding (mins range 3–5rem),
+   which makes the gaps between sections look uneven. Normalise the vertical
+   rhythm to one comfortable value on phones (the hero keeps its full height). */
+@media (max-width: 760px) {
+  .home-main > section:not(.hero) {
+    padding-top: clamp(2.6rem, 9vw, 3.6rem) !important;
+    padding-bottom: clamp(2.6rem, 9vw, 3.6rem) !important;
+  }
+}
+
 /* Generic CTA button */
 .btn {
   display: inline-flex;

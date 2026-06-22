@@ -43,7 +43,6 @@ export default function Footer() {
 
         <div className="bottom">
           <span>{brand.copyright}</span>
-          <span className="tagline">{brand.tagline}</span>
         </div>
       </div>
 
