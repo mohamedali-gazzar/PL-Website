@@ -171,7 +171,7 @@ export default function ProductGallery({ images, alt, badge }) {
           position: absolute;
           top: 50%;
           left: 50%;
-          width: clamp(130px, 39%, 290px);
+          width: clamp(100px, 28%, 210px);
           transform: translate(-50%, -50%) rotate(-7deg);
           opacity: 0;
           animation: stampRise 0.85s var(--spring) 0.45s both;

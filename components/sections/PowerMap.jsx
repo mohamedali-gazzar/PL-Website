@@ -236,7 +236,7 @@ export default function PowerMap() {
 
         .pm-svg {
           width: 100%;
-          max-width: 88%;
+          max-width: 66%;
           margin: 0 auto;
           height: auto;
           overflow: visible;

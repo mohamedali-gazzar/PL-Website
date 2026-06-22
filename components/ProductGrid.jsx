@@ -103,10 +103,11 @@ export default function ProductGrid({ items }) {
         /* type-tested seal on the card */
         .prod-thumb .card-badge {
           position: absolute;
-          top: 0.6rem;
-          right: 0.6rem;
-          width: 64px;
-          height: 64px;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 88px;
+          height: 88px;
           object-fit: contain;
           filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))
             drop-shadow(0 3px 9px rgba(0, 0, 0, 0.4));
