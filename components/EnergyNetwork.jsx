@@ -172,20 +172,15 @@ function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
       <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" className="en-svg">
-        {/* 1 — wires (drawn first → sit BEHIND the logo) */}
+        {/* 1 — wires (drawn first → sit BEHIND the logo). Single layer, no
+            infinite pulse loops, no breathing — energy delivery IS the draw-on
+            cascade, which keeps the load light on the loading page. */}
         <g className="en-net">
           {FEEDERS.map((f, i) => (
             <path key={`f${i}`} className="en-wire" d={f.d} pathLength="1" style={{ "--d": `${f.delay}s` }} />
           ))}
           {LINKS.map((l, i) => (
             <path key={`l${i}`} className="en-wire" d={l.d} pathLength="1" style={{ "--d": `${l.delay}s` }} />
-          ))}
-          {/* travelling pulses (same paths, drawn over the wires) */}
-          {FEEDERS.map((f, i) => (
-            <path key={`fp${i}`} className="en-pulse" d={f.d} pathLength="1" style={{ "--d": `${f.delay}s` }} />
-          ))}
-          {LINKS.map((l, i) => (
-            <path key={`lp${i}`} className="en-pulse" d={l.d} pathLength="1" style={{ "--d": `${l.delay}s` }} />
           ))}
         </g>
 
@@ -249,7 +244,6 @@ function EnergyNetwork() {
            every infinite animation (breathing wires, travelling pulses, P
            pulse) so the GPU can render the dolly zoom at 60fps. */
         .en.en-closing .en-wire,
-        .en.en-closing .en-pulse,
         .en.en-closing .en-p-pulse,
         .en.en-closing .en-dot,
         .en.en-closing .en-dot-off,
@@ -260,38 +254,22 @@ function EnergyNetwork() {
         .en.en-closing .en-wire { stroke-dashoffset: 0; }
 
         /* ── wires (real-cable look, breathing pulse) ── */
+        /* ── wires: draw on (one-shot) then stay solid and bright.
+           No infinite breathe/pulse loops — those were running ~100
+           keyframe-on-stroke animations during the preloader and causing
+           the lag. */
         .en-wire {
           fill: none;
-          stroke: rgba(var(--pl), 0.55);
-          stroke-width: 1.4;
+          stroke: #f16722;
+          stroke-width: 1.7;
           stroke-linecap: round;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
-          filter: drop-shadow(0 0 3px rgba(var(--pl), 0.5));
-          animation: enDraw 0.55s ease forwards, enBreathe 2.4s ease-in-out infinite;
-          animation-delay: var(--d), calc(var(--d) + 0.55s);
+          filter: drop-shadow(0 0 4px rgba(var(--pl), 0.75));
+          animation: enDraw 0.55s ease forwards;
+          animation-delay: var(--d);
         }
         @keyframes enDraw { to { stroke-dashoffset: 0; } }
-        /* dim → bright → dim, like current flowing */
-        @keyframes enBreathe {
-          0%, 100% { stroke: rgba(var(--pl), 0.35); filter: drop-shadow(0 0 2px rgba(var(--pl), 0.3)); }
-          50%      { stroke: rgba(var(--pl), 0.9);  filter: drop-shadow(0 0 6px rgba(var(--pl), 0.85)); }
-        }
-
-        /* a bright pulse travelling along each wire */
-        .en-pulse {
-          fill: none;
-          stroke: #ffe2cd;
-          stroke-width: 1.8;
-          stroke-linecap: round;
-          stroke-dasharray: 0.05 0.95;
-          stroke-dashoffset: 1;
-          opacity: 0;
-          filter: drop-shadow(0 0 5px rgba(var(--hot), 1));
-          animation: enReveal 0.4s ease forwards, enFlow 2.2s linear infinite;
-          animation-delay: calc(var(--d) + 0.6s), calc(var(--d) + 0.6s);
-        }
-        @keyframes enFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
         @keyframes enReveal { to { opacity: 1; } }
 
         /* ── nodes ── */
@@ -362,7 +340,7 @@ function EnergyNetwork() {
         .en-word-accent { fill: #f16722; }
 
         @media (prefers-reduced-motion: reduce) {
-          .en-p, .en-wire, .en-pulse, .en-dot, .en-dot-off, .en-p-pulse, .en-word {
+          .en-p, .en-wire, .en-dot, .en-dot-off, .en-p-pulse, .en-word {
             animation: none; opacity: 1;
           }
           .en-wire { stroke-dashoffset: 0; }
