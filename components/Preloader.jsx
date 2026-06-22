@@ -10,11 +10,9 @@ import EnergyNetwork from "./EnergyNetwork";
  * branches emerge from the logo and power a distribution network of nodes →
  * the scene holds, then fades to reveal the site.
  */
-export default function Preloader({ onReveal, onComplete }) {
+export default function Preloader({ onComplete }) {
   const root = useRef(null);
   const [hidden, setHidden] = useState(false);
-  const onRevealRef = useRef(onReveal);
-  onRevealRef.current = onReveal;
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -33,23 +31,21 @@ export default function Preloader({ onReveal, onComplete }) {
     };
 
     if (reduce) {
-      onRevealRef.current?.();
       finish();
       return;
     }
 
     // Hold while the network powers up. Then the WHOLE lit network (bright P +
     // lit lines + lit dots + POWERLINE) dollies toward the viewer together —
-    // nothing fades out early, nothing restarts. The site cross-fades in behind
-    // as it comes closer, and only at the very end does the lit scene hand off
-    // to the now-revealed site.
+    // nothing fades out early, nothing restarts — then the lit scene fades to
+    // reveal the site. No React state changes happen until finish(), so the
+    // animation can never re-render and restart.
     const tl = gsap.timeline({ onComplete: finish });
     tl.to(
       ".en-svg",
       { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut" },
       3.3
     );
-    tl.call(() => onRevealRef.current?.(), null, 3.8);
     tl.to(
       root.current,
       { autoAlpha: 0, duration: 1.0, ease: "power2.out" },

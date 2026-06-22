@@ -33,13 +33,13 @@ export default function Home() {
     <SmoothScroll>
       {showIntro && (
         <Preloader
-          // reveal the site behind the preloader as the closing zoom begins,
-          // so the two cross-fade (no disappear-then-reappear)
-          onReveal={() => {
+          // Reveal the site AND unmount the preloader together at the very end.
+          // No React state changes during the animation → it can never restart.
+          onComplete={() => {
             introPlayed = true;
             setReady(true);
+            setShowIntro(false);
           }}
-          onComplete={() => setShowIntro(false)}
         />
       )}
 
