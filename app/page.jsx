@@ -3,7 +3,7 @@
 import { useState } from "react";
 import SmoothScroll from "@/components/SmoothScroll";
 import Preloader from "@/components/Preloader";
-import ElectricBackground from "@/components/ElectricBackground";
+import EnergyField from "@/components/EnergyField";
 import EnergyRail from "@/components/EnergyRail";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -43,9 +43,11 @@ export default function Home() {
         />
       )}
 
-      {/* Subtle, slow electric ambiance behind the whole page */}
+      {/* Calm, organized ambient field behind the whole page — a chain of
+          dots that pass energy to each other in sequence. Replaces the
+          chaotic random-lightning background. */}
       <div className="page-electric" aria-hidden="true">
-        <ElectricBackground opacity={0.4} rate={0.028} fade={0.03} />
+        <EnergyField />
       </div>
 
       <EnergyRail />
