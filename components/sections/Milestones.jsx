@@ -1,128 +1,176 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { milestones } from "@/lib/content";
 
+const INTERVAL = 5200; // ms each milestone holds before auto-advancing
+
+/**
+ * Our Milestones — an AUTO-PLAYING story carousel (no scroll-scrub, no pin).
+ *
+ * Each milestone holds for INTERVAL then advances on its own. A slim bar counts
+ * down to the next one; clicking a year jumps straight to it; hovering the
+ * stage (or pressing pause) freezes the countdown. The countdown bar IS the
+ * clock — it drives the advance via onAnimationEnd, so pause/resume stays
+ * perfectly in sync. It only runs while the section is on screen.
+ *
+ * Premium touches: a giant ghost year behind the copy, a slow Ken-Burns push on
+ * the active photo, and a crossfade+rise between slides. All transform/opacity.
+ * prefers-reduced-motion falls back to a static, fully-visible stack.
+ */
 export default function Milestones() {
   const root = useRef(null);
-  const fill = useRef(null);
-  const [active, setActive] = useState(0);
-  // correct value on the client's first paint (matchMedia is unavailable in SSR)
-  const [mobile, setMobile] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches
+  const n = milestones.length;
+
+  const [reduced] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
+  const [active, setActive] = useState(0);
+  const [userPaused, setUserPaused] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const [inView, setInView] = useState(false);
 
-  // Click anywhere on the section to skip it in the scroll direction —
-  // down jumps past it, up jumps back above it. (desktop only). Direction is
-  // read lazily from Lenis, so no dedicated scroll listener is needed.
-  const skipOnClick = () => {
-    if (mobile) return;
-    const r = root.current.getBoundingClientRect();
-    const topDoc = window.scrollY + r.top;
-    const bottomDoc = window.scrollY + r.bottom;
-    const down = (window.__lenis?.direction ?? 1) >= 0;
-    const y = down ? bottomDoc : Math.max(0, topDoc - window.innerHeight);
-    const lenis = window.__lenis;
-    if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 0.9 });
-    else window.scrollTo({ top: y, behavior: "smooth" });
-  };
-
-  // track the breakpoint so the layout + image strategy switch correctly
+  // only let the clock run while the section is visible
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 900px)");
-    const apply = () => setMobile(mq.matches);
-    apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    const el = root.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => setInView(e.isIntersecting),
+      { threshold: 0.3 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
 
-  useEffect(() => {
-    // On mobile the section flows vertically (see CSS) — no pin, no scrub, no
-    // per-frame onUpdate. This avoids a 6×-viewport pinned scrub on the
-    // weakest devices.
-    if (mobile) return;
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    gsap.registerPlugin(ScrollTrigger);
-    const n = milestones.length;
+  const frozen = userPaused || hovering || !inView;
+  const go = (i) => setActive(((i % n) + n) % n);
 
-    const ctx = gsap.context(() => {
-      const st = ScrollTrigger.create({
-        trigger: root.current,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: reduce ? false : true,
-        onUpdate: (self) => {
-          if (fill.current)
-            fill.current.style.transform = `scaleX(${self.progress})`;
-          const idx = Math.min(n - 1, Math.floor(self.progress * n + 0.0001));
-          setActive((prev) => (prev === idx ? prev : idx));
-        },
-      });
-      return () => st.kill();
-    }, root);
-    return () => ctx.revert();
-  }, [mobile]);
+  if (reduced) {
+    // static, no motion: show every milestone in a simple vertical stack
+    return (
+      <section className="ms" ref={root} id="milestones">
+        <div className="container">
+          <span className="eyebrow">Our Milestones</span>
+          <div className="ms-static">
+            {milestones.map((m) => (
+              <article className="ms-srow" key={m.year}>
+                <div className="ms-stxt">
+                  <span className="ms-syear">{m.year}</span>
+                  <h3>{m.title}</h3>
+                  <p>{m.body}</p>
+                </div>
+                <div className="ms-smedia">
+                  <img src={m.img} alt={`${m.year} — ${m.title}`} loading="lazy" />
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+        <style jsx>{staticCss}</style>
+      </section>
+    );
+  }
 
   return (
-    <section
-      className="ms"
-      ref={root}
-      style={{ height: `${milestones.length * 75}vh` }}
-      id="milestones"
-    >
-      <div className="ms-stage" onClick={skipOnClick}>
-        <span className="ms-skip-hint" aria-hidden="true">Click anywhere to skip</span>
-        <div className="container ms-inner">
-          {/* top: horizontal year timeline */}
-          <div className="ms-top">
+    <section className="ms" ref={root} id="milestones">
+      <div className="container ms-inner">
+        {/* header + year rail */}
+        <div className="ms-head">
+          <div className="ms-head-l">
             <span className="eyebrow">Our Milestones</span>
-            <div className="ms-years">
-              <div className="ms-line">
-                <span className="ms-line-fill" ref={fill} />
-              </div>
-              <ul>
-                {milestones.map((m, i) => (
-                  <li
-                    key={m.year}
-                    className={i === active ? "on" : i < active ? "past" : ""}
-                  >
-                    <span className="yr-dot" />
-                    <span className="yr-label">{m.year}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <h2 className="ms-title">
+              A journey <span className="text-orange">in power.</span>
+            </h2>
           </div>
 
-          {/* main: each milestone is a self-contained text+image block, so it
-              can crossfade in place on desktop and flow vertically on mobile */}
-          <div className="ms-main">
-            {milestones.map((m, i) => {
-              // desktop: only load the active image and its neighbours (all
-              // share one in-view stage, so native lazy can't help). mobile:
-              // load all (native lazy works because they're in normal flow).
-              const near = Math.abs(i - active) <= 1;
-              return (
-                <div className={`ms-item ${i === active ? "is-active" : ""}`} key={m.year}>
-                  <div className="ms-text">
-                    <span className="big-year">{m.year}</span>
-                    <h3>{m.title}</h3>
-                    <p>{m.body}</p>
-                  </div>
-                  <div className="ms-media">
-                    <img
-                      src={mobile ? m.img : near ? m.img : undefined}
-                      alt={`${m.year} — ${m.title}`}
-                      loading={i === 0 ? "eager" : "lazy"}
-                    />
-                    <span className="ms-frame" />
-                  </div>
-                </div>
-              );
-            })}
+          <div className="ms-rail" role="tablist" aria-label="Milestones timeline">
+            {milestones.map((m, i) => (
+              <button
+                key={m.year}
+                role="tab"
+                aria-selected={i === active}
+                aria-label={`Show ${m.year} — ${m.title}`}
+                className={`ms-year ${i === active ? "on" : i < active ? "past" : ""}`}
+                onClick={() => go(i)}
+              >
+                {m.year}
+              </button>
+            ))}
           </div>
+        </div>
+
+        {/* countdown bar — this is the clock that drives the auto-advance */}
+        <div className="ms-prog" aria-hidden="true">
+          <span
+            className="ms-prog-fill"
+            key={active}
+            style={{
+              animationDuration: `${INTERVAL}ms`,
+              animationPlayState: frozen ? "paused" : "running",
+            }}
+            onAnimationEnd={() => go(active + 1)}
+          />
+        </div>
+
+        {/* stage — crossfading slides */}
+        <div
+          className="ms-stage"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+        >
+          {milestones.map((m, i) => {
+            const near =
+              i === active ||
+              i === (active + 1) % n ||
+              i === (active - 1 + n) % n;
+            return (
+              <article
+                className={`ms-slide ${i === active ? "is-active" : ""}`}
+                key={m.year}
+                aria-hidden={i !== active}
+              >
+                <span className="ms-ghost">{m.year}</span>
+                <div className="ms-txt">
+                  <span className="ms-count">
+                    {String(i + 1).padStart(2, "0")}
+                    <span className="ms-count-tot"> / {String(n).padStart(2, "0")}</span>
+                  </span>
+                  <span className="ms-yr">{m.year}</span>
+                  <h3>{m.title}</h3>
+                  <p>{m.body}</p>
+                </div>
+                <div className="ms-media">
+                  <img
+                    src={near ? m.img : undefined}
+                    alt={`${m.year} — ${m.title}`}
+                    loading={i === 0 ? "eager" : "lazy"}
+                  />
+                  <span className="ms-frame" />
+                </div>
+              </article>
+            );
+          })}
+
+          {/* play / pause — control for touch (not hover-only) */}
+          <button
+            className="ms-pp"
+            onClick={() => setUserPaused((p) => !p)}
+            aria-label={userPaused ? "Play timeline" : "Pause timeline"}
+            aria-pressed={userPaused}
+          >
+            {userPaused ? (
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <path d="M8 5v14l11-7z" fill="currentColor" />
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                <rect x="6" y="5" width="4" height="14" fill="currentColor" />
+                <rect x="14" y="5" width="4" height="14" fill="currentColor" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
 
@@ -130,169 +178,198 @@ export default function Milestones() {
         .ms {
           position: relative;
           background: var(--bg-2);
-        }
-        .ms-stage {
-          position: sticky;
-          top: 0;
-          height: 100vh;
-          height: 100dvh;
-          display: flex;
-          align-items: center;
-          overflow: hidden;
-        }
-        .ms-stage {
-          cursor: pointer;
-        }
-        .ms-skip-hint {
-          position: absolute;
-          right: clamp(1.2rem, 4vw, 3rem);
-          top: clamp(5.5rem, 12vh, 7rem);
-          z-index: 5;
-          pointer-events: none;
-          font-size: 0.7rem;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: var(--text-faint);
-          opacity: 0.7;
+          padding: clamp(4rem, 10vh, 7rem) 0;
         }
         .ms-inner {
-          width: 100%;
           display: flex;
           flex-direction: column;
-          gap: clamp(1.5rem, 4vh, 3rem);
+          gap: clamp(1.4rem, 3vh, 2.2rem);
         }
 
-        /* ── top year timeline ── */
-        .ms-top {
-          width: 100%;
+        /* ── header + year rail ── */
+        .ms-head {
+          display: flex;
+          align-items: flex-end;
+          justify-content: space-between;
+          gap: 1.5rem 2rem;
+          flex-wrap: wrap;
         }
-        .ms-years {
+        .ms-title {
+          font-family: var(--font-head);
+          font-weight: 800;
+          text-transform: uppercase;
+          font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+          line-height: 1;
+          margin-top: 0.8rem;
+        }
+        .text-orange {
+          color: var(--orange);
+        }
+        .ms-rail {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+        }
+        .ms-year {
+          appearance: none;
+          background: none;
+          border: 1px solid var(--line);
+          border-radius: 999px;
+          padding: 0.45rem 1rem;
+          font-family: var(--font-head);
+          font-weight: 700;
+          font-size: 0.92rem;
+          color: var(--text-faint);
+          cursor: pointer;
+          transition: color 0.3s, border-color 0.3s, background 0.3s,
+            transform 0.3s var(--ease);
+        }
+        .ms-year:hover {
+          color: #fff;
+          border-color: rgba(241, 103, 34, 0.5);
+        }
+        .ms-year.past {
+          color: var(--text-dim);
+          border-color: rgba(241, 103, 34, 0.25);
+        }
+        .ms-year.on {
+          color: #fff;
+          background: var(--orange);
+          border-color: var(--orange);
+          box-shadow: 0 0 18px rgba(241, 103, 34, 0.45);
+        }
+
+        /* ── countdown clock ── */
+        .ms-prog {
           position: relative;
-          margin-top: 1.4rem;
-        }
-        .ms-line {
-          position: absolute;
-          left: 0;
-          right: 0;
-          top: 5px;
           height: 2px;
-          background: rgba(255, 255, 255, 0.08);
           border-radius: 2px;
+          background: rgba(255, 255, 255, 0.08);
           overflow: hidden;
         }
-        .ms-line-fill {
+        .ms-prog-fill {
           position: absolute;
           inset: 0;
           transform-origin: left center;
           transform: scaleX(0);
           background: linear-gradient(90deg, var(--orange-deep), var(--orange-bright));
           box-shadow: 0 0 14px var(--orange);
+          animation-name: msProg;
+          animation-timing-function: linear;
+          animation-fill-mode: forwards;
         }
-        .ms-years ul {
-          position: relative;
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: space-between;
-        }
-        .ms-years li {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.7rem;
-          font-family: var(--font-head);
-          font-weight: 700;
-        }
-        .yr-dot {
-          width: 12px;
-          height: 12px;
-          border-radius: 50%;
-          background: #1a1a1d;
-          border: 2px solid rgba(255, 255, 255, 0.18);
-          transition: all 0.35s var(--ease);
-        }
-        .yr-label {
-          font-size: 0.85rem;
-          color: var(--text-faint);
-          transition: color 0.35s, transform 0.35s;
-        }
-        .ms-years li.past .yr-dot {
-          border-color: var(--orange);
-          background: var(--orange);
-        }
-        .ms-years li.on .yr-dot {
-          border-color: var(--orange);
-          background: var(--orange);
-          box-shadow: 0 0 16px var(--orange);
-          transform: scale(1.3);
-        }
-        .ms-years li.on .yr-label {
-          color: var(--orange);
-          transform: translateY(-2px);
+        @keyframes msProg {
+          to {
+            transform: scaleX(1);
+          }
         }
 
-        /* ── main content: stacked crossfading items (desktop) ── */
-        .ms-main {
+        /* ── stage ── */
+        .ms-stage {
           position: relative;
-          min-height: 62vh;
+          min-height: clamp(430px, 58vh, 560px);
         }
-        .ms-item {
+        .ms-slide {
           position: absolute;
           inset: 0;
           display: grid;
-          grid-template-columns: 1fr 1.05fr;
-          gap: clamp(2rem, 5vw, 5rem);
-          align-items: stretch;
+          grid-template-columns: 1fr 1.04fr;
+          gap: clamp(1.5rem, 4vw, 4rem);
+          align-items: center;
           opacity: 0;
-          transform: translateY(30px);
-          transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+          visibility: hidden;
           pointer-events: none;
+          transition: opacity 0.6s var(--ease), visibility 0.6s;
         }
-        .ms-item.is-active {
+        .ms-slide.is-active {
           opacity: 1;
-          transform: none;
+          visibility: visible;
           pointer-events: auto;
         }
-        .ms-text {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-        }
-        .big-year {
+
+        /* giant ghost year behind the copy */
+        .ms-ghost {
+          position: absolute;
+          left: -0.5rem;
+          top: -2.4rem;
           font-family: var(--font-head);
           font-weight: 800;
-          font-size: clamp(4rem, 12vw, 11rem);
-          line-height: 0.82;
-          letter-spacing: -0.03em;
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.16),
-            rgba(255, 255, 255, 0.03)
-          );
-          -webkit-background-clip: text;
-          background-clip: text;
+          font-size: clamp(7rem, 17vw, 15rem);
+          line-height: 0.8;
+          letter-spacing: -0.04em;
           color: transparent;
+          -webkit-text-stroke: 1px rgba(241, 103, 34, 0.12);
+          pointer-events: none;
+          user-select: none;
+          z-index: 0;
         }
-        .ms-text h3 {
-          font-size: clamp(1.6rem, 3.2vw, 2.8rem);
-          text-transform: uppercase;
+        .ms-txt {
+          position: relative;
+          z-index: 1;
+          display: flex;
+          flex-direction: column;
+        }
+        /* content rises in as the slide becomes active */
+        .is-active .ms-txt > * {
+          animation: msRise 0.6s var(--ease) both;
+        }
+        .is-active .ms-yr {
+          animation-delay: 0.05s;
+        }
+        .is-active h3 {
+          animation-delay: 0.12s;
+        }
+        .is-active p {
+          animation-delay: 0.19s;
+        }
+        @keyframes msRise {
+          from {
+            opacity: 0;
+            transform: translateY(22px);
+          }
+          to {
+            opacity: 1;
+            transform: none;
+          }
+        }
+        .ms-count {
+          font-family: var(--font-head);
+          font-weight: 700;
+          font-size: 0.8rem;
+          letter-spacing: 0.2em;
+          color: var(--orange);
+        }
+        .ms-count-tot {
+          color: var(--text-faint);
+        }
+        .ms-yr {
+          font-family: var(--font-head);
+          font-weight: 800;
+          font-size: clamp(2.6rem, 6vw, 5rem);
+          line-height: 1;
           color: #fff;
-          margin: 0.6rem 0 1.2rem;
-          line-height: 1.02;
+          margin: 0.5rem 0 0.2rem;
         }
-        .ms-text p {
+        .ms-txt h3 {
+          font-size: clamp(1.3rem, 2.6vw, 2.1rem);
+          text-transform: uppercase;
+          color: var(--orange);
+          margin: 0.4rem 0 1rem;
+          line-height: 1.05;
+        }
+        .ms-txt p {
           color: var(--text-dim);
-          font-size: clamp(1rem, 1.4vw, 1.2rem);
+          font-size: clamp(1rem, 1.4vw, 1.18rem);
+          line-height: 1.65;
           max-width: 46ch;
-          line-height: 1.6;
         }
         .ms-media {
           position: relative;
-          height: 62vh;
+          height: clamp(300px, 52vh, 520px);
           border-radius: 20px;
           overflow: hidden;
           border: 1px solid var(--line);
+          z-index: 1;
         }
         .ms-media img {
           position: absolute;
@@ -300,6 +377,18 @@ export default function Milestones() {
           width: 100%;
           height: 100%;
           object-fit: cover;
+        }
+        /* slow Ken-Burns push on the active photo only */
+        .is-active .ms-media img {
+          animation: msKB 6s ease-out both;
+        }
+        @keyframes msKB {
+          from {
+            transform: scale(1.001);
+          }
+          to {
+            transform: scale(1.08);
+          }
         }
         .ms-frame {
           position: absolute;
@@ -309,48 +398,75 @@ export default function Milestones() {
           box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
         }
 
+        /* play / pause */
+        .ms-pp {
+          position: absolute;
+          right: 0;
+          bottom: 0;
+          z-index: 3;
+          width: 42px;
+          height: 42px;
+          display: grid;
+          place-items: center;
+          border-radius: 50%;
+          border: 1px solid var(--line);
+          background: rgba(5, 5, 6, 0.6);
+          backdrop-filter: blur(6px);
+          color: #fff;
+          cursor: pointer;
+          transition: color 0.3s, border-color 0.3s, transform 0.3s var(--ease);
+        }
+        .ms-pp:hover {
+          color: var(--orange);
+          border-color: rgba(241, 103, 34, 0.5);
+          transform: scale(1.08);
+        }
+
         @media (max-width: 900px) {
-          /* no pin/scrub on phones — the whole timeline flows vertically */
-          .ms {
-            height: auto !important;
-          }
           .ms-stage {
-            position: static;
-            height: auto;
-            display: block;
-            overflow: visible;
-            padding: 4rem 0;
-            cursor: auto;
-          }
-          .ms-top {
-            display: none;
-          }
-          .ms-main {
-            position: static;
             min-height: 0;
-            display: block;
           }
-          .ms-item {
-            position: static;
+          .ms-slide {
+            position: relative;
             inset: auto;
-            display: flex;
-            flex-direction: column;
-            opacity: 1;
-            transform: none;
-            pointer-events: auto;
-            margin-bottom: 3rem;
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+          }
+          .ms-slide.is-active {
+            height: auto;
+            overflow: visible;
           }
           .ms-media {
             order: -1;
-            height: 52vw;
+            height: 56vw;
             min-height: 220px;
-            margin-bottom: 1.2rem;
           }
-          .ms-skip-hint {
-            display: none;
+          .ms-ghost {
+            top: auto;
+            bottom: -1rem;
+            font-size: 30vw;
+          }
+          .ms-pp {
+            position: static;
+            margin: 1.2rem auto 0;
           }
         }
       `}</style>
     </section>
   );
 }
+
+const staticCss = `
+  .ms { background: var(--bg-2); padding: clamp(4rem,10vh,7rem) 0; }
+  .ms-static { display: flex; flex-direction: column; gap: 3rem; margin-top: 2rem; }
+  .ms-srow { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
+  .ms-syear { font-family: var(--font-head); font-weight: 800; font-size: 2.4rem; color: var(--orange); }
+  .ms-srow h3 { text-transform: uppercase; color: #fff; margin: 0.4rem 0 0.8rem; }
+  .ms-srow p { color: var(--text-dim); line-height: 1.6; }
+  .ms-smedia { border-radius: 20px; overflow: hidden; border: 1px solid var(--line); aspect-ratio: 4/3; }
+  .ms-smedia img { width: 100%; height: 100%; object-fit: cover; }
+  @media (max-width: 900px) { .ms-srow { grid-template-columns: 1fr; } .ms-smedia { order: -1; } }
+`;
