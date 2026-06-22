@@ -122,7 +122,7 @@ export default function ProductGallery({ images, alt, badge }) {
           transform-origin: center;
           filter: drop-shadow(0 0 10px rgba(var(--pl), 0.35))
             drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
-          animation: pgInk 0.4s cubic-bezier(0.3, 0.7, 0.2, 1) 0.5s forwards;
+          animation: pgInk 0.95s cubic-bezier(0.3, 0.7, 0.2, 1) 0.5s forwards;
         }
         @keyframes pgInk {
           /* contact: ink lands instantly, a hair small */
