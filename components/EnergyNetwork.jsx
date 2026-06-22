@@ -61,8 +61,11 @@ function scatter(n, minDist) {
 const INNER = [
   { x: 720, y: 200, inner: true },
   { x: 940, y: 330, inner: true },
-  { x: 870, y: 600, inner: true },
-  { x: 570, y: 600, inner: true },
+  // the two lower nodes sit just ABOVE the wordmark band (y≈552, not 600) so
+  // they're clear of the POWERLINE exclusion zone and can join the mesh —
+  // otherwise every wire from them was dropped at its own endpoint.
+  { x: 870, y: 552, inner: true },
+  { x: 570, y: 552, inner: true },
   { x: 500, y: 330, inner: true },
 ];
 
@@ -144,21 +147,34 @@ function wire(a, b) {
   return `M ${a.x} ${a.y} Q ${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x} ${b.y}`;
 }
 
-// Mesh links — each outer node hooks to its nearest neighbours (inner OR
-// outer). The link inherits the timing of whichever endpoint lights first, so
-// the wave clearly propagates outward FROM the inner ring.
+// Mesh links — EVERY node (inner OR outer) hooks to its nearest neighbours.
+// The link inherits the timing of whichever endpoint lights first, so the wave
+// still propagates outward FROM the inner ring.
 const seen = new Set();
 const LINKS = [];
-for (const n of OUTER) {
-  for (const m of nearest(n, NODES, 2)) {
-    const a = n.delay <= m.delay ? n : m;
-    const b = a === n ? m : n;
-    const key = `${a.x},${a.y}|${b.x},${b.y}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const d = wire(a, b);
-    if (!d) continue;
-    LINKS.push({ d, delay: +(a.delay + 0.02).toFixed(3) });
+const deg = new Map(NODES.map((n) => [n, 0])); // visible mesh links per node
+const addLink = (n, m) => {
+  const a = n.delay <= m.delay ? n : m;
+  const b = a === n ? m : n;
+  const key = `${a.x},${a.y}|${b.x},${b.y}`;
+  if (seen.has(key)) return false;
+  const d = wire(a, b);
+  if (!d) return false; // would cross the P / wordmark clear zone → skip
+  seen.add(key);
+  LINKS.push({ d, delay: +(a.delay + 0.02).toFixed(3) });
+  deg.set(n, deg.get(n) + 1);
+  deg.set(m, deg.get(m) + 1);
+  return true;
+};
+// Give EVERY node (inner + outer) at least 2 *visible* node-to-node links, so
+// none is left hanging on only its feeder (which fades out under the P and made
+// the node look disconnected). Degree-tracked so we add the minimum needed —
+// keeps the mesh light. Wide candidate pool (10) so nodes stuck near the P /
+// wordmark clear zones can still reach a reachable neighbour.
+for (const n of NODES) {
+  for (const m of nearest(n, NODES, 10)) {
+    if (deg.get(n) >= 2) break;
+    addLink(n, m);
   }
 }
 
