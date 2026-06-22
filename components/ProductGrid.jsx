@@ -105,7 +105,8 @@ export default function ProductGrid({ items }) {
           position: absolute;
           top: 50%;
           left: 50%;
-          transform: translate(-50%, -50%);
+          /* slight inclination (~5°) so the seal reads like a pressed stamp */
+          transform: translate(-50%, -50%) rotate(-5deg);
           width: 88px;
           height: 88px;
           object-fit: contain;
