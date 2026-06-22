@@ -172,15 +172,22 @@ function EnergyNetwork() {
   return (
     <div className="en" aria-hidden="true">
       <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" className="en-svg">
-        {/* 1 — wires (drawn first → sit BEHIND the logo). Single layer, no
-            infinite pulse loops, no breathing — energy delivery IS the draw-on
-            cascade, which keeps the load light on the loading page. */}
+        {/* 1 — wires (drawn first → sit BEHIND the logo) + travelling pulses
+            on every wire. The pulses keep looping during the cascade/hold and
+            are killed the moment the close dolly starts (.en-closing rule
+            below) so they don't fight the GPU during the zoom. */}
         <g className="en-net">
           {FEEDERS.map((f, i) => (
             <path key={`f${i}`} className="en-wire" d={f.d} pathLength="1" style={{ "--d": `${f.delay}s` }} />
           ))}
           {LINKS.map((l, i) => (
             <path key={`l${i}`} className="en-wire" d={l.d} pathLength="1" style={{ "--d": `${l.delay}s` }} />
+          ))}
+          {FEEDERS.map((f, i) => (
+            <path key={`fp${i}`} className="en-pulse" d={f.d} pathLength="1" style={{ "--d": `${f.delay}s` }} />
+          ))}
+          {LINKS.map((l, i) => (
+            <path key={`lp${i}`} className="en-pulse" d={l.d} pathLength="1" style={{ "--d": `${l.delay}s` }} />
           ))}
         </g>
 
@@ -244,6 +251,7 @@ function EnergyNetwork() {
            every infinite animation (breathing wires, travelling pulses, P
            pulse) so the GPU can render the dolly zoom at 60fps. */
         .en.en-closing .en-wire,
+        .en.en-closing .en-pulse,
         .en.en-closing .en-p-pulse,
         .en.en-closing .en-dot,
         .en.en-closing .en-dot-off,
@@ -251,13 +259,15 @@ function EnergyNetwork() {
           animation: none !important;
           opacity: 1;
         }
+        /* hide the pulses entirely during the close — they're "frozen" mid-wire
+           otherwise and look like dashes. The wires themselves stay solid. */
+        .en.en-closing .en-pulse { opacity: 0; }
         .en.en-closing .en-wire { stroke-dashoffset: 0; }
 
         /* ── wires (real-cable look, breathing pulse) ── */
-        /* ── wires: draw on (one-shot) then stay solid and bright.
-           No infinite breathe/pulse loops — those were running ~100
-           keyframe-on-stroke animations during the preloader and causing
-           the lag. */
+        /* ── wires: draw on (one-shot) then stay solid bright. No infinite
+           breathing loop on the wires (that was 53 keyframe loops on
+           stroke-color before). Wires below get a travelling pulse layer. */
         .en-wire {
           fill: none;
           stroke: #f16722;
@@ -271,6 +281,23 @@ function EnergyNetwork() {
         }
         @keyframes enDraw { to { stroke-dashoffset: 0; } }
         @keyframes enReveal { to { opacity: 1; } }
+
+        /* bright pulse travelling along each wire — visual interest during
+           the cascade + hold. Killed instantly on close-start (.en-closing
+           rule above) so the dolly stays smooth. */
+        .en-pulse {
+          fill: none;
+          stroke: #ffe2cd;
+          stroke-width: 1.8;
+          stroke-linecap: round;
+          stroke-dasharray: 0.05 0.95;
+          stroke-dashoffset: 1;
+          opacity: 0;
+          filter: drop-shadow(0 0 5px rgba(var(--hot), 1));
+          animation: enReveal 0.4s ease forwards, enFlow 2.2s linear infinite;
+          animation-delay: calc(var(--d) + 0.6s), calc(var(--d) + 0.6s);
+        }
+        @keyframes enFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
         /* ── nodes ── */
         .en-dot-off {
@@ -340,7 +367,7 @@ function EnergyNetwork() {
         .en-word-accent { fill: #f16722; }
 
         @media (prefers-reduced-motion: reduce) {
-          .en-p, .en-wire, .en-dot, .en-dot-off, .en-p-pulse, .en-word {
+          .en-p, .en-wire, .en-pulse, .en-dot, .en-dot-off, .en-p-pulse, .en-word {
             animation: none; opacity: 1;
           }
           .en-wire { stroke-dashoffset: 0; }
