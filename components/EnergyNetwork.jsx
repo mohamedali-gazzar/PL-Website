@@ -196,12 +196,16 @@ function EnergyNetwork() {
           ))}
         </g>
 
-        {/* 2 — dim grid that lights up node-by-node in a wave */}
+        {/* 2 — glowing ring nodes that light up one-by-one in a wave */}
         <g className="en-net">
           {NODES.map((n, i) => (
-            <g key={`d${i}`} style={{ "--d": `${n.delay}s` }}>
-              <circle className="en-dot-off" cx={n.x} cy={n.y} r="5" />
-              <circle className="en-dot" cx={n.x} cy={n.y} r="5" />
+            <g
+              key={`d${i}`}
+              className="en-node"
+              style={{ "--d": `${n.delay}s`, transformOrigin: `${n.x}px ${n.y}px` }}
+            >
+              <circle className="en-ring" cx={n.x} cy={n.y} r="8.5" />
+              <circle className="en-core" cx={n.x} cy={n.y} r="3.2" />
             </g>
           ))}
         </g>
@@ -258,8 +262,7 @@ function EnergyNetwork() {
         .en.en-closing .en-wire,
         .en.en-closing .en-pulse,
         .en.en-closing .en-p-pulse,
-        .en.en-closing .en-dot,
-        .en.en-closing .en-dot-off,
+        .en.en-closing .en-node,
         .en.en-closing .en-word {
           animation: none !important;
           opacity: 1;
@@ -275,15 +278,16 @@ function EnergyNetwork() {
            stroke-color before). Wires below get a travelling pulse layer. */
         .en-wire {
           fill: none;
-          stroke: #f16722;
-          stroke-width: 3.4;
+          stroke: #ff7d1e;
+          stroke-width: 5;
           stroke-linecap: round;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
-          /* thick glowing cable like the reference. The glow only re-rasterises
-             during the 0.55s draw; once drawn the wire is static and the filter
-             result is cached, so the steady cost is ~zero. */
-          filter: drop-shadow(0 0 3px rgba(var(--pl), 0.65));
+          /* thick neon TUBE like the reference — a layered halo glow. The glow
+             only re-rasterises during the 0.55s draw; once drawn the wire is
+             static and the filter result is cached, so steady cost is ~zero. */
+          filter: drop-shadow(0 0 3px rgba(var(--pl), 0.9))
+                  drop-shadow(0 0 9px rgba(var(--pl), 0.5));
           animation: enDraw 0.55s ease forwards;
           animation-delay: var(--d);
         }
@@ -310,26 +314,27 @@ function EnergyNetwork() {
         }
         @keyframes enFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-        /* ── nodes ── */
-        .en-dot-off {
-          fill: rgba(var(--pl), 0.16);
-          stroke: rgba(var(--pl), 0.35);
-          stroke-width: 1;
+        /* ── nodes: glowing rings with a hot core, like the reference ── */
+        .en-node {
+          transform-box: view-box;
           opacity: 0;
-          animation: enReveal 0.4s ease forwards 0.3s;
-        }
-        .en-dot {
-          fill: #f16722;
-          transform-box: fill-box;
-          transform-origin: center;
-          opacity: 0;
-          animation: enPowerOn 0.5s var(--energy) both;
+          animation: enPowerOn 0.55s var(--energy) both;
           animation-delay: var(--d);
         }
         @keyframes enPowerOn {
-          0%   { opacity: 0; transform: scale(2); filter: drop-shadow(0 0 0 rgba(var(--hot), 0)); }
-          40%  { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 12px rgba(var(--hot), 1)); }
-          100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 6px rgba(var(--pl), 0.95)); }
+          0%   { opacity: 0; transform: scale(2.2); }
+          45%  { opacity: 1; transform: scale(1); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        .en-ring {
+          fill: none;
+          stroke: #ff8a2a;
+          stroke-width: 2.8;
+          filter: drop-shadow(0 0 5px rgba(var(--pl), 0.95));
+        }
+        .en-core {
+          fill: rgba(var(--hot), 1);
+          filter: drop-shadow(0 0 5px rgba(255, 205, 150, 0.95));
         }
 
         /* dark plate behind the P so wires fade out as they near the logo */
@@ -378,7 +383,7 @@ function EnergyNetwork() {
         .en-word-accent { fill: #f16722; }
 
         @media (prefers-reduced-motion: reduce) {
-          .en-p, .en-wire, .en-pulse, .en-dot, .en-dot-off, .en-p-pulse, .en-word {
+          .en-p, .en-wire, .en-pulse, .en-node, .en-p-pulse, .en-word {
             animation: none; opacity: 1;
           }
           .en-wire { stroke-dashoffset: 0; }

@@ -235,9 +235,13 @@ export default function PowerMap() {
         }
 
         .pm-svg {
+          display: block;
           width: 100%;
           max-width: 66%;
-          margin: 0 auto;
+          /* sit at the right of the column so the freed space lands BETWEEN the
+             text/list and the map — not bunched on one side. (display:block is
+             required, else the inline <svg> ignores the auto margin.) */
+          margin: 0 0 0 auto;
           height: auto;
           overflow: visible;
         }
