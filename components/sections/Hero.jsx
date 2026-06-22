@@ -8,6 +8,23 @@ import { CountUp } from "@/components/Primitives";
 
 export default function Hero({ ready }) {
   const root = useRef(null);
+  const video = useRef(null);
+
+  // Defer the ~62MB hero video fetch until AFTER the preloader finishes, so it
+  // never competes with the opening animation's rAF/paint work or the first
+  // paint. The poster (facility-1.webp) is the LCP element and shows the whole
+  // time, so the look is unchanged until the (now-cheap) video swaps in.
+  useEffect(() => {
+    if (!ready || !video.current) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return; // poster alone is fine for reduced-motion users
+    const v = video.current;
+    v.src = "/video/hero.mp4";
+    v.load();
+    const onReady = () => v.play().catch(() => {});
+    v.addEventListener("canplay", onReady, { once: true });
+    return () => v.removeEventListener("canplay", onReady);
+  }, [ready]);
 
   // Hide the hero text up-front so nothing flashes while the preloader plays.
   useEffect(() => {
@@ -43,14 +60,13 @@ export default function Hero({ ready }) {
     <section className="hero" ref={root}>
       <div className="hero-media">
         <video
+          ref={video}
           className="hero-video"
-          src="/video/hero.mp4"
           poster="/img/facility-1.webp"
-          autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           aria-hidden="true"
         />
         <div className="grad" />

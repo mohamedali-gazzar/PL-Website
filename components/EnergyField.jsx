@@ -54,7 +54,7 @@ export default function EnergyField() {
       el.setAttribute("r", "5");
       el.setAttribute("class", "ef-dot");
       svg.appendChild(el);
-      const d = { x, y, el, born: performance.now() };
+      const d = { x, y, el, born: performance.now(), lastOp: -1 };
       dots.push(d);
       return d;
     };
@@ -76,7 +76,7 @@ export default function EnergyField() {
       el.style.strokeDasharray = "1";
       el.style.strokeDashoffset = "1";
       svg.appendChild(el);
-      wires.push({ el, born: performance.now() });
+      wires.push({ el, born: performance.now(), lastOp: -1, lastDash: -1 });
     };
 
     // Pick a random spot that isn't too close to any existing or pending dot.
@@ -128,13 +128,17 @@ export default function EnergyField() {
         return;
       }
       lastUpdate = now;
-      // age + fade dots
+      // age + fade dots — only write when the value actually changed (an
+      // 8-bit alpha step is ~0.0039, so 0.004 epsilon = byte-identical)
       for (const d of dots) {
         const age = (now - d.born) / 1000;
         const fade = age > LIFE_S - FADE_S
           ? Math.max(0, 1 - (age - (LIFE_S - FADE_S)) / FADE_S)
           : 1;
-        d.el.style.opacity = fade.toString();
+        if (Math.abs(fade - d.lastOp) > 0.004) {
+          d.el.style.opacity = fade.toString();
+          d.lastOp = fade;
+        }
       }
       // age + draw + fade wires
       for (const w of wires) {
@@ -142,12 +146,19 @@ export default function EnergyField() {
         const t = Math.min(1, age / DRAW_S);
         // ease-out cubic — fast start, gentle settle as the energy arrives
         const eased = 1 - Math.pow(1 - t, 3);
-        w.el.style.strokeDashoffset = (1 - eased).toString();
+        const dash = 1 - eased;
+        if (Math.abs(dash - w.lastDash) > 0.004) {
+          w.el.style.strokeDashoffset = dash.toString();
+          w.lastDash = dash;
+        }
         const wireLife = LIFE_S - FADE_S * 0.6;
         const fade = age > wireLife - FADE_S
           ? Math.max(0, 1 - (age - (wireLife - FADE_S)) / FADE_S)
           : 1;
-        w.el.style.opacity = fade.toString();
+        if (Math.abs(fade - w.lastOp) > 0.004) {
+          w.el.style.opacity = fade.toString();
+          w.lastOp = fade;
+        }
       }
       // garbage-collect fully faded
       for (let i = dots.length - 1; i >= 0; i--) {
@@ -172,9 +183,29 @@ export default function EnergyField() {
     };
     raf = requestAnimationFrame(tick);
 
+    // Pause the whole loop while the tab is hidden (no point animating an
+    // ambient decoration nobody can see), and shift every born timestamp
+    // forward by the hidden duration on return so nothing mass-expires/pops.
+    let hiddenAt = 0;
+    const onVisibility = () => {
+      if (document.hidden) {
+        if (raf) { cancelAnimationFrame(raf); raf = 0; }
+        hiddenAt = performance.now();
+      } else if (!raf) {
+        const elapsed = performance.now() - hiddenAt;
+        for (const d of dots) d.born += elapsed;
+        for (const w of wires) w.born += elapsed;
+        lastSpawn += elapsed;
+        lastUpdate = 0; // force an immediate redraw
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
+      document.removeEventListener("visibilitychange", onVisibility);
       while (svg.firstChild) svg.removeChild(svg.firstChild);
     };
   }, []);

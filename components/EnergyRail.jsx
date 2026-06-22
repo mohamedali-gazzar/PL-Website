@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
  * The connective tissue of the site — a thin orange "current" pinned to the
@@ -13,9 +14,16 @@ export default function EnergyRail() {
 
   useEffect(() => {
     let raf;
+    // Cache the scrollable height — reading scrollHeight every frame forces a
+    // layout/reflow, especially nasty while the GSAP pins are scrubbing on the
+    // same scroll. Recompute it only on resize and on ScrollTrigger refresh
+    // (pinned sections change the document height).
+    let max = 0;
+    const measure = () => {
+      max = document.documentElement.scrollHeight - window.innerHeight;
+    };
     const update = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      const p = h > 0 ? window.scrollY / h : 0;
+      const p = max > 0 ? window.scrollY / max : 0;
       if (fill.current) fill.current.style.transform = `scaleY(${p})`;
       if (node.current) node.current.style.top = `${p * 100}%`;
       raf = 0;
@@ -23,12 +31,19 @@ export default function EnergyRail() {
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+    measure();
     update();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
+    ScrollTrigger.addEventListener("refresh", measure);
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
+      ScrollTrigger.removeEventListener("refresh", measure);
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);

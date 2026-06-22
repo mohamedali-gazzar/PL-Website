@@ -8,37 +8,41 @@ import { milestones } from "@/lib/content";
 export default function Milestones() {
   const root = useRef(null);
   const fill = useRef(null);
-  const dir = useRef(1); // 1 = scrolling down, -1 = up
   const [active, setActive] = useState(0);
+  // correct value on the client's first paint (matchMedia is unavailable in SSR)
+  const [mobile, setMobile] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(max-width: 900px)").matches
+  );
 
   // Click anywhere on the section to skip it in the scroll direction —
-  // down jumps past it, up jumps back above it. (desktop only)
+  // down jumps past it, up jumps back above it. (desktop only). Direction is
+  // read lazily from Lenis, so no dedicated scroll listener is needed.
   const skipOnClick = () => {
-    if (window.matchMedia("(max-width: 900px)").matches) return;
+    if (mobile) return;
     const r = root.current.getBoundingClientRect();
     const topDoc = window.scrollY + r.top;
     const bottomDoc = window.scrollY + r.bottom;
-    const y = dir.current >= 0 ? bottomDoc : Math.max(0, topDoc - window.innerHeight);
+    const down = (window.__lenis?.direction ?? 1) >= 0;
+    const y = down ? bottomDoc : Math.max(0, topDoc - window.innerHeight);
     const lenis = window.__lenis;
     if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 0.9 });
     else window.scrollTo({ top: y, behavior: "smooth" });
   };
 
-  // track scroll direction for click-to-skip
+  // track the breakpoint so the layout + image strategy switch correctly
   useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (Math.abs(y - last) > 1) {
-        dir.current = y > last ? 1 : -1;
-        last = y;
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const mq = window.matchMedia("(max-width: 900px)");
+    const apply = () => setMobile(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
   useEffect(() => {
+    // On mobile the section flows vertically (see CSS) — no pin, no scrub, no
+    // per-frame onUpdate. This avoids a 6×-viewport pinned scrub on the
+    // weakest devices.
+    if (mobile) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     gsap.registerPlugin(ScrollTrigger);
     const n = milestones.length;
@@ -59,7 +63,7 @@ export default function Milestones() {
       return () => st.kill();
     }, root);
     return () => ctx.revert();
-  }, []);
+  }, [mobile]);
 
   return (
     <section
@@ -92,30 +96,32 @@ export default function Milestones() {
             </div>
           </div>
 
-          {/* main: text + image */}
+          {/* main: each milestone is a self-contained text+image block, so it
+              can crossfade in place on desktop and flow vertically on mobile */}
           <div className="ms-main">
-            <div className="ms-text">
-              {milestones.map((m, i) => (
-                <div className={`panel ${i === active ? "is-active" : ""}`} key={m.year}>
-                  <span className="big-year">{m.year}</span>
-                  <h3>{m.title}</h3>
-                  <p>{m.body}</p>
+            {milestones.map((m, i) => {
+              // desktop: only load the active image and its neighbours (all
+              // share one in-view stage, so native lazy can't help). mobile:
+              // load all (native lazy works because they're in normal flow).
+              const near = Math.abs(i - active) <= 1;
+              return (
+                <div className={`ms-item ${i === active ? "is-active" : ""}`} key={m.year}>
+                  <div className="ms-text">
+                    <span className="big-year">{m.year}</span>
+                    <h3>{m.title}</h3>
+                    <p>{m.body}</p>
+                  </div>
+                  <div className="ms-media">
+                    <img
+                      src={mobile ? m.img : near ? m.img : undefined}
+                      alt={`${m.year} — ${m.title}`}
+                      loading={i === 0 ? "eager" : "lazy"}
+                    />
+                    <span className="ms-frame" />
+                  </div>
                 </div>
-              ))}
-            </div>
-
-            <div className="ms-media">
-              {milestones.map((m, i) => (
-                <img
-                  src={m.img}
-                  alt={`${m.year} — ${m.title}`}
-                  key={m.year}
-                  className={i === active ? "is-active" : ""}
-                  loading={i === 0 ? "eager" : "lazy"}
-                />
-              ))}
-              <span className="ms-frame" />
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -226,31 +232,32 @@ export default function Milestones() {
           transform: translateY(-2px);
         }
 
-        /* ── main content ── */
+        /* ── main content: stacked crossfading items (desktop) ── */
         .ms-main {
+          position: relative;
+          min-height: 62vh;
+        }
+        .ms-item {
+          position: absolute;
+          inset: 0;
           display: grid;
           grid-template-columns: 1fr 1.05fr;
           gap: clamp(2rem, 5vw, 5rem);
           align-items: stretch;
-        }
-        .ms-text {
-          position: relative;
-          min-height: 62vh;
-        }
-        .panel {
-          position: absolute;
-          inset: 0;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
           opacity: 0;
           transform: translateY(30px);
           transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
           pointer-events: none;
         }
-        .panel.is-active {
+        .ms-item.is-active {
           opacity: 1;
           transform: none;
+          pointer-events: auto;
+        }
+        .ms-text {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
         .big-year {
           font-family: var(--font-head);
@@ -267,14 +274,14 @@ export default function Milestones() {
           background-clip: text;
           color: transparent;
         }
-        .panel h3 {
+        .ms-text h3 {
           font-size: clamp(1.6rem, 3.2vw, 2.8rem);
           text-transform: uppercase;
           color: #fff;
           margin: 0.6rem 0 1.2rem;
           line-height: 1.02;
         }
-        .panel p {
+        .ms-text p {
           color: var(--text-dim);
           font-size: clamp(1rem, 1.4vw, 1.2rem);
           max-width: 46ch;
@@ -293,13 +300,6 @@ export default function Milestones() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          opacity: 0;
-          transform: scale(1.08);
-          transition: opacity 0.7s var(--ease), transform 1.2s var(--ease);
-        }
-        .ms-media img.is-active {
-          opacity: 1;
-          transform: scale(1);
         }
         .ms-frame {
           position: absolute;
@@ -310,26 +310,44 @@ export default function Milestones() {
         }
 
         @media (max-width: 900px) {
+          /* no pin/scrub on phones — the whole timeline flows vertically */
+          .ms {
+            height: auto !important;
+          }
+          .ms-stage {
+            position: static;
+            height: auto;
+            display: block;
+            overflow: visible;
+            padding: 4rem 0;
+            cursor: auto;
+          }
+          .ms-top {
+            display: none;
+          }
           .ms-main {
-            grid-template-columns: 1fr;
-            gap: 2rem;
+            position: static;
+            min-height: 0;
+            display: block;
+          }
+          .ms-item {
+            position: static;
+            inset: auto;
+            display: flex;
+            flex-direction: column;
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+            margin-bottom: 3rem;
           }
           .ms-media {
             order: -1;
-            height: 40vh;
-          }
-          .ms-text {
-            min-height: 0;
-            height: 40vh;
-          }
-          .yr-label {
-            font-size: 0.72rem;
+            height: 52vw;
+            min-height: 220px;
+            margin-bottom: 1.2rem;
           }
           .ms-skip-hint {
             display: none;
-          }
-          .ms-stage {
-            cursor: auto;
           }
         }
       `}</style>

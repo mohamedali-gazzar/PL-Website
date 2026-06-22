@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import SmoothScroll from "@/components/SmoothScroll";
 import Preloader from "@/components/Preloader";
 import EnergyField from "@/components/EnergyField";
@@ -8,6 +9,8 @@ import EnergyRail from "@/components/EnergyRail";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 
+// Eager: above-the-fold + all pinned/scrubbed sections (their pin math must be
+// stable at first paint).
 import Hero from "@/components/sections/Hero";
 import Projects from "@/components/sections/Projects";
 import ProductLines from "@/components/sections/ProductLines";
@@ -15,10 +18,23 @@ import Milestones from "@/components/sections/Milestones";
 import PowerMap from "@/components/sections/PowerMap";
 import Values from "@/components/sections/Values";
 import Safety from "@/components/sections/Safety";
-import PowerlineEffect from "@/components/sections/PowerlineEffect";
-import Logos from "@/components/sections/Logos";
-import Memorial from "@/components/sections/Memorial";
-import CTA from "@/components/sections/CTA";
+
+// Lazy: the trailing sections (all AFTER the last pinned section, Safety, so
+// deferring them can't shift any pin offset). Splits their JS out of the
+// first-load bundle; placeholders reserve height to avoid layout shift.
+// (next/dynamic requires an inline object-literal for its options.)
+const PowerlineEffect = dynamic(() => import("@/components/sections/PowerlineEffect"), {
+  loading: () => <div style={{ minHeight: "90vh" }} aria-hidden />,
+});
+const Logos = dynamic(() => import("@/components/sections/Logos"), {
+  loading: () => <div style={{ minHeight: "60vh" }} aria-hidden />,
+});
+const CTA = dynamic(() => import("@/components/sections/CTA"), {
+  loading: () => <div style={{ minHeight: "60vh" }} aria-hidden />,
+});
+const Memorial = dynamic(() => import("@/components/sections/Memorial"), {
+  loading: () => <div style={{ minHeight: "70vh" }} aria-hidden />,
+});
 
 // Module-scoped flag: false on a full page load (first open / reload), and
 // stays true across in-app navigation. So the intro plays once per page load,

@@ -280,7 +280,9 @@ function EnergyNetwork() {
           stroke-linecap: round;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
-          filter: drop-shadow(0 0 4px rgba(var(--pl), 0.75));
+          /* no drop-shadow — re-rasterising a blur on ~50 wires every draw
+             frame was a top preloader paint cost. The bright stroke + the
+             pulse + dot glows already read as fully lit. */
           animation: enDraw 0.55s ease forwards;
           animation-delay: var(--d);
         }
@@ -293,12 +295,14 @@ function EnergyNetwork() {
         .en-pulse {
           fill: none;
           stroke: #ffe2cd;
-          stroke-width: 1.8;
+          stroke-width: 2;
           stroke-linecap: round;
           stroke-dasharray: 0.05 0.95;
           stroke-dashoffset: 1;
           opacity: 0;
-          filter: drop-shadow(0 0 5px rgba(var(--hot), 1));
+          /* drop-shadow removed: it was a blur re-rasterised every frame on
+             ~50 looping pulses — the single heaviest paint on the loading
+             screen. The bright #ffe2cd stroke reads clearly on the dark bg. */
           animation: enReveal 0.4s ease forwards, enFlow 2.2s linear infinite;
           animation-delay: calc(var(--d) + 0.6s), calc(var(--d) + 0.6s);
         }

@@ -9,32 +9,20 @@ export default function Projects() {
   const root = useRef(null);
   const track = useRef(null);
   const stRef = useRef(null);
-  const dir = useRef(1); // 1 = scrolling down, -1 = up
 
   // Click anywhere on the pinned section to skip it in the direction the user
-  // is scrolling — down jumps past it, up jumps back before it.
+  // is scrolling — down jumps past it, up jumps back before it. Direction is
+  // read lazily from Lenis (0/idle treated as "down"), so we no longer need a
+  // dedicated always-on scroll listener just to track it.
   const skipOnClick = () => {
     const st = stRef.current;
     if (!st) return; // not pinned (mobile / reduced-motion)
-    const y = dir.current >= 0 ? st.end + 4 : st.start - 4;
+    const down = (window.__lenis?.direction ?? 1) >= 0;
+    const y = down ? st.end + 4 : st.start - 4;
     const lenis = window.__lenis;
     if (lenis?.scrollTo) lenis.scrollTo(y, { duration: 0.9 });
     else window.scrollTo({ top: y, behavior: "smooth" });
   };
-
-  // track scroll direction for the click-to-skip behaviour
-  useEffect(() => {
-    let last = window.scrollY;
-    const onScroll = () => {
-      const y = window.scrollY;
-      if (Math.abs(y - last) > 1) {
-        dir.current = y > last ? 1 : -1;
-        last = y;
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -47,10 +35,9 @@ export default function Projects() {
       const inner = track.current;
       const distance = () => inner.scrollWidth - window.innerWidth;
 
-      // pin the section and translate the track horizontally as you scroll
-      const tween = gsap.to(inner, {
-        x: () => -distance(),
-        ease: "none",
+      // ONE timeline + ONE ScrollTrigger drives both the horizontal track and
+      // the rail fill (was two overlapping triggers over the same range).
+      const tl = gsap.timeline({
         scrollTrigger: {
           trigger: root.current,
           start: "top top",
@@ -60,25 +47,11 @@ export default function Projects() {
           invalidateOnRefresh: true,
         },
       });
-      stRef.current = tween.scrollTrigger;
+      tl.to(inner, { x: () => -distance(), ease: "none" }, 0)
+        .fromTo(".pj-rail-fill", { scaleX: 0 }, { scaleX: 1, ease: "none" }, 0);
+      stRef.current = tl.scrollTrigger;
 
-      // energy rail fills as you advance
-      gsap.fromTo(
-        ".pj-rail-fill",
-        { scaleX: 0 },
-        {
-          scaleX: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: root.current,
-            start: "top top",
-            end: () => `+=${distance()}`,
-            scrub: true,
-          },
-        }
-      );
-
-      return () => tween.kill();
+      return () => tl.kill();
     }, root);
     return () => ctx.revert();
   }, []);

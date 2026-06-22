@@ -34,7 +34,7 @@ export default function AboutPage() {
             </Reveal>
             <Reveal delay={120}>
               <div className="intro-media">
-                <img src="/img/facility-2.webp" alt="Powerline manufacturing facility" />
+                <img src="/img/facility-2.webp" alt="Powerline manufacturing facility" loading="lazy" decoding="async" />
                 <span className="im-frame" />
               </div>
             </Reveal>
@@ -66,7 +66,7 @@ export default function AboutPage() {
                   power systems running smoothly.
                 </h2>
               </div>
-              <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" className="ps-logos" />
+              <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" className="ps-logos" loading="lazy" decoding="async" />
             </div>
           </Reveal>
 
@@ -98,7 +98,7 @@ export default function AboutPage() {
                 <Link href="/locations" className="btn btn-ghost">Find us →</Link>
               </div>
               <div className="foot-media">
-                <img src="/img/facility-1.webp" alt="Powerline facility" />
+                <img src="/img/facility-1.webp" alt="Powerline facility" loading="lazy" decoding="async" />
                 <span className="im-frame" />
               </div>
             </div>
@@ -125,7 +125,7 @@ export default function AboutPage() {
         .partner-text { flex:1 1 420px; }
         .partner h2 { font-size: clamp(1.3rem,2.6vw,2rem); text-transform:uppercase; color:#fff; max-width:none; margin-top:0.8rem; line-height:1.3; }
         .partner h2 .kw { color:var(--orange); }
-        .ps-logos { max-height: clamp(78px, 11vw, 124px); width:auto; flex:0 0 auto; }
+        .ps-logos { max-height: clamp(78px, 11vw, 124px); width:auto; aspect-ratio: 16 / 9; flex:0 0 auto; }
 
         .vhead h2 { margin-top:1rem; }
         .vgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1.2rem; margin-bottom: clamp(3rem,8vh,5rem); }

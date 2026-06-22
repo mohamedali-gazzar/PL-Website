@@ -65,9 +65,9 @@ export default function PowerlineEffect() {
               if (e.key === "ArrowRight") setPos((p) => Math.min(100, p + 4));
             }}
           >
-            <img className="after" src={powerlineEffect.after} alt="After Powerline installation" draggable="false" />
+            <img className="after" src={powerlineEffect.after} alt="After Powerline installation" draggable="false" loading="lazy" decoding="async" />
             <div className="before" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }}>
-              <img src={powerlineEffect.before} alt="Before installation" draggable="false" />
+              <img src={powerlineEffect.before} alt="Before installation" draggable="false" loading="lazy" decoding="async" />
               <span className="tag tag-b">Before</span>
             </div>
             <span className="tag tag-a">After</span>
