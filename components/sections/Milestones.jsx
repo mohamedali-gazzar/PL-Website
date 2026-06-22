@@ -29,22 +29,24 @@ export default function Milestones() {
   );
   const [active, setActive] = useState(0);
   const [userPaused, setUserPaused] = useState(false);
-  const [hovering, setHovering] = useState(false);
   const [inView, setInView] = useState(false);
 
-  // only let the clock run while the section is visible
+  // Auto-play runs the whole time ANY part of the section is on screen — it
+  // starts the moment you scroll into Our Milestones and keeps going until the
+  // section has scrolled away (i.e. you've reached the next section, Our
+  // Network). It is NOT affected by the cursor at all.
   useEffect(() => {
     const el = root.current;
     if (!el) return;
     const io = new IntersectionObserver(
       ([e]) => setInView(e.isIntersecting),
-      { threshold: 0.3 }
+      { threshold: 0 }
     );
     io.observe(el);
     return () => io.disconnect();
   }, []);
 
-  const frozen = userPaused || hovering || !inView;
+  const frozen = userPaused || !inView;
   const go = (i) => setActive(((i % n) + n) % n);
 
   if (reduced) {
@@ -115,11 +117,7 @@ export default function Milestones() {
         </div>
 
         {/* stage — crossfading slides */}
-        <div
-          className="ms-stage"
-          onMouseEnter={() => setHovering(true)}
-          onMouseLeave={() => setHovering(false)}
-        >
+        <div className="ms-stage">
           {milestones.map((m, i) => {
             const near =
               i === active ||
