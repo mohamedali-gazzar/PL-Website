@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { milestones } from "@/lib/content";
 
-const INTERVAL = 5200; // ms each milestone holds before auto-advancing
+const INTERVAL = 3120; // ms each milestone holds before auto-advancing (5200 − 40%)
 
 /**
  * Our Milestones — an AUTO-PLAYING story carousel (no scroll-scrub, no pin).
