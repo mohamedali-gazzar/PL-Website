@@ -13,15 +13,15 @@ import { useEffect, useRef } from "react";
  * as they live and die.
  */
 
-const SPAWN_S        = 5.0;   // seconds between spawn batches
-const SPAWN_COUNT    = 2;     // dots per batch
+const SPAWN_S        = 2.6;   // seconds between spawn batches
+const SPAWN_COUNT    = 4;     // dots per batch
 const CONNECTIONS    = 2;     // wires from each new dot to nearest existing dots
-const MAX_DOTS       = 8;     // population cap
-const DRAW_S         = 2.6;   // wire draw duration — slower, smoother delivery
-const LIFE_S         = 16;
+const MAX_DOTS       = 22;    // population cap — denser web across the page
+const DRAW_S         = 0.85;  // wire draw duration — quick energy delivery
+const LIFE_S         = 15;
 const FADE_S         = 2.0;
-const MIN_DOT_DIST   = 140;
-const UPDATE_MS      = 100;   // ~10fps update rate
+const MIN_DOT_DIST   = 150;   // spacing so the web spreads instead of clustering
+const UPDATE_MS      = 50;    // ~20fps — smooth enough for the faster draw
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -35,9 +35,16 @@ export default function EnergyField() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
-    let W = window.innerWidth;
-    let H = window.innerHeight;
-    const onResize = () => { W = window.innerWidth; H = window.innerHeight; };
+    // Measure the SVG's real painted size (it fills the fixed full-page
+    // wrapper) so dots spread across the whole page, not just the centre.
+    const measure = () => {
+      const r = svg.getBoundingClientRect();
+      W = Math.round(r.width) || window.innerWidth;
+      H = Math.round(r.height) || window.innerHeight;
+    };
+    let W, H;
+    measure();
+    const onResize = () => measure();
     window.addEventListener("resize", onResize);
 
     /** @type {Array<{x:number,y:number,el:SVGCircleElement,born:number}>} */
