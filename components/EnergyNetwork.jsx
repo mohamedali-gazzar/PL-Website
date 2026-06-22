@@ -276,13 +276,14 @@ function EnergyNetwork() {
         .en-wire {
           fill: none;
           stroke: #f16722;
-          stroke-width: 1.7;
+          stroke-width: 3.4;
           stroke-linecap: round;
           stroke-dasharray: 1;
           stroke-dashoffset: 1;
-          /* no drop-shadow — re-rasterising a blur on ~50 wires every draw
-             frame was a top preloader paint cost. The bright stroke + the
-             pulse + dot glows already read as fully lit. */
+          /* thick glowing cable like the reference. The glow only re-rasterises
+             during the 0.55s draw; once drawn the wire is static and the filter
+             result is cached, so the steady cost is ~zero. */
+          filter: drop-shadow(0 0 3px rgba(var(--pl), 0.65));
           animation: enDraw 0.55s ease forwards;
           animation-delay: var(--d);
         }
@@ -294,15 +295,16 @@ function EnergyNetwork() {
            rule above) so the dolly stays smooth. */
         .en-pulse {
           fill: none;
-          stroke: #ffe2cd;
-          stroke-width: 2;
+          stroke: #fff0e0;
+          stroke-width: 3.6;
           stroke-linecap: round;
-          stroke-dasharray: 0.05 0.95;
+          stroke-dasharray: 0.09 0.91;
           stroke-dashoffset: 1;
           opacity: 0;
-          /* drop-shadow removed: it was a blur re-rasterised every frame on
-             ~50 looping pulses — the single heaviest paint on the loading
-             screen. The bright #ffe2cd stroke reads clearly on the dark bg. */
+          /* a bright hot pulse races along every (now thicker) wire so the
+             whole network feels alive — like the reference. A small glow makes
+             it pop; it's on the brief loading screen only. */
+          filter: drop-shadow(0 0 4px rgba(255, 210, 160, 0.9));
           animation: enReveal 0.4s ease forwards, enFlow 2.2s linear infinite;
           animation-delay: calc(var(--d) + 0.6s), calc(var(--d) + 0.6s);
         }

@@ -14,3 +14,4 @@ scripts/*.html
 .claude/
 
 .vercel
+.next-build

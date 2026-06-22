@@ -3,28 +3,25 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Ambient background — a growing spider-web of energy across the whole page.
+ * Ambient background — sparse RANDOM electrical pulses.
  *
- * Every SPAWN_S seconds a batch of new RANDOM dots appears; each wires to its
- * nearest existing dots, so the network grows as a mesh. Old dots/wires fade
- * out so the web keeps evolving.
+ * Instead of a connected, growing network (which pulled the eye around the
+ * page), this just fires the occasional short energy spark at a random spot:
+ * a hot dash that races along a faint, gently-curved track and fades. There's
+ * no persistent web to read, so it stays quietly in the background and never
+ * competes with the content.
  *
- * Smoothness: the wire DRAW and all fades are pure CSS animations/transitions
- * (run on the compositor at native 60fps). The JS rAF loop is throttled and
- * only handles lifecycle (spawn, trigger fade-out, remove) via class toggles —
- * it never writes per-frame values, so the draw is buttery even though the
- * loop ticks slowly. Pauses entirely while the tab is hidden.
+ * Smoothness: the pulse travel + draw + fade are pure CSS animations (run on
+ * the compositor at native 60fps). The JS rAF loop is throttled and only does
+ * lifecycle (spawn, remove) — it never writes per-frame values. Pauses while
+ * the tab is hidden.
  */
 
-const SPAWN_S      = 2.6;   // seconds between spawn batches
-const SPAWN_COUNT  = 4;     // dots per batch
-const CONNECTIONS  = 2;     // wires from each new dot to nearest existing dots
-const MAX_DOTS     = 22;    // population cap
-const DRAW_S       = 0.9;   // wire draw duration (CSS)
-const LIFE_S       = 15;
-const FADE_S       = 2.0;
-const MIN_DOT_DIST = 150;
-const UPDATE_MS    = 120;   // lifecycle tick — coarse is fine, CSS does the motion
+const SPAWN_S   = 1.15;  // seconds between sparks
+const MAX_LIVE  = 5;     // concurrent sparks cap
+const TRAVEL_S  = 1.6;   // pulse travel duration (CSS)
+const LIFE_S    = 2.2;   // total life before removal (travel + fade tail)
+const UPDATE_MS = 140;   // lifecycle tick — coarse is fine, CSS does the motion
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -38,8 +35,8 @@ export default function EnergyField() {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
 
-    // Measure the SVG's real painted size (it fills the fixed full-page
-    // wrapper) so dots spread across the whole page, not just the centre.
+    // Measure the SVG's real painted size (it fills the fixed full-page wrapper)
+    // so sparks spread across the whole page.
     let W, H;
     const measure = () => {
       const r = svg.getBoundingClientRect();
@@ -50,120 +47,68 @@ export default function EnergyField() {
     const onResize = () => measure();
     window.addEventListener("resize", onResize);
 
-    const dots = [];
-    const wires = [];
+    const sparks = [];
     const rand = (min, max) => min + Math.random() * (max - min);
 
-    const addDot = (x, y) => {
-      const el = document.createElementNS(NS, "circle");
-      el.setAttribute("cx", x);
-      el.setAttribute("cy", y);
-      el.setAttribute("r", "5");
-      el.setAttribute("class", "ef-dot"); // CSS fades it in on mount
-      svg.appendChild(el);
-      const d = { x, y, el, born: performance.now(), fading: false };
-      dots.push(d);
-      return d;
+    // One spark = a faint track + a hot pulse dash travelling along it.
+    const spawn = () => {
+      const x1 = rand(40, Math.max(40, W - 40));
+      const y1 = rand(40, Math.max(40, H - 40));
+      const ang = rand(0, Math.PI * 2);
+      const len = rand(120, 260);
+      const x2 = x1 + Math.cos(ang) * len;
+      const y2 = y1 + Math.sin(ang) * len;
+      // gentle perpendicular bow so the track reads like a real cable
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      const nx = -Math.sin(ang), ny = Math.cos(ang);
+      const bow = rand(-26, 26);
+      const cx = mx + nx * bow, cy = my + ny * bow;
+      const d = `M ${x1.toFixed(1)} ${y1.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+
+      const g = document.createElementNS(NS, "g");
+      const track = document.createElementNS(NS, "path");
+      track.setAttribute("d", d);
+      track.setAttribute("class", "ef-track");
+      const pulse = document.createElementNS(NS, "path");
+      pulse.setAttribute("d", d);
+      pulse.setAttribute("pathLength", "1");
+      pulse.setAttribute("class", "ef-pulse");
+      g.appendChild(track);
+      g.appendChild(pulse);
+      svg.appendChild(g);
+
+      sparks.push({ el: g, born: performance.now() });
     };
 
-    const addWire = (a, b) => {
-      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
-      const dx = b.x - a.x, dy = b.y - a.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const bow = Math.min(28, len * 0.16) * (Math.random() < 0.5 ? 1 : -1);
-      const cx = mx + (-dy / len) * bow;
-      const cy = my + (dx / len) * bow;
-      const el = document.createElementNS(NS, "path");
-      el.setAttribute(
-        "d",
-        `M ${a.x.toFixed(1)} ${a.y.toFixed(1)} Q ${cx.toFixed(1)} ${cy.toFixed(1)} ${b.x.toFixed(1)} ${b.y.toFixed(1)}`
-      );
-      el.setAttribute("class", "ef-wire"); // CSS draws it on mount (dashoffset 1→0)
-      el.setAttribute("pathLength", "1");
-      svg.appendChild(el);
-      wires.push({ el, born: performance.now(), fading: false });
-    };
-
-    // Pick a random spot, full-page, kept clear of existing/pending dots.
-    const pickSpot = (pending) => {
-      for (let attempts = 0; attempts < 30; attempts++) {
-        const x = rand(70, Math.max(70, W - 70));
-        const y = rand(70, Math.max(70, H - 70));
-        const tooClose = [...dots, ...pending].some(
-          (d) => Math.hypot(d.x - x, d.y - y) < MIN_DOT_DIST
-        );
-        if (!tooClose) return { x, y };
-      }
-      return { x: rand(70, W - 70), y: rand(70, H - 70) };
-    };
-
-    const spawnBatch = (now) => {
-      const newOnes = [];
-      for (let i = 0; i < SPAWN_COUNT; i++) {
-        const { x, y } = pickSpot(newOnes);
-        newOnes.push(addDot(x, y));
-      }
-      for (const nd of newOnes) {
-        const existing = dots.filter((d) => d !== nd);
-        if (!existing.length) continue;
-        const closest = existing
-          .map((d) => ({ d, dist: Math.hypot(d.x - nd.x, d.y - nd.y) }))
-          .sort((a, b) => a.dist - b.dist)
-          .slice(0, CONNECTIONS);
-        for (const { d } of closest) addWire(d, nd);
-      }
-      const overflow = dots.length - MAX_DOTS;
-      for (let i = 0; i < overflow; i++) dots[i].born = now - LIFE_S;
-    };
-
-    spawnBatch(performance.now());
+    spawn();
     let lastSpawn = performance.now();
 
     let raf;
     let lastUpdate = 0;
-    const wireLife = LIFE_S - FADE_S * 0.6;
     const tick = (now) => {
       if (now - lastUpdate < UPDATE_MS) {
         raf = requestAnimationFrame(tick);
         return;
       }
       lastUpdate = now;
-      // lifecycle ONLY — toggle the CSS fade-out class at the boundary, then
-      // remove once fully faded. No per-frame value writes.
-      for (let i = dots.length - 1; i >= 0; i--) {
-        const d = dots[i];
-        const age = (now - d.born) / 1000;
-        if (!d.fading && age > LIFE_S - FADE_S) {
-          d.fading = true;
-          d.el.classList.add("out");
-        }
-        if (age > LIFE_S) {
-          svg.removeChild(d.el);
-          dots.splice(i, 1);
+      // lifecycle ONLY — remove finished sparks, spawn new ones. No per-frame
+      // value writes; the CSS animations handle all motion.
+      for (let i = sparks.length - 1; i >= 0; i--) {
+        if ((now - sparks[i].born) / 1000 > LIFE_S) {
+          svg.removeChild(sparks[i].el);
+          sparks.splice(i, 1);
         }
       }
-      for (let i = wires.length - 1; i >= 0; i--) {
-        const w = wires[i];
-        const age = (now - w.born) / 1000;
-        if (!w.fading && age > wireLife - FADE_S) {
-          w.fading = true;
-          w.el.classList.add("out");
-        }
-        if (age > wireLife) {
-          svg.removeChild(w.el);
-          wires.splice(i, 1);
-        }
-      }
-      if ((now - lastSpawn) / 1000 >= SPAWN_S) {
+      if ((now - lastSpawn) / 1000 >= SPAWN_S && sparks.length < MAX_LIVE) {
         lastSpawn = now;
-        spawnBatch(now);
+        spawn();
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
 
-    // Pause everything while the tab is hidden; shift timestamps on return so
-    // nothing mass-expires/pops.
+    // Pause while the tab is hidden; shift timestamps on return so nothing
+    // mass-expires/pops.
     let hiddenAt = 0;
     const onVisibility = () => {
       if (document.hidden) {
@@ -171,8 +116,7 @@ export default function EnergyField() {
         hiddenAt = performance.now();
       } else if (!raf) {
         const elapsed = performance.now() - hiddenAt;
-        for (const d of dots) d.born += elapsed;
-        for (const w of wires) w.born += elapsed;
+        for (const s of sparks) s.born += elapsed;
         lastSpawn += elapsed;
         lastUpdate = 0;
         raf = requestAnimationFrame(tick);
@@ -204,44 +148,36 @@ export default function EnergyField() {
           pointer-events: none;
           overflow: visible;
         }
-        /* wires: the draw is a CSS animation that runs on mount (compositor,
-           native 60fps — smooth regardless of the throttled JS lifecycle loop).
-           stroke-dashoffset is the only animated prop, so opacity stays free
-           for the fade-out transition. */
-        :global(.ef-wire) {
+        /* faint track the pulse rides along — quietly fades in then out so it's
+           barely there when no pulse is on it */
+        :global(.ef-track) {
           fill: none;
-          stroke: #f16722;
-          stroke-width: 1.6;
+          stroke: rgba(241, 103, 34, 0.16);
+          stroke-width: 1;
           stroke-linecap: round;
-          stroke-dasharray: 1;
+          opacity: 0;
+          animation: efTrack ${LIFE_S}s ease forwards;
+        }
+        @keyframes efTrack {
+          0%   { opacity: 0; }
+          20%  { opacity: 1; }
+          70%  { opacity: 1; }
+          100% { opacity: 0; }
+        }
+        /* the hot pulse: a short bright dash that races along the track once
+           (CSS — compositor, native 60fps) then the parent is removed */
+        :global(.ef-pulse) {
+          fill: none;
+          stroke: #ff8a3d;
+          stroke-width: 2;
+          stroke-linecap: round;
+          stroke-dasharray: 0.12 1;
           stroke-dashoffset: 1;
-          opacity: 0.9;
-          transition: opacity ${FADE_S}s ease;
-          animation: efDraw ${DRAW_S}s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+          filter: drop-shadow(0 0 3px rgba(241, 103, 34, 0.8));
+          animation: efPulse ${TRAVEL_S}s cubic-bezier(0.4, 0, 0.4, 1) forwards;
         }
-        @keyframes efDraw {
-          to { stroke-dashoffset: 0; }
-        }
-        :global(.ef-wire.out) {
-          opacity: 0;
-        }
-        /* dots: fade in on mount, fade out when retired — both CSS animations */
-        :global(.ef-dot) {
-          fill: #f16722;
-          filter: drop-shadow(0 0 3px rgba(241, 103, 34, 0.9));
-          opacity: 0;
-          animation: efDotIn 0.6s ease forwards;
-        }
-        @keyframes efDotIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        :global(.ef-dot.out) {
-          animation: efDotOut ${FADE_S}s ease forwards;
-        }
-        @keyframes efDotOut {
-          from { opacity: 1; }
-          to { opacity: 0; }
+        @keyframes efPulse {
+          to { stroke-dashoffset: -0.12; }
         }
       `}</style>
     </svg>

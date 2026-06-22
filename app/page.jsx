@@ -59,9 +59,9 @@ export default function Home() {
         />
       )}
 
-      {/* Calm, organized ambient field behind the whole page — a chain of
-          dots that pass energy to each other in sequence. Replaces the
-          chaotic random-lightning background. */}
+      {/* Sparse, non-distracting ambient field behind the whole page — the
+          occasional random electrical pulse races across and fades. No
+          persistent network to pull the eye around. */}
       <div className="page-electric" aria-hidden="true">
         <EnergyField />
       </div>
