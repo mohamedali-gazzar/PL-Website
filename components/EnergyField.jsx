@@ -118,7 +118,7 @@ function EnergyField() {
 
       {/* dots — dim by default, flash bright as the pulse arrives */}
       {DOTS.map((p, i) => (
-        <circle key={`bg${i}`} className="ef-dot-bg" cx={p.x} cy={p.y} r="3" />
+        <circle key={`bg${i}`} className="ef-dot-bg" cx={p.x} cy={p.y} r="5" />
       ))}
       {LIT_DOTS.map((p, i) => (
         <circle
@@ -126,7 +126,7 @@ function EnergyField() {
           className="ef-dot-on"
           cx={p.x}
           cy={p.y}
-          r="3"
+          r="5"
           style={{ "--d": `${p.delay}s`, "--total": `${TOTAL}s` }}
         />
       ))}
@@ -141,41 +141,44 @@ function EnergyField() {
         }
         .ef-wire {
           fill: none;
-          stroke: rgba(241, 103, 34, 0.07);
-          stroke-width: 1;
+          stroke: rgba(241, 103, 34, 0.32);
+          stroke-width: 1.4;
+          filter: drop-shadow(0 0 2px rgba(241, 103, 34, 0.35));
         }
-        /* dots: dim baseline */
+        /* dots: clearly visible baseline (always on, just dim) */
         .ef-dot-bg {
-          fill: rgba(241, 103, 34, 0.18);
+          fill: rgba(241, 103, 34, 0.7);
+          filter: drop-shadow(0 0 4px rgba(241, 103, 34, 0.5));
         }
-        /* dots: brief bright flash when the pulse arrives */
+        /* dots: bright flash when the pulse arrives */
         .ef-dot-on {
-          fill: #f16722;
+          fill: #ffb069;
           transform-box: fill-box;
           transform-origin: center;
           opacity: 0;
-          filter: drop-shadow(0 0 5px rgba(241, 103, 34, 0.9));
+          filter: drop-shadow(0 0 12px rgba(255, 200, 140, 1));
           animation: efDotOn var(--total) linear infinite;
           animation-delay: var(--d);
         }
         @keyframes efDotOn {
           0%   { opacity: 0; transform: scale(0.8); }
           /* the flash window: visible briefly, then fades */
-          ${Math.round((FLASH_S / TOTAL) * 50) / 5}% { opacity: 1; transform: scale(1.4); }
-          ${Math.round((FLASH_S / TOTAL) * 250) / 5}% { opacity: 0; transform: scale(1); }
+          ${Math.round((FLASH_S / TOTAL) * 50) / 5}% { opacity: 1; transform: scale(2); }
+          ${Math.round((FLASH_S / TOTAL) * 250) / 5}% { opacity: 0; transform: scale(1.1); }
           100% { opacity: 0; }
         }
 
         /* travelling pulse — fires in a small window of its loop, dark the rest */
         .ef-pulse {
           fill: none;
-          stroke: rgba(255, 200, 140, 0.85);
-          stroke-width: 1.4;
+          stroke: #ffe2cd;
+          stroke-width: 2.6;
           stroke-linecap: round;
           stroke-dasharray: 0.045 0.955;
           stroke-dashoffset: 1;
           opacity: 0;
-          filter: drop-shadow(0 0 5px rgba(241, 103, 34, 0.85));
+          filter: drop-shadow(0 0 6px rgba(255, 200, 140, 1))
+            drop-shadow(0 0 12px rgba(241, 103, 34, 0.8));
           animation:
             efPulseShow var(--total) linear infinite,
             efPulseFlow var(--total) linear infinite;
