@@ -21,7 +21,6 @@ export default function ProductGallery({ images, alt, badge }) {
           /* a real stamp impression pressed across the edge of the image —
              ~half on the photo, ~half on the page behind it */
           <span className="pg-cert" aria-hidden="false">
-            <span className="pg-impact" aria-hidden="true" />
             <img
               className="pg-badge"
               src={badge}
@@ -108,26 +107,11 @@ export default function ProductGallery({ images, alt, badge }) {
           filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.6));
         }
 
-        /* shockwave that snaps out at the instant of impact */
-        .pg-impact {
-          position: absolute;
-          inset: 0;
-          margin: auto;
-          width: 64%;
-          aspect-ratio: 1;
-          border-radius: 50%;
-          border: 2px solid rgba(var(--pl), 0.7);
-          opacity: 0;
-          transform: scale(0.5);
-          animation: pgShock 0.55s ease-out 0.45s forwards;
-        }
-        @keyframes pgShock {
-          0% { opacity: 0.7; transform: scale(0.5); }
-          100% { opacity: 0; transform: scale(1.65); }
-        }
-
-        /* the INK impression — invisible until impact, then it appears
-           INSTANTLY (no fade), compresses, vibrates, and settles */
+        /* the INK impression — already in place above the page; it does NOT
+           slide in from anywhere. Invisible until the moment of contact, then
+           it appears INSTANTLY (no fade) and is pressed home with a tiny
+           micro-compression and settle. Motion stays within 0.96–1.01 scale —
+           you feel the press, you don't see a UI element arrive. */
         .pg-badge {
           position: absolute;
           inset: 0;
@@ -138,26 +122,20 @@ export default function ProductGallery({ images, alt, badge }) {
           transform-origin: center;
           filter: drop-shadow(0 0 10px rgba(var(--pl), 0.35))
             drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
-          animation: pgInk 0.62s cubic-bezier(0.34, 1.3, 0.5, 1) 0.45s forwards;
+          animation: pgInk 0.4s cubic-bezier(0.3, 0.7, 0.2, 1) 0.5s forwards;
         }
         @keyframes pgInk {
-          /* impact frame — ink lands instantly, squashed from the press
-             (tilt is on .pg-cert, so these only add squash + vibration) */
-          0% { opacity: 1; transform: scale(1.16, 0.8); }
-          16% { opacity: 1; transform: scale(0.95, 1.06); }
-          /* quick vibration */
-          30% { transform: translateX(-3px) rotate(-1deg) scale(1); }
-          44% { transform: translateX(3px) rotate(1deg); }
-          58% { transform: translateX(-2px) rotate(-0.6deg); }
-          72% { transform: translateX(1px) rotate(0.4deg); }
-          /* settle */
-          100% { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
+          /* contact: ink lands instantly, a hair small */
+          0% { opacity: 1; transform: scale(0.965); }
+          /* impact: pressed flat for an instant (micro vertical compression) */
+          42% { transform: scale(1.012, 0.99); }
+          /* subtle rebound */
+          70% { transform: scale(0.998); }
+          /* settled */
+          100% { opacity: 1; transform: scale(1); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .pg-impact {
-            display: none;
-          }
           .pg-badge {
             animation: none;
             opacity: 1;
