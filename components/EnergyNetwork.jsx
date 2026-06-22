@@ -15,7 +15,12 @@ const P_PATH =
 
 // ── Layout (deterministic — same every load) ───────────────────────────────
 const W = 1440, H = 900, CX = 720, CY = 430;
-const P_TF = "translate(510 213) scale(2.15)";
+// Smaller P (scale 2.15 → 1.5) — cuts the glow/blur rasterisation area
+// significantly, which is the heaviest filter on the loading page.
+// Natural P centre ≈ (96, 96); to keep it on (CX, CY):
+//   translate_x = 720 - 96 * 1.5 = 576
+//   translate_y = 430 - 96 * 1.5 = 286
+const P_TF = "translate(576 286) scale(1.5)";
 
 // Seeded PRNG so the scatter is the same on every render/build.
 function rng(seed) {
