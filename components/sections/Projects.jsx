@@ -1,18 +1,123 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { projects } from "@/lib/content";
 import { Reveal } from "@/components/Primitives";
 
 /**
- * Powerline Projects — an auto-looping marquee (like Powerline Customers).
- * The strip drifts horizontally on its own, independent of scroll, and pauses
- * on hover. No pinning, no scrub, no ScrollTrigger.
+ * Powerline Projects — an auto-looping strip you can also grab and drag.
+ * The track scrolls on its own (JS rAF, not scroll-bound); holding it pauses
+ * the drift and follows the pointer left/right, releasing flings it with
+ * momentum, then it resumes. The loop is seamless in both directions.
  */
 export default function Projects() {
-  // Duplicate the set once so the loop is seamless: the track translates by
-  // exactly one base set (-50%) and snaps back invisibly. Each card owns its
+  // Duplicate the set once so the loop is seamless: translating by exactly one
+  // base set lands the copy where the original began. Each card owns its
   // trailing gap via margin so the seam has no half-gap jump.
   const loop = [...projects, ...projects];
+  const vpRef = useRef(null);
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+    const vp = vpRef.current;
+    const track = trackRef.current;
+    if (!vp || !track) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    let baseWidth = track.scrollWidth / 2; // two identical halves
+    const measure = () => { baseWidth = track.scrollWidth / 2; };
+    const ro = new ResizeObserver(measure);
+    ro.observe(track);
+
+    let offset = 0;
+    let dragging = false;
+    let hovering = false;
+    let lastX = 0;
+    let lastMoveT = 0;
+    let velocity = 0; // px/s, for fling momentum
+    const SPEED = reduce ? 0 : 42; // auto-scroll px/s
+
+    // keep offset within one base set so the loop is seamless either direction
+    const wrap = () => {
+      if (baseWidth > 0) {
+        offset = (((offset % baseWidth) + baseWidth) % baseWidth) - baseWidth;
+      }
+    };
+    const apply = () => {
+      track.style.transform = `translate3d(${offset}px,0,0)`;
+    };
+
+    let raf;
+    let lastT = null;
+    const tick = (t) => {
+      raf = requestAnimationFrame(tick);
+      if (lastT == null) { lastT = t; apply(); return; }
+      const dt = Math.min(0.05, (t - lastT) / 1000);
+      lastT = t;
+      if (dragging) return; // pointer drives the position
+      if (Math.abs(velocity) > 4) {
+        offset += velocity * dt;            // glide after release
+        velocity *= Math.pow(0.92, dt * 60); // frame-rate-independent friction
+      } else {
+        velocity = 0;
+        if (!hovering) offset -= SPEED * dt; // gentle auto-drift
+      }
+      wrap();
+      apply();
+    };
+    raf = requestAnimationFrame(tick);
+
+    const onDown = (e) => {
+      dragging = true;
+      velocity = 0;
+      lastX = e.clientX;
+      lastMoveT = performance.now();
+      vp.style.cursor = "grabbing";
+      if (e.pointerId != null) { try { vp.setPointerCapture(e.pointerId); } catch {} }
+    };
+    const onMove = (e) => {
+      if (!dragging) return;
+      const now = performance.now();
+      const dx = e.clientX - lastX;
+      const dts = Math.max(0.001, (now - lastMoveT) / 1000);
+      offset += dx;
+      velocity = Math.max(-2600, Math.min(2600, dx / dts));
+      lastX = e.clientX;
+      lastMoveT = now;
+      wrap();
+      apply();
+    };
+    const onUp = (e) => {
+      if (!dragging) return;
+      dragging = false;
+      vp.style.cursor = "grab";
+      // stale flick → don't fling
+      if (performance.now() - lastMoveT > 90) velocity = 0;
+      if (e && e.pointerId != null) { try { vp.releasePointerCapture(e.pointerId); } catch {} }
+    };
+    const onEnter = () => { hovering = true; };
+    const onLeave = () => { hovering = false; };
+
+    vp.addEventListener("pointerdown", onDown);
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("pointercancel", onUp);
+    vp.addEventListener("pointerenter", onEnter);
+    vp.addEventListener("pointerleave", onLeave);
+    window.addEventListener("resize", measure);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      vp.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+      window.removeEventListener("pointercancel", onUp);
+      vp.removeEventListener("pointerenter", onEnter);
+      vp.removeEventListener("pointerleave", onLeave);
+      window.removeEventListener("resize", measure);
+    };
+  }, []);
 
   return (
     <section id="projects" className="pj">
@@ -31,8 +136,8 @@ export default function Projects() {
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="pj-marquee">
-            <div className="pj-track">
+          <div className="pj-marquee" ref={vpRef}>
+            <div className="pj-track" ref={trackRef}>
               {loop.map((p, i) => (
                 <article className="pj-card" key={i}>
                   <img
@@ -40,6 +145,7 @@ export default function Projects() {
                     src={p.img}
                     alt={p.name}
                     loading="lazy"
+                    draggable="false"
                   />
                   <span className="pj-card-veil" />
                   <span className="pj-dot" />
@@ -83,9 +189,12 @@ export default function Projects() {
           margin: 1.1rem auto 0;
         }
 
-        /* ── the looping strip ── */
+        /* ── the looping strip (JS-driven; grab to drag) ── */
         .pj-marquee {
           overflow: hidden;
+          cursor: grab;
+          /* horizontal gestures drag the strip; vertical still scrolls the page */
+          touch-action: pan-y;
           -webkit-mask-image: linear-gradient(
             90deg,
             transparent,
@@ -101,19 +210,18 @@ export default function Projects() {
             transparent
           );
         }
+        .pj-marquee:active {
+          cursor: grabbing;
+        }
         .pj-track {
           display: flex;
           width: max-content;
-          animation: pjScroll 45s linear infinite;
           will-change: transform;
+          user-select: none;
         }
-        .pj-marquee:hover .pj-track {
-          animation-play-state: paused;
-        }
-        @keyframes pjScroll {
-          to {
-            transform: translateX(-50%);
-          }
+        .pj-card-img {
+          -webkit-user-drag: none;
+          user-select: none;
         }
 
         .pj-card {
@@ -200,20 +308,8 @@ export default function Projects() {
             max-height: 380px;
           }
         }
-        @media (prefers-reduced-motion: reduce) {
-          .pj-marquee {
-            overflow: visible;
-            -webkit-mask-image: none;
-            mask-image: none;
-          }
-          .pj-track {
-            animation: none;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1.5rem;
-            width: auto;
-          }
-        }
+        /* reduced-motion: JS sets auto-scroll speed to 0 (no drift), but the
+           strip stays a single row that the user can still grab and drag. */
       `}</style>
     </section>
   );
