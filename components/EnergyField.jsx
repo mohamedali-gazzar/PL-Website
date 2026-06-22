@@ -3,23 +3,24 @@
 import { useEffect, useRef } from "react";
 
 /**
- * Ambient background — a living chain.
+ * Ambient background — a growing spider-web of energy.
  *
- * One "head" dot is alive at any moment. Every ~1.2s a NEW random dot spawns
- * somewhere on screen and a wire grows from the current head out to it; once
- * the wire arrives, the new dot lights up and BECOMES the head. Old dots and
- * old wires linger a few hops then fade out. The network is never the same
- * twice — the energy is always travelling to a fresh destination.
- *
- * JS-driven via one rAF loop, GPU-cheap (opacity + path drawing only). The
- * loop pauses while the tab is hidden so it costs nothing in the background.
+ * Every SPAWN_S seconds a BATCH of new random dots appears across the screen.
+ * Each new dot wires itself to its 2 nearest existing dots, so the network
+ * grows as a mesh / spider web rather than a single chain. Old dots and their
+ * wires fade out after a few batches so the web is always evolving — never
+ * the same twice. JS-driven via one rAF loop; ~SVG nodes are pooled in/out
+ * as they live and die.
  */
 
-const MAX_DOTS = 10;     // ceiling — old ones fade out as new ones spawn
-const HOP_S    = 1.2;    // delay between successive hops
-const DRAW_S   = 0.55;   // how long a wire takes to deliver energy
-const LIFE_S   = HOP_S * 6; // how long a dot stays visible before fading
-const FADE_S   = 1.2;    // fade-out duration
+const SPAWN_S        = 3.0;   // seconds between spawn batches
+const SPAWN_COUNT    = 4;     // dots per batch
+const CONNECTIONS    = 2;     // wires from each new dot to nearest existing dots
+const MAX_DOTS       = 16;    // population cap (oldest are retired when full)
+const DRAW_S         = 0.65;  // how long a wire takes to draw on
+const LIFE_S         = 18;    // how long a dot/wire stays visible
+const FADE_S         = 2.0;   // fade-out duration
+const MIN_DOT_DIST   = 110;   // minimum spacing between dots
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -45,10 +46,7 @@ export default function EnergyField() {
 
     const rand = (min, max) => min + Math.random() * (max - min);
 
-    // Spawn a dot at a random spot (kept away from the screen edges).
-    const spawnDot = () => {
-      const x = rand(80, Math.max(80, W - 80));
-      const y = rand(80, Math.max(80, H - 80));
+    const addDot = (x, y) => {
       const el = document.createElementNS(NS, "circle");
       el.setAttribute("cx", x);
       el.setAttribute("cy", y);
@@ -60,8 +58,7 @@ export default function EnergyField() {
       return d;
     };
 
-    // Wire from one dot to another — a curved path that draws on over DRAW_S.
-    const spawnWire = (a, b) => {
+    const addWire = (a, b) => {
       const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
       const dx = b.x - a.x, dy = b.y - a.y;
       const len = Math.hypot(dx, dy) || 1;
@@ -78,33 +75,70 @@ export default function EnergyField() {
       el.style.strokeDasharray = "1";
       el.style.strokeDashoffset = "1";
       svg.appendChild(el);
-      const w = { el, born: performance.now() };
-      wires.push(w);
+      wires.push({ el, born: performance.now() });
     };
 
-    // Seed: one starter dot.
-    let head = spawnDot();
+    // Pick a random spot that isn't too close to any existing or pending dot.
+    const pickSpot = (pending) => {
+      for (let attempts = 0; attempts < 30; attempts++) {
+        const x = rand(80, Math.max(80, W - 80));
+        const y = rand(80, Math.max(80, H - 80));
+        const tooClose = [...dots, ...pending].some(
+          (d) => Math.hypot(d.x - x, d.y - y) < MIN_DOT_DIST
+        );
+        if (!tooClose) return { x, y };
+      }
+      return { x: rand(80, W - 80), y: rand(80, H - 80) };
+    };
 
-    let lastHop = performance.now();
+    // One spawn batch: SPAWN_COUNT new dots, each wired to nearest neighbours.
+    const spawnBatch = (now) => {
+      const newOnes = [];
+      for (let i = 0; i < SPAWN_COUNT; i++) {
+        const { x, y } = pickSpot(newOnes);
+        newOnes.push(addDot(x, y));
+      }
+      // wire each new dot to its 2 nearest existing dots — the spider web
+      for (const nd of newOnes) {
+        const existing = dots.filter((d) => d !== nd);
+        if (!existing.length) continue;
+        const closest = existing
+          .map((d) => ({ d, dist: Math.hypot(d.x - nd.x, d.y - nd.y) }))
+          .sort((a, b) => a.dist - b.dist)
+          .slice(0, CONNECTIONS);
+        for (const { d } of closest) addWire(d, nd);
+      }
+      // retire the oldest if we overflow the cap
+      const overflow = dots.length - MAX_DOTS;
+      for (let i = 0; i < overflow; i++) dots[i].born = now - LIFE_S;
+    };
+
+    // Seed with one immediate batch so the page never sits empty.
+    spawnBatch(performance.now());
+    let lastSpawn = performance.now();
+
     let raf;
     const tick = (now) => {
-      // age each dot / wire and fade it out near end of life
+      // age + fade dots
       for (const d of dots) {
         const age = (now - d.born) / 1000;
-        const fade = age > LIFE_S - FADE_S ? Math.max(0, 1 - (age - (LIFE_S - FADE_S)) / FADE_S) : 1;
+        const fade = age > LIFE_S - FADE_S
+          ? Math.max(0, 1 - (age - (LIFE_S - FADE_S)) / FADE_S)
+          : 1;
         d.el.style.opacity = fade.toString();
       }
+      // age + draw + fade wires
       for (const w of wires) {
         const age = (now - w.born) / 1000;
-        // draw on
         const draw = Math.min(1, age / DRAW_S);
         w.el.style.strokeDashoffset = (1 - draw).toString();
-        // fade out near end of life (wires die slightly before their endpoints)
         const wireLife = LIFE_S - FADE_S * 0.6;
-        const fade = age > wireLife - FADE_S ? Math.max(0, 1 - (age - (wireLife - FADE_S)) / FADE_S) : 1;
+        const fade = age > wireLife - FADE_S
+          ? Math.max(0, 1 - (age - (wireLife - FADE_S)) / FADE_S)
+          : 1;
         w.el.style.opacity = fade.toString();
       }
-      // remove fully-faded elements
+      // garbage-collect fully faded
       for (let i = dots.length - 1; i >= 0; i--) {
         if ((now - dots[i].born) / 1000 > LIFE_S) {
           svg.removeChild(dots[i].el);
@@ -118,18 +152,9 @@ export default function EnergyField() {
         }
       }
 
-      // every HOP_S seconds, spawn a new dot and connect it to the current head
-      if ((now - lastHop) / 1000 >= HOP_S) {
-        lastHop = now;
-        // if the head was retired, pick the most recent surviving dot as head
-        if (!dots.includes(head)) head = dots[dots.length - 1] || spawnDot();
-        // cap population — let the oldest die off when full
-        if (dots.length >= MAX_DOTS && dots[0] !== head) {
-          dots[0].born = now - LIFE_S; // mark for retirement on next tick
-        }
-        const next = spawnDot();
-        spawnWire(head, next);
-        head = next;
+      if ((now - lastSpawn) / 1000 >= SPAWN_S) {
+        lastSpawn = now;
+        spawnBatch(now);
       }
 
       raf = requestAnimationFrame(tick);
@@ -139,7 +164,6 @@ export default function EnergyField() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
-      // tear down any nodes we left behind
       while (svg.firstChild) svg.removeChild(svg.firstChild);
     };
   }, []);
