@@ -13,15 +13,15 @@ import { useEffect, useRef } from "react";
  * as they live and die.
  */
 
-const SPAWN_S        = 4.5;   // seconds between spawn batches (was 3.0)
-const SPAWN_COUNT    = 2;     // dots per batch (was 4)
+const SPAWN_S        = 5.0;   // seconds between spawn batches
+const SPAWN_COUNT    = 2;     // dots per batch
 const CONNECTIONS    = 2;     // wires from each new dot to nearest existing dots
-const MAX_DOTS       = 8;     // population cap (was 16)
-const DRAW_S         = 0.7;
-const LIFE_S         = 14;
+const MAX_DOTS       = 8;     // population cap
+const DRAW_S         = 2.6;   // wire draw duration — slower, smoother delivery
+const LIFE_S         = 16;
 const FADE_S         = 2.0;
 const MIN_DOT_DIST   = 140;
-const UPDATE_MS      = 120;   // throttle per-frame opacity work to ~8fps
+const UPDATE_MS      = 100;   // ~10fps update rate
 
 const NS = "http://www.w3.org/2000/svg";
 
@@ -139,8 +139,10 @@ export default function EnergyField() {
       // age + draw + fade wires
       for (const w of wires) {
         const age = (now - w.born) / 1000;
-        const draw = Math.min(1, age / DRAW_S);
-        w.el.style.strokeDashoffset = (1 - draw).toString();
+        const t = Math.min(1, age / DRAW_S);
+        // ease-out cubic — fast start, gentle settle as the energy arrives
+        const eased = 1 - Math.pow(1 - t, 3);
+        w.el.style.strokeDashoffset = (1 - eased).toString();
         const wireLife = LIFE_S - FADE_S * 0.6;
         const fade = age > wireLife - FADE_S
           ? Math.max(0, 1 - (age - (wireLife - FADE_S)) / FADE_S)
@@ -198,8 +200,9 @@ export default function EnergyField() {
           stroke: #f16722;
           stroke-width: 1.6;
           stroke-linecap: round;
-          /* softer glow — half the blur radius is roughly half the GPU cost */
-          filter: drop-shadow(0 0 2px rgba(241, 103, 34, 0.7));
+          /* no drop-shadow on wires — re-rasterising a blur for ~10 wires
+             every frame was the heavy GPU cost. The dot glow + bright
+             stroke alone keep the network clearly visible. */
         }
         :global(.ef-dot) {
           fill: #f16722;
