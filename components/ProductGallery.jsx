@@ -9,24 +9,25 @@ export default function ProductGallery({ images, alt, badge }) {
 
   return (
     <div className="gallery">
-      <div className="main">
-        <img src={list[active]} alt={alt} />
-        <span className="frame" />
+      {/* main-wrap is NOT clipped, so the stamp can straddle the image edge and
+          spill onto the page; .main itself still clips the photo. */}
+      <div className="main-wrap">
+        <div className="main">
+          <img src={list[active]} alt={alt} />
+          <span className="frame" />
+        </div>
+
         {badge && (
-          <span className="pg-cert" style={{ "--seal": `url(${badge})` }} aria-hidden="false">
-            {/* the stamp forms from a charged core: ignition + ring */}
-            <span className="pg-fx" aria-hidden="true">
-              <span className="pg-core" />
-              <span className="pg-flash" />
-              <span className="pg-shock" />
-            </span>
-            {/* the stamp forms outward from the energy core */}
-            <span className="pg-stamp">
-              <span className="pg-seal">
-                <img className="pg-badge" src={badge} alt="Designed & Type Tested by Powerline" />
-                <span className="pg-sheen" aria-hidden="true" />
-              </span>
-            </span>
+          /* a real stamp impression pressed across the edge of the image —
+             ~half on the photo, ~half on the page behind it */
+          <span className="pg-cert" aria-hidden="false">
+            <span className="pg-press" aria-hidden="true" />
+            <span className="pg-impact" aria-hidden="true" />
+            <img
+              className="pg-badge"
+              src={badge}
+              alt="Designed & Type Tested by Powerline"
+            />
           </span>
         )}
       </div>
@@ -53,6 +54,10 @@ export default function ProductGallery({ images, alt, badge }) {
           flex-direction: column;
           gap: 0.9rem;
         }
+        .main-wrap {
+          position: relative;
+          /* visible so the stamp can cross the edge onto the page */
+        }
         .main {
           position: relative;
           aspect-ratio: 1 / 1;
@@ -73,191 +78,139 @@ export default function ProductGallery({ images, alt, badge }) {
           border-radius: 20px;
           box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
         }
-        /* ===== Unified certification reveal =====
-           One continuous event, all sharing the centre point, one colour
-           system and one easing language:
-             0.15s  energy condenses into a charged core
-             0.45s  core ignites (flash + ring)
-             0.45s  stamp FORMS outward from the core (circular reveal + glow)
-             1.40s  metallic sheen sweep → steady engraved glow */
+
+        /* ============================================================
+           PHYSICAL CERTIFICATION STAMP
+           A real stamp impression pressed across the LEFT edge of the
+           image — ~50% sits on the photo, ~50% spills onto the page
+           behind it, so it reads as applied AFTER the page, crossing
+           layers. On load it is physically stamped:
+             1. the stamp tool slams down from above (fast, accelerating)
+             2. hard impact + compression
+             3. the ink impression appears INSTANTLY at the moment of impact
+             4. a quick vibration
+             5. it settles
+           No fade-in, no scale-up, no floating.
+           ============================================================ */
         .pg-cert {
-          /* shared tokens — keeps every layer on the same palette + rhythm */
-          --pl: 241, 103, 34;      /* brand orange   */
-          --hot: 255, 226, 188;    /* charged white  */
-          --energy: cubic-bezier(0.4, 0, 0.2, 1);
-          --spring: cubic-bezier(0.34, 1.4, 0.5, 1);
+          --pl: 241, 103, 34;
           position: absolute;
-          inset: 0;
-          z-index: 3;
+          left: 56%;
+          bottom: 0;
+          width: clamp(120px, 31%, 190px);
+          aspect-ratio: 1;
+          /* centre on the BOTTOM edge → ~50% sits on the image, ~50% spills
+             below onto the page/layout. (Bottom edge, not a side, so the
+             off-image half is always within the viewport and never collides
+             with the detail text on the right; pointer-events:none keeps any
+             thumbnails underneath clickable.) */
+          transform: translate(-50%, 48%) rotate(-7deg);
+          z-index: 6;
           pointer-events: none;
+          /* a real cast shadow so the stamp sits physically above the page */
+          filter: drop-shadow(0 16px 26px rgba(0, 0, 0, 0.62));
         }
 
-        .pg-fx { position: absolute; inset: 0; overflow: hidden; }
-
-        /* a charged core that swells, then flares out into the stamp */
-        .pg-core {
+        /* the stamp TOOL (a dark inked head) that slams down and lifts away */
+        .pg-press {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 9%;
-          aspect-ratio: 1;
-          transform: translate(-50%, -50%) scale(0);
+          inset: 3%;
           border-radius: 50%;
           background: radial-gradient(
-            circle,
-            rgba(var(--hot), 1) 0%,
-            rgba(var(--pl), 0.9) 45%,
-            transparent 70%
+            circle at 36% 30%,
+            #46464b 0%,
+            #1d1d20 60%,
+            #0d0d0f 100%
           );
+          border: 2px solid rgba(var(--pl), 0.65);
+          box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7),
+            inset 0 3px 9px rgba(255, 255, 255, 0.14),
+            inset 0 -7px 14px rgba(0, 0, 0, 0.55);
           opacity: 0;
-          filter: blur(1px) drop-shadow(0 0 12px rgba(var(--pl), 0.9));
-          mix-blend-mode: screen;
-          animation: coreCharge 0.5s var(--energy) 0.15s both;
+          transform: translateY(-320px);
+          animation: pgDrop 0.4s cubic-bezier(0.6, 0, 0.95, 0.35) 0.35s both,
+            pgLift 0.3s cubic-bezier(0.3, 0, 0.2, 1) 0.75s forwards;
         }
-        @keyframes coreCharge {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0); }
-          45% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-          72% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(2.8); }
-        }
-
-        /* ignition flash — the core blooming into the stamp's birth */
-        .pg-flash {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 56%;
-          aspect-ratio: 1;
-          transform: translate(-50%, -50%) scale(0.2);
-          border-radius: 50%;
-          background: radial-gradient(
-            circle,
-            rgba(var(--hot), 0.95) 0%,
-            rgba(var(--pl), 0.5) 34%,
-            transparent 66%
-          );
-          opacity: 0;
-          mix-blend-mode: screen;
-          animation: flashPop 0.6s var(--energy) 0.45s both;
-        }
-        @keyframes flashPop {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
-          22% { opacity: 0.9; transform: translate(-50%, -50%) scale(1); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
-        }
-
-        /* the same energy snapping outward as the seal's forming ring */
-        .pg-shock {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 35%;
-          aspect-ratio: 1;
-          transform: translate(-50%, -50%) scale(0.15);
-          border: 2px solid rgba(var(--pl), 0.85);
-          border-radius: 50%;
-          opacity: 0;
-          filter: drop-shadow(0 0 8px rgba(var(--pl), 0.6));
-          animation: shockExpand 0.85s var(--energy) 0.45s both;
-        }
-        @keyframes shockExpand {
-          0% { opacity: 0; transform: translate(-50%, -50%) scale(0.15); border-width: 2px; }
-          24% { opacity: 0.55; }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.95); border-width: 0.5px; }
-        }
-
-        /* --- the stamp: born at the core, springs into its resting tilt --- */
-        .pg-stamp {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: clamp(100px, 28%, 210px);
-          transform: translate(-50%, -50%) rotate(-7deg);
-          opacity: 0;
-          animation: stampRise 0.85s var(--spring) 0.45s both;
-        }
-        @keyframes stampRise {
-          0% { opacity: 0; transform: translate(-50%, -50%) rotate(-7deg) scale(0.72); }
+        @keyframes pgDrop {
+          0% { opacity: 0; transform: translateY(-320px); }
           30% { opacity: 1; }
-          62% { transform: translate(-50%, -50%) rotate(-7deg) scale(1.05); }
-          100% { opacity: 1; transform: translate(-50%, -50%) rotate(-7deg) scale(1); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pgLift {
+          0% { opacity: 1; transform: translateY(3px) scale(0.985); }
+          100% { opacity: 0; transform: translateY(-150px) scale(1.03); }
         }
 
-        /* seal materialises from the centre outward, in time with the ignition */
-        .pg-seal {
-          position: relative;
-          display: block;
-          clip-path: circle(0% at 50% 50%);
-          animation: sealForm 0.8s var(--energy) 0.45s both;
-        }
-        @keyframes sealForm {
-          0% { clip-path: circle(0% at 50% 50%); }
-          100% { clip-path: circle(75% at 50% 50%); }
-        }
-
-        .pg-stamp .pg-badge {
-          display: block;
-          width: 100%;
-          height: auto;
-          object-fit: contain;
-          filter: drop-shadow(0 0 12px rgba(var(--pl), 0.55))
-            drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
-          /* ignite white-hot at birth, then cool to the steady engraved glow */
-          animation: ignite 0.95s var(--energy) 0.5s both;
-        }
-        @keyframes ignite {
-          0% {
-            filter: drop-shadow(0 0 0 rgba(var(--hot), 0))
-              drop-shadow(0 0 0 rgba(0, 0, 0, 0)) brightness(2.4);
-          }
-          22% {
-            filter: drop-shadow(0 0 26px rgba(var(--hot), 0.95))
-              drop-shadow(0 6px 18px rgba(0, 0, 0, 0.35)) brightness(1.7);
-          }
-          55% {
-            filter: drop-shadow(0 0 18px rgba(var(--pl), 0.8))
-              drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5)) brightness(1.12);
-          }
-          100% {
-            filter: drop-shadow(0 0 12px rgba(var(--pl), 0.55))
-              drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5)) brightness(1);
-          }
-        }
-
-        /* metallic highlight sweeping across the engraved seal */
-        .pg-sheen {
+        /* shockwave that snaps out at the instant of impact */
+        .pg-impact {
           position: absolute;
           inset: 0;
-          -webkit-mask: var(--seal) center / contain no-repeat;
-          mask: var(--seal) center / contain no-repeat;
-          background: linear-gradient(
-            115deg,
-            transparent 40%,
-            rgba(var(--hot), 0.35) 47%,
-            rgba(255, 255, 255, 1) 50%,
-            rgba(var(--hot), 0.35) 53%,
-            transparent 60%
-          );
-          background-size: 300% 100%;
-          background-position: 135% 0;
+          margin: auto;
+          width: 64%;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          border: 2px solid rgba(var(--pl), 0.7);
           opacity: 0;
-          filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
-          animation: sheenSweep 1.1s var(--energy) 1.4s both;
+          transform: scale(0.5);
+          animation: pgShock 0.55s ease-out 0.75s forwards;
         }
-        @keyframes sheenSweep {
-          0% { opacity: 0; background-position: 135% 0; }
-          16% { opacity: 1; }
-          84% { opacity: 1; }
-          100% { opacity: 0; background-position: -35% 0; }
+        @keyframes pgShock {
+          0% { opacity: 0.7; transform: scale(0.5); }
+          100% { opacity: 0; transform: scale(1.65); }
+        }
+
+        /* the INK impression — invisible until impact, then it appears
+           INSTANTLY (no fade), compresses, vibrates, and settles */
+        .pg-badge {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          opacity: 0;
+          transform-origin: center;
+          filter: drop-shadow(0 0 10px rgba(var(--pl), 0.35))
+            drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
+          animation: pgInk 0.62s cubic-bezier(0.34, 1.3, 0.5, 1) 0.75s forwards;
+        }
+        @keyframes pgInk {
+          /* impact frame — ink lands instantly, squashed from the press
+             (tilt is on .pg-cert, so these only add squash + vibration) */
+          0% { opacity: 1; transform: scale(1.16, 0.8); }
+          16% { opacity: 1; transform: scale(0.95, 1.06); }
+          /* quick vibration */
+          30% { transform: translateX(-3px) rotate(-1deg) scale(1); }
+          44% { transform: translateX(3px) rotate(1deg); }
+          58% { transform: translateX(-2px) rotate(-0.6deg); }
+          72% { transform: translateX(1px) rotate(0.4deg); }
+          /* settle */
+          100% { opacity: 1; transform: translateX(0) rotate(0deg) scale(1); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .pg-fx { display: none; }
-          .pg-stamp { animation: none; opacity: 1; transform: translate(-50%, -50%) rotate(-7deg); }
-          .pg-seal { animation: none; clip-path: none; }
-          .pg-stamp .pg-badge { animation: none; }
-          .pg-sheen { animation: none; opacity: 0; }
+          .pg-press,
+          .pg-impact {
+            display: none;
+          }
+          .pg-badge {
+            animation: none;
+            opacity: 1;
+          }
         }
+
+        /* mobile: straddle the BOTTOM-RIGHT corner instead, so the off-image
+           half never clips against the viewport edge */
+        @media (max-width: 680px) {
+          .pg-cert {
+            top: auto;
+            bottom: 0;
+            left: auto;
+            right: 8%;
+            width: clamp(108px, 36%, 160px);
+            transform: translate(0, 42%);
+          }
+        }
+
         .thumbs {
           display: flex;
           gap: 0.7rem;

@@ -119,10 +119,6 @@ export default function Milestones() {
         {/* stage — crossfading slides */}
         <div className="ms-stage">
           {milestones.map((m, i) => {
-            const near =
-              i === active ||
-              i === (active + 1) % n ||
-              i === (active - 1 + n) % n;
             return (
               <article
                 className={`ms-slide ${i === active ? "is-active" : ""}`}
@@ -140,8 +136,10 @@ export default function Milestones() {
                   <p>{m.body}</p>
                 </div>
                 <div className="ms-media">
+                  {/* always load every slide's image (only 9) so jumping to any
+                     year never shows a blank — windowed src caused that */}
                   <img
-                    src={near ? m.img : undefined}
+                    src={m.img}
                     alt={`${m.year} — ${m.title}`}
                     loading={i === 0 ? "eager" : "lazy"}
                   />
