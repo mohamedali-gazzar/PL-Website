@@ -44,12 +44,12 @@ export default function Preloader({ onComplete }) {
     tl.to(
       ".en-svg",
       { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut" },
-      3.3
+      3.4
     );
     tl.to(
       root.current,
       { autoAlpha: 0, duration: 1.0, ease: "power2.out" },
-      4.3
+      4.4
     );
 
     return () => tl.kill();
