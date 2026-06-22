@@ -41,9 +41,12 @@ export default function Preloader({ onComplete }) {
     // reveal the site. No React state changes happen until finish(), so the
     // animation can never re-render and restart.
     const tl = gsap.timeline({ onComplete: finish });
+    // Kill all the infinite stroke/pulse loops the instant the dolly starts so
+    // the browser has the headroom to scale the SVG smoothly at 60fps.
+    tl.call(() => document.querySelector(".en")?.classList.add("en-closing"), null, 3.4);
     tl.to(
       ".en-svg",
-      { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut" },
+      { scale: 2.5, transformOrigin: "49% 48%", duration: 1.7, ease: "power2.inOut", force3D: true },
       3.4
     );
     tl.to(

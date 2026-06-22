@@ -51,15 +51,53 @@ function scatter(n, minDist) {
   return pts;
 }
 
-const NODES = scatter(54, 110)
-  .map((p) => ({ ...p, x: +p.x.toFixed(1), y: +p.y.toFixed(1) }))
-  .sort((a, b) => a.d - b.d);
+// Five INNER dots forming a pentagon around the P — they are the first to
+// power on (after the P fires), then they distribute energy out to the rest.
+const INNER = [
+  { x: 720, y: 200, inner: true },
+  { x: 940, y: 330, inner: true },
+  { x: 870, y: 600, inner: true },
+  { x: 570, y: 600, inner: true },
+  { x: 500, y: 330, inner: true },
+];
 
-// Wave timing so closer nodes light up first.
-const MAXD = Math.max(...NODES.map((n) => n.d));
-NODES.forEach((n) => { n.delay = +(0.45 + (n.d / MAXD) * 1.6).toFixed(3); });
+// Outer scatter, kept far from the inner ring so the cascade reads clearly.
+function scatterAround(n, minDist) {
+  const r = rng(20260622);
+  const pts = [];
+  let guard = 0;
+  while (pts.length < n && guard < n * 60) {
+    guard++;
+    const x = 60 + r() * (W - 120);
+    const y = 50 + r() * (H - 100);
+    if (inClear(x, y)) continue;
+    let ok = true;
+    for (const p of [...INNER, ...pts]) {
+      if (Math.hypot(p.x - x, p.y - y) < minDist) { ok = false; break; }
+    }
+    if (ok) pts.push({ x, y });
+  }
+  return pts;
+}
 
-// Connect each node to its k nearest neighbours (creates a sparse mesh).
+const OUTER = scatterAround(38, 120)
+  .map((p) => ({ ...p, x: +p.x.toFixed(1), y: +p.y.toFixed(1) }));
+
+// Cascade timing: P fires → feeders draw → 5 inner dots light → wave outward.
+const P_END = 0.45;
+const FEEDER_T = 0.55;
+const INNER_T = 0.95;
+const OUTER_T0 = 1.2;
+
+INNER.forEach((p) => { p.d = 0; p.delay = INNER_T; });
+const distToInner = (p) =>
+  Math.min(...INNER.map((i) => Math.hypot(p.x - i.x, p.y - i.y)));
+OUTER.forEach((p) => { p.d = distToInner(p); });
+const MAXD = Math.max(1, ...OUTER.map((p) => p.d));
+OUTER.forEach((p) => { p.delay = +(OUTER_T0 + (p.d / MAXD) * 1.45).toFixed(3); });
+
+const NODES = [...INNER, ...OUTER];
+
 function nearest(of, all, k) {
   return all
     .filter((n) => n !== of)
@@ -96,25 +134,39 @@ function wire(a, b) {
   return `M ${a.x} ${a.y} Q ${c.x.toFixed(1)} ${c.y.toFixed(1)} ${b.x} ${b.y}`;
 }
 
-// Build mesh links (dedup by node pair).
+// Mesh links — each outer node hooks to its nearest neighbours (inner OR
+// outer). The link inherits the timing of whichever endpoint lights first, so
+// the wave clearly propagates outward FROM the inner ring.
 const seen = new Set();
 const LINKS = [];
-for (const n of NODES) {
+for (const n of OUTER) {
   for (const m of nearest(n, NODES, 2)) {
-    const key = n.d < m.d ? `${n.x},${n.y}|${m.x},${m.y}` : `${m.x},${m.y}|${n.x},${n.y}`;
+    const a = n.delay <= m.delay ? n : m;
+    const b = a === n ? m : n;
+    const key = `${a.x},${a.y}|${b.x},${b.y}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    const d = wire(n, m);
+    const d = wire(a, b);
     if (!d) continue;
-    // delay = whichever endpoint lights first, plus a tiny lag
-    const delay = +(Math.min(n.delay, m.delay) + 0.04).toFixed(3);
-    LINKS.push({ d, delay });
+    LINKS.push({ d, delay: +(a.delay + 0.02).toFixed(3) });
   }
 }
 
-// No explicit feeders — the P's glow + the wave timing make it obvious that
-// the energy originates from the logo.
-const FEEDERS = [];
+// Feeders: a wire from the P out to each of the 5 inner dots. These are the
+// first wires to draw, and they originate inside the P (the P is rendered
+// on top so they emerge from underneath it).
+const FEEDERS = INNER.map((i) => {
+  const mx = (CX + i.x) / 2, my = (CY + i.y) / 2;
+  const dx = i.x - CX, dy = i.y - CY;
+  const len = Math.hypot(dx, dy) || 1;
+  const nx = -dy / len, ny = dx / len;
+  const sign = ((mx - CX) * nx + (my - CY) * ny) >= 0 ? 1 : -1;
+  const bow = 18 * sign;
+  return {
+    d: `M ${CX} ${CY} Q ${(mx + nx * bow).toFixed(1)} ${(my + ny * bow).toFixed(1)} ${i.x} ${i.y}`,
+    delay: FEEDER_T,
+  };
+});
 
 function EnergyNetwork() {
   return (
@@ -184,7 +236,28 @@ function EnergyNetwork() {
           inset: 0;
           overflow: hidden;
         }
-        .en-svg { width: 100%; height: 100%; display: block; }
+        .en-svg {
+          width: 100%;
+          height: 100%;
+          display: block;
+          /* promote the whole scene to its own layer so the closing dolly
+             stays smooth even with many stroke animations running */
+          will-change: transform, opacity;
+          transform: translateZ(0);
+        }
+        /* on close-start the Preloader adds .en-closing to .en — that stops
+           every infinite animation (breathing wires, travelling pulses, P
+           pulse) so the GPU can render the dolly zoom at 60fps. */
+        .en.en-closing .en-wire,
+        .en.en-closing .en-pulse,
+        .en.en-closing .en-p-pulse,
+        .en.en-closing .en-dot,
+        .en.en-closing .en-dot-off,
+        .en.en-closing .en-word {
+          animation: none !important;
+          opacity: 1;
+        }
+        .en.en-closing .en-wire { stroke-dashoffset: 0; }
 
         /* ── wires (real-cable look, breathing pulse) ── */
         .en-wire {
