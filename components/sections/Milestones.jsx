@@ -157,11 +157,11 @@ export default function Milestones() {
             aria-pressed={userPaused}
           >
             {userPaused ? (
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
                 <path d="M8 5v14l11-7z" fill="currentColor" />
               </svg>
             ) : (
-              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
                 <rect x="6" y="5" width="4" height="14" fill="currentColor" />
                 <rect x="14" y="5" width="4" height="14" fill="currentColor" />
               </svg>
@@ -400,8 +400,8 @@ export default function Milestones() {
           right: 0;
           bottom: 0;
           z-index: 3;
-          width: 42px;
-          height: 42px;
+          width: 60px;
+          height: 60px;
           display: grid;
           place-items: center;
           border-radius: 50%;

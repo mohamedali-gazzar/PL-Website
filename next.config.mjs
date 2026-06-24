@@ -14,6 +14,7 @@ const nextConfig = {
       { source: "/assembly-lines", destination: "/our-products", permanent: true },
       { source: "/products/pral24", destination: "/products/pral", permanent: true },
       { source: "/products/minicenter-abb", destination: "/products/minicenter", permanent: true },
+      { source: "/products/gis-ring-main-units-12-24-kv", destination: "/products/aegis-plus-12-24-kv", permanent: true },
     ];
   },
 };

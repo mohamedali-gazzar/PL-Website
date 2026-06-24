@@ -120,9 +120,8 @@ export default function ProductGrid({ items }) {
           height: auto;
           aspect-ratio: 1;
           object-fit: contain;
-          /* sit almost entirely ON the image in the top-right corner; only a
-             sliver (~1–2%) crosses the edge */
-          transform: translate(2%, -2%) rotate(4deg);
+          /* ~95% on the image in the top-right corner; ~5% crosses onto the page */
+          transform: translate(5%, -5%) rotate(4deg);
           filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
             drop-shadow(0 6px 13px rgba(0, 0, 0, 0.5));
           z-index: 5;
