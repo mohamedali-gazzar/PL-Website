@@ -100,18 +100,21 @@ export default function ProductGrid({ items }) {
           inset: 0;
           background: linear-gradient(180deg, transparent 55%, rgba(5, 5, 6, 0.55));
         }
-        /* type-tested seal on the card */
+        /* type-tested seal — top-right corner, tilted, like the single
+           product page (the number badge sits in the opposite corner) */
         .prod-thumb .card-badge {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          /* slight inclination (~5°) so the seal reads like a pressed stamp */
-          transform: translate(-50%, -50%) rotate(-5deg);
-          width: 88px;
-          height: 88px;
+          top: 0.85rem;
+          right: 0.85rem;
+          /* override the .prod-thumb img { inset:0 } rule so right-anchoring wins */
+          left: auto;
+          bottom: auto;
+          transform: rotate(-6deg);
+          width: clamp(64px, 26%, 84px);
+          height: clamp(64px, 26%, 84px);
           object-fit: contain;
           filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))
-            drop-shadow(0 3px 9px rgba(0, 0, 0, 0.4));
+            drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
           z-index: 3;
         }
         .num {
