@@ -19,27 +19,31 @@ export default function ProductGrid({ items }) {
         const hover = hoverFor(p.href);
         return (
         <Reveal as="div" key={p.name} delay={i * 70}>
-          <Link href={p.href} className="prod">
-            <div className={`prod-thumb ${hover ? "has-hover" : ""}`}>
-              {imgFor(p.href) && (
-                <img className="img-base" src={imgFor(p.href)} alt={p.name} loading="lazy" />
-              )}
-              {hover && (
-                <img className="img-hover" src={hover} alt={`${p.name} — interior`} loading="lazy" />
-              )}
-              {badgeFor(p.href) && (
-                <img className="card-badge" src={badgeFor(p.href)} alt="Type Tested by Powerline" loading="lazy" />
-              )}
-              <span className="num">{String(i + 1).padStart(2, "0")}</span>
-            </div>
-            <div className="prod-body">
-              <div className="prod-head">
-                <h3>{p.name}</h3>
-                <span className="arrow">→</span>
+          <div className="prod-wrap">
+            <Link href={p.href} className="prod">
+              <div className={`prod-thumb ${hover ? "has-hover" : ""}`}>
+                {imgFor(p.href) && (
+                  <img className="img-base" src={imgFor(p.href)} alt={p.name} loading="lazy" />
+                )}
+                {hover && (
+                  <img className="img-hover" src={hover} alt={`${p.name} — interior`} loading="lazy" />
+                )}
+                <span className="num">{String(i + 1).padStart(2, "0")}</span>
               </div>
-              {p.desc && <p>{p.desc}</p>}
-            </div>
-          </Link>
+              <div className="prod-body">
+                <div className="prod-head">
+                  <h3>{p.name}</h3>
+                  <span className="arrow">→</span>
+                </div>
+                {p.desc && <p>{p.desc}</p>}
+              </div>
+            </Link>
+            {/* the seal lives OUTSIDE the clipped card so it can hang off the
+                top-right corner onto the page, like the single product page */}
+            {badgeFor(p.href) && (
+              <img className="card-badge" src={badgeFor(p.href)} alt="Type Tested by Powerline" loading="lazy" draggable="false" />
+            )}
+          </div>
         </Reveal>
         );
       })}
@@ -49,6 +53,10 @@ export default function ProductGrid({ items }) {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
           gap: 1.3rem;
+        }
+        .prod-wrap {
+          position: relative;
+          height: 100%;
         }
         .prod {
           display: flex;
@@ -100,22 +108,23 @@ export default function ProductGrid({ items }) {
           inset: 0;
           background: linear-gradient(180deg, transparent 55%, rgba(5, 5, 6, 0.55));
         }
-        /* type-tested seal — top-right corner, tilted, like the single
-           product page (the number badge sits in the opposite corner) */
-        .prod-thumb .card-badge {
+        /* type-tested seal — hangs OFF the top-right corner onto the page,
+           like the single product page (it sits in .prod-wrap, outside the
+           clipped card). pointer-events:none so the card stays fully clickable
+           underneath. */
+        .card-badge {
           position: absolute;
-          top: 0.85rem;
-          right: 0.85rem;
-          /* override the .prod-thumb img { inset:0 } rule so right-anchoring wins */
-          left: auto;
-          bottom: auto;
-          transform: rotate(-6deg);
-          width: clamp(64px, 26%, 84px);
-          height: clamp(64px, 26%, 84px);
+          top: 0;
+          right: 0;
+          width: clamp(80px, 33%, 120px);
+          height: auto;
+          aspect-ratio: 1;
           object-fit: contain;
-          filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5))
-            drop-shadow(0 5px 12px rgba(0, 0, 0, 0.5));
-          z-index: 3;
+          transform: translate(34%, -32%) rotate(6deg);
+          filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
+            drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+          z-index: 5;
+          pointer-events: none;
         }
         .num {
           position: absolute;
