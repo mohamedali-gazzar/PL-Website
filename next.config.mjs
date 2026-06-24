@@ -8,6 +8,14 @@ const nextConfig = {
     // Local bundled assets only; allow Shopify CDN as a fallback if ever needed.
     remotePatterns: [{ protocol: "https", hostname: "powerlinei.com" }],
   },
+  // Keep the old slugs working after renaming them to match page/product names.
+  async redirects() {
+    return [
+      { source: "/assembly-lines", destination: "/our-products", permanent: true },
+      { source: "/products/pral24", destination: "/products/pral", permanent: true },
+      { source: "/products/minicenter-abb", destination: "/products/minicenter", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

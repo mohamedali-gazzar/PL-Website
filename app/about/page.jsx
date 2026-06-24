@@ -27,7 +27,7 @@ export default function AboutPage() {
             <Reveal>
               <div className="intro-text">
                 <p className="lead">{aboutCopy.body}</p>
-                <Link href="/assembly-lines" className="btn btn-primary intro-cta">
+                <Link href="/our-products" className="btn btn-primary intro-cta">
                   Explore our solutions
                 </Link>
               </div>

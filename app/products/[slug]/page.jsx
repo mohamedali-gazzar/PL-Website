@@ -20,7 +20,7 @@ const lineImg = {
 const lineHref = {
   "Low Voltage": "/low-voltage",
   "Medium Voltage": "/medium-voltage",
-  "Dry Transformers": "/assembly-lines",
+  "Dry Transformers": "/our-products",
   Supplies: "/supplies",
 };
 
