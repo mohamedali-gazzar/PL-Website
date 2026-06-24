@@ -116,13 +116,15 @@ export default function ProductGrid({ items }) {
           position: absolute;
           top: 0;
           right: 0;
-          width: clamp(80px, 33%, 120px);
+          width: clamp(58px, 21%, 86px);
           height: auto;
           aspect-ratio: 1;
           object-fit: contain;
-          transform: translate(34%, -32%) rotate(6deg);
+          /* sit almost entirely ON the image in the top-right corner; only a
+             sliver (~1–2%) crosses the edge */
+          transform: translate(2%, -2%) rotate(4deg);
           filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.55))
-            drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
+            drop-shadow(0 6px 13px rgba(0, 0, 0, 0.5));
           z-index: 5;
           pointer-events: none;
         }
