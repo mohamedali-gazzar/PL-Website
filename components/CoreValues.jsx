@@ -5,74 +5,81 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { values } from "@/lib/content";
 
-// stroke icons — one per value station (consistent line set, no emoji)
+// The Powerline "P" — reused logo geometry; it is the central power hub.
+const P_PATH =
+  "M 45.955 44.083 C 44.205 47.355, 45.082 70.813, 47 72.023 C 47.839 72.553, 59.637 72.976, 73.782 72.985 C 100.907 73.001, 104.131 73.494, 107.369 78.117 C 109.205 80.737, 109.527 87.146, 107.970 90.055 C 106.135 93.484, 101.609 95, 93.205 95 C 82.182 95, 82 95.263, 82 111.174 C 82 127.156, 81.872 127.007, 95.579 126.983 C 123.215 126.934, 141.900 115.285, 146.640 95.147 C 151.347 75.148, 142.535 55.952, 124.593 47.121 C 115.027 42.412, 111.742 42.051, 78.285 42.024 C 47.665 42, 47.049 42.040, 45.955 44.083 M 54.202 57.250 L 54.500 63.500 79 64 C 106.298 64.557, 108.105 64.939, 113.724 71.338 C 119.421 77.827, 120.180 85.807, 115.897 94.202 C 112.907 100.062, 107.221 103.276, 98.660 103.942 L 91.500 104.500 91.500 111 L 91.500 117.500 95.846 117.812 C 98.236 117.984, 103.398 117.627, 107.318 117.019 C 127.223 113.930, 138.470 102.190, 138.470 84.500 C 138.470 74.861, 136.060 68.723, 129.702 62.167 C 120.156 52.325, 114.454 51.027, 80.702 51.012 L 53.905 51 54.202 57.250 M 46.035 78.934 C 44.626 81.568, 44.626 146.432, 46.035 149.066 C 46.980 150.830, 48.246 151, 60.464 151 C 71.306 151, 74.156 150.701, 75.429 149.429 C 76.786 148.071, 77 143.848, 77 118.429 L 77 89 88.800 89 C 101.191 89, 103 88.427, 103 84.500 C 103 80.421, 101.350 80, 85.371 80 C 72.861 80, 69.862 80.280, 68.571 81.571 C 67.214 82.929, 67 87.156, 67 112.619 L 67 142.095 60.750 141.798 L 54.500 141.500 54.235 110.585 C 54.057 89.810, 53.607 79.232, 52.863 78.335 C 51.226 76.362, 47.224 76.713, 46.035 78.934";
+
 const ICONS = {
-  shield: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.8C7.9 18.4 5 15.2 5 11V6l7-3z" /><path d="M9 11.5l2 2 4-4" />
-    </svg>
-  ),
-  bulb: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 18h6" /><path d="M10 21h4" /><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8.9.9 1.5l.2 1h5l.2-1c.1-.6.4-1.1.9-1.5A6 6 0 0 0 12 3z" />
-    </svg>
-  ),
-  summit: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 20l6.5-13 4 7.5 2.2-3.5L21 20z" /><path d="M3 20h18" />
-    </svg>
-  ),
-  link: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="9" cy="12" r="5" /><circle cx="15" cy="12" r="5" />
-    </svg>
-  ),
-  flag: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 21V4" /><path d="M6 4h11l-2.2 4L17 12H6" />
-    </svg>
-  ),
+  shield: <><path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.8C7.9 18.4 5 15.2 5 11V6l7-3z" /><path d="M9 11.5l2 2 4-4" /></>,
+  bulb: <><path d="M9 18h6" /><path d="M10 21h4" /><path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8.9.9 1.5l.2 1h5l.2-1c.1-.6.4-1.1.9-1.5A6 6 0 0 0 12 3z" /></>,
+  summit: <><path d="M3 20l6.5-13 4 7.5 2.2-3.5L21 20z" /><path d="M3 20h18" /></>,
+  link: <><circle cx="9" cy="12" r="5" /><circle cx="15" cy="12" r="5" /></>,
+  flag: <><path d="M6 21V4" /><path d="M6 4h11l-2.2 4L17 12H6" /></>,
 };
+const Icon = ({ name }) => (
+  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{ICONS[name]}</svg>
+);
+
+// hub + the five surrounding nodes (viewBox 1000×720). Order = activation order.
+const HUB = { x: 500, y: 362 };
+const POS = [
+  { x: 500, y: 96, anchor: "up" },     // 1 Integrity   — top
+  { x: 244, y: 280, anchor: "left" },  // 2 Realism     — upper-left
+  { x: 348, y: 566, anchor: "left" },  // 3 Grit        — lower-left
+  { x: 756, y: 280, anchor: "right" }, // 4 Partnership — upper-right
+  { x: 652, y: 566, anchor: "right" }, // 5 Ownership   — lower-right
+];
+const NODES = values.map((v, i) => ({ ...v, ...POS[i] }));
+
+// a gently bowed branch from the hub out to a node
+function branch(n) {
+  const mx = (HUB.x + n.x) / 2, my = (HUB.y + n.y) / 2;
+  const dx = n.x - HUB.x, dy = n.y - HUB.y, len = Math.hypot(dx, dy) || 1;
+  const nx = -dy / len, ny = dx / len;
+  const bow = 22 * (n.x >= HUB.x ? 1 : -1);
+  return `M ${HUB.x} ${HUB.y} Q ${(mx + nx * bow).toFixed(1)} ${(my + ny * bow).toFixed(1)} ${n.x} ${n.y}`;
+}
+
+const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
 
 /**
- * Core Values — ONE full-screen section. The whole electrical network (entry
- * from above, a conduit branching to five nodes, exit below) is visible at once
- * on a pinned screen. Scrolling does NOT move the user past separate cards: the
- * stage stays put while scroll PROGRESS drives an energy pulse down the conduit,
- * powering on one node at a time (node → branch → icon → title → line) and
- * leaving each lit. By the end all five are active; the energy then flows out
- * the bottom into the next section. Pure transform/opacity; reduced motion gets
- * the full lit network statically.
+ * Core Values — one full-screen intelligent network. The Powerline "P" is the
+ * central hub; five branches reach out to the five values (pure star topology —
+ * every node wires straight back to the P, never to each other). On a pinned
+ * screen, scroll PROGRESS energises it: the P lights and its inner current
+ * flows, then one branch at a time grows out of the P, reaches a value, lights
+ * its node, reveals the value, and a return shimmer runs back to the hub —
+ * until all five are live. Pure transform/opacity + SVG stroke draw; reduced
+ * motion shows the whole network lit.
  */
 export default function CoreValues() {
   const root = useRef(null);
-  const net = useRef(null);
-  const fill = useRef(null);
-  const pulse = useRef(null);
+  const diagram = useRef(null);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const stations = [...net.current.querySelectorAll(".cv-station")];
+    const d = diagram.current;
+    const pGroup = d.querySelector(".cv-p");
+    const pStroke = d.querySelector(".cv-p-stroke");
+    const branches = [...d.querySelectorAll(".cv-branch")];
+    const returns = [...d.querySelectorAll(".cv-return")];
+    const snodes = [...d.querySelectorAll(".cv-snode")];
+    const cards = [...d.querySelectorAll(".cv-vcard")];
 
     if (reduce) {
-      stations.forEach((s) => s.classList.add("is-on"));
-      if (fill.current) fill.current.style.transform = "scaleY(1)";
-      if (pulse.current) pulse.current.style.opacity = "0";
+      pGroup.classList.add("on");
+      if (pStroke) pStroke.style.strokeDashoffset = "0";
+      branches.forEach((b) => (b.style.strokeDashoffset = "0"));
+      snodes.forEach((s) => s.classList.add("on"));
+      cards.forEach((c) => c.classList.add("show"));
       return;
     }
 
-    root.current.classList.add("is-live"); // enables the tall scroll track + pin
+    root.current.classList.add("is-live");
     gsap.registerPlugin(ScrollTrigger);
 
-    let fractions = stations.map((_, i) => (i + 0.5) / stations.length);
-    const measure = () => {
-      const nr = net.current.getBoundingClientRect();
-      if (!nr.height) return;
-      fractions = stations.map((s) => {
-        const r = s.querySelector(".cv-node").getBoundingClientRect();
-        return (r.top + r.height / 2 - nr.top) / nr.height;
-      });
-    };
+    const P_PHASE = 0.13;
+    const span = (1 - P_PHASE) / NODES.length;
 
     const ctx = gsap.context(() => {
       const st = ScrollTrigger.create({
@@ -80,20 +87,27 @@ export default function CoreValues() {
         start: "top top",
         end: "bottom bottom",
         scrub: 0.5,
-        onRefresh: measure,
         onUpdate: (self) => {
           const p = self.progress;
-          if (fill.current) fill.current.style.transform = `scaleY(${p})`;
-          if (pulse.current) {
-            pulse.current.style.transform = `translate(-50%, ${p * net.current.offsetHeight}px)`;
-            pulse.current.style.opacity = p > 0.01 && p < 0.995 ? "1" : "0";
-          }
-          for (let i = 0; i < stations.length; i++) {
-            stations[i].classList.toggle("is-on", p >= fractions[i]);
+          // central P energises first, then keeps glowing
+          if (pStroke) pStroke.style.strokeDashoffset = String(1 - clamp(p / P_PHASE));
+          pGroup.classList.toggle("on", p > 0.015);
+
+          for (let i = 0; i < NODES.length; i++) {
+            const s = P_PHASE + i * span;
+            const local = clamp((p - s) / span);
+            const draw = clamp(local / 0.6);          // branch grows out
+            branches[i].style.strokeDashoffset = String(1 - draw);
+            snodes[i].classList.toggle("on", draw > 0.92);
+            cards[i].classList.toggle("show", draw > 0.86);
+            // energy returns to the hub over the tail of the slice
+            const ret = clamp((local - 0.6) / 0.4);
+            const live = draw > 0.98 && ret > 0 && ret < 1;
+            returns[i].style.opacity = live ? "0.95" : "0";
+            returns[i].style.strokeDashoffset = String(-0.86 * (1 - ret));
           }
         },
       });
-      measure();
       ScrollTrigger.refresh();
       return () => st.kill();
     }, root);
@@ -103,57 +117,75 @@ export default function CoreValues() {
   return (
     <section className="cv" ref={root} aria-label="Our values">
       <div className="cv-sticky">
-        <div className="container cv-inner">
-          <header className="cv-head">
-            <span className="eyebrow">Our Values</span>
-            <h2 className="cv-title">
-              Five values. <span>One grid.</span>
-            </h2>
-            <p className="cv-lead">The current that powers everything we build.</p>
-          </header>
+        <div className="container cv-head">
+          <span className="eyebrow">Our Values</span>
+          <h2 className="cv-title">
+            Powered by the <span>P.</span>
+          </h2>
+          <p className="cv-lead">Five values, energised by one source.</p>
+        </div>
 
-          <div className="cv-net" ref={net}>
-            <span className="cv-entry" aria-hidden="true" />
-            <span className="cv-spine" aria-hidden="true" />
-            <span className="cv-fill" ref={fill} aria-hidden="true" />
-            <span className="cv-pulse" ref={pulse} aria-hidden="true" />
+        <div className="cv-diagram" ref={diagram}>
+          <svg className="cv-svg" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+            <defs>
+              <radialGradient id="cvPlate" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="#000" stopOpacity="0.92" />
+                <stop offset="60%" stopColor="#000" stopOpacity="0.7" />
+                <stop offset="100%" stopColor="#000" stopOpacity="0" />
+              </radialGradient>
+            </defs>
 
-            <div className="cv-stations">
-              {values.map((v, i) => (
-                <div className={`cv-station ${i % 2 ? "right" : "left"}`} key={v.title}>
-                  <div className="cv-node" aria-hidden="true">
-                    <span className="cv-core" />
-                  </div>
-                  <article className="cv-card">
-                    <span className="cv-icon">{ICONS[v.icon]}</span>
-                    <div className="cv-text">
-                      <span className="cv-num">{String(i + 1).padStart(2, "0")}</span>
-                      <h3>{v.title}</h3>
-                      <p>{v.line}</p>
-                    </div>
-                  </article>
-                </div>
-              ))}
+            {/* branches (drawn behind the P so they emerge from it) */}
+            {NODES.map((n, i) => (
+              <path key={`b${i}`} className="cv-branch" d={branch(n)} pathLength="1" />
+            ))}
+            {/* return shimmer along each branch */}
+            {NODES.map((n, i) => (
+              <path key={`r${i}`} className="cv-return" d={branch(n)} pathLength="1" />
+            ))}
+            {/* value nodes */}
+            {NODES.map((n, i) => (
+              <g key={`n${i}`} className="cv-snode" transform={`translate(${n.x} ${n.y})`}>
+                <circle className="cv-snode-ring" r="13" />
+                <circle className="cv-snode-core" r="6" />
+              </g>
+            ))}
+
+            {/* dark plate + the central P hub on top */}
+            <ellipse className="cv-plate" cx={HUB.x} cy={HUB.y} rx="150" ry="150" fill="url(#cvPlate)" />
+            <g className="cv-p" transform="translate(404 264) scale(1.02)">
+              <path className="cv-p-glow" d={P_PATH} pathLength="1" />
+              <path className="cv-p-fill" d={P_PATH} fillRule="evenodd" />
+              <path className="cv-p-stroke" d={P_PATH} pathLength="1" />
+              <path className="cv-p-pulse" d={P_PATH} pathLength="1" />
+            </g>
+          </svg>
+
+          {/* value content overlaid at each node */}
+          {NODES.map((n, i) => (
+            <div
+              key={`c${i}`}
+              className={`cv-vcard ${n.anchor}`}
+              style={{ left: `${(n.x / 1000) * 100}%`, top: `${(n.y / 720) * 100}%` }}
+            >
+              <span className="cv-vc-num">{String(i + 1).padStart(2, "0")}</span>
+              <span className="cv-vc-icon"><Icon name={n.icon} /></span>
+              <h3>{n.title}</h3>
+              <p>{n.line}</p>
             </div>
-
-            <span className="cv-exit" aria-hidden="true" />
-          </div>
+          ))}
         </div>
       </div>
 
       <style jsx>{`
-        .cv {
-          position: relative;
-        }
-        /* live (motion ok): a tall track so the pinned stage can scrub */
-        .cv.is-live {
-          height: 300vh;
-        }
+        .cv { position: relative; }
+        .cv.is-live { height: 320vh; }
         .cv-sticky {
           min-height: 100vh;
           min-height: 100dvh;
           display: flex;
-          align-items: stretch;
+          flex-direction: column;
+          align-items: center;
           overflow: hidden;
           padding: clamp(1.5rem, 4vh, 3rem) 0;
         }
@@ -164,315 +196,201 @@ export default function CoreValues() {
           height: 100dvh;
           min-height: 0;
         }
-        /* soft glow at the top where the network enters */
-        .cv-sticky::before {
-          content: "";
-          position: absolute;
-          top: -60px;
-          left: 50%;
-          transform: translateX(-50%);
-          width: min(640px, 92%);
-          height: 340px;
-          background: radial-gradient(circle, rgba(232, 114, 42, 0.09), transparent 70%);
-          pointer-events: none;
-        }
-        .cv-inner {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-height: 0;
-        }
         .cv-head {
           flex: 0 0 auto;
           text-align: center;
         }
-        .cv-head :global(.eyebrow) {
-          justify-content: center;
-        }
+        .cv-head :global(.eyebrow) { justify-content: center; }
         .cv-title {
           font-family: var(--font-head);
           font-weight: 800;
           text-transform: uppercase;
           font-size: clamp(1.7rem, 4vw, 3rem);
           line-height: 1;
-          margin-top: 0.7rem;
+          margin-top: 0.6rem;
         }
-        .cv-title span {
-          color: var(--orange);
-        }
+        .cv-title span { color: var(--orange); }
         .cv-lead {
           color: var(--text-dim);
           font-size: clamp(0.95rem, 1.4vw, 1.08rem);
-          margin-top: 0.7rem;
+          margin-top: 0.6rem;
         }
 
-        /* ── the network: full conduit + 5 branched nodes, all on screen ── */
-        .cv-net {
+        /* the network canvas — fixed aspect so SVG nodes & HTML cards align */
+        .cv-diagram {
           position: relative;
-          flex: 1 1 auto;
-          min-height: 0;
-          width: 100%;
-          max-width: 860px;
-          margin: clamp(1rem, 3vh, 2rem) auto 0;
+          flex: 0 1 auto;
+          width: min(94vw, calc((100dvh - 210px) * (1000 / 720)));
+          aspect-ratio: 1000 / 720;
+          margin: clamp(0.5rem, 2vh, 1.5rem) auto 0;
         }
-        .cv-spine,
-        .cv-fill {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 50%;
-          width: 2px;
-          margin-left: -1px;
-          border-radius: 2px;
-        }
-        .cv-spine {
-          background: rgba(232, 114, 42, 0.16);
-        }
-        .cv-fill {
-          height: 100%;
-          transform-origin: top center;
-          transform: scaleY(0);
-          background: linear-gradient(180deg, var(--orange-deep), var(--orange) 45%, var(--orange-bright));
-          box-shadow: 0 0 12px rgba(232, 114, 42, 0.75), 0 0 4px rgba(232, 114, 42, 1);
-          will-change: transform;
-        }
-        /* entry from the previous scene / exit into the next one */
-        .cv-entry,
-        .cv-exit {
-          position: absolute;
-          left: 50%;
-          width: 2px;
-          margin-left: -1px;
-          height: clamp(28px, 5vh, 56px);
-          pointer-events: none;
-        }
-        .cv-entry {
-          bottom: 100%;
-          background: linear-gradient(180deg, transparent, rgba(232, 114, 42, 0.45));
-        }
-        .cv-exit {
-          top: 100%;
-          background: linear-gradient(180deg, rgba(232, 114, 42, 0.45), transparent);
-        }
-        .cv-pulse {
-          position: absolute;
-          top: 0;
-          left: 50%;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: radial-gradient(circle, #fff 10%, var(--orange) 55%, transparent 72%);
-          box-shadow: 0 0 22px 5px rgba(232, 114, 42, 0.9);
-          transform: translate(-50%, 0);
-          opacity: 0;
-          pointer-events: none;
-          will-change: transform, opacity;
-          z-index: 3;
-        }
-
-        .cv-stations {
-          position: relative;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-evenly;
-        }
-        .cv-station {
-          display: grid;
-          grid-template-columns: 1fr 56px 1fr;
-          align-items: center;
-        }
-        .cv-node {
-          grid-column: 2;
-          justify-self: center;
-          position: relative;
-          z-index: 2;
-          width: 24px;
-          height: 24px;
-          display: grid;
-          place-items: center;
-        }
-        .cv-node::before {
-          content: "";
+        .cv-svg {
           position: absolute;
           inset: 0;
-          border-radius: 50%;
-          border: 2px solid rgba(232, 114, 42, 0.35);
-          background: var(--bg);
-          transition: border-color 0.4s var(--ease), box-shadow 0.4s var(--ease);
+          width: 100%;
+          height: 100%;
+          overflow: visible;
         }
-        .cv-node::after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          height: 2px;
-          width: clamp(20px, 4vw, 48px);
-          transform: translateY(-50%) scaleX(0);
-          transition: transform 0.5s var(--ease);
+
+        /* branches */
+        :global(.cv-branch) {
+          fill: none;
+          stroke: var(--orange);
+          stroke-width: 3;
+          stroke-linecap: round;
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          filter: drop-shadow(0 0 4px rgba(232, 114, 42, 0.7));
         }
-        .cv-station.left .cv-node::after {
-          right: 100%;
-          transform-origin: right center;
-          background: linear-gradient(270deg, var(--orange), transparent);
+        :global(.cv-return) {
+          fill: none;
+          stroke: #fff2e6;
+          stroke-width: 3.2;
+          stroke-linecap: round;
+          stroke-dasharray: 0.14 1;
+          stroke-dashoffset: 0;
+          opacity: 0;
+          filter: drop-shadow(0 0 5px rgba(255, 200, 150, 0.9));
         }
-        .cv-station.right .cv-node::after {
-          left: 100%;
-          transform-origin: left center;
-          background: linear-gradient(90deg, var(--orange), transparent);
+
+        /* value nodes */
+        :global(.cv-snode-ring) {
+          fill: var(--bg);
+          stroke: rgba(232, 114, 42, 0.4);
+          stroke-width: 2;
+          transition: stroke 0.4s ease;
         }
-        .cv-core {
-          position: relative;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
-          background: var(--orange);
+        :global(.cv-snode-core) {
+          fill: var(--orange);
           transform: scale(0);
+          transform-box: fill-box;
+          transform-origin: center;
           transition: transform 0.45s cubic-bezier(0.34, 1.4, 0.5, 1);
         }
-        .cv-station.is-on .cv-node::before {
-          border-color: var(--orange);
-          box-shadow: 0 0 16px rgba(232, 114, 42, 0.55);
+        :global(.cv-snode.on .cv-snode-ring) {
+          stroke: var(--orange);
+          filter: drop-shadow(0 0 9px rgba(232, 114, 42, 0.8));
         }
-        .cv-station.is-on .cv-node::after {
-          transform: translateY(-50%) scaleX(1);
-        }
-        .cv-station.is-on .cv-core {
-          transform: scale(1);
-          box-shadow: 0 0 14px 2px rgba(232, 114, 42, 0.9);
-        }
+        :global(.cv-snode.on .cv-snode-core) { transform: scale(1); }
 
-        /* compact horizontal station — icon beside the text, so all five fit
-           on one pinned screen */
-        .cv-card {
-          display: flex;
-          align-items: center;
-          gap: clamp(0.7rem, 1.6vw, 1.1rem);
-          max-width: 360px;
-          opacity: 0;
-          transform: translateY(18px);
-          transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
-        }
-        .cv-station.left .cv-card {
-          grid-column: 1;
-          justify-self: end;
-          flex-direction: row-reverse;
-          text-align: right;
-        }
-        .cv-station.right .cv-card {
-          grid-column: 3;
-          justify-self: start;
-          flex-direction: row;
-          text-align: left;
-        }
-        .cv-station.is-on .cv-card {
+        /* central P hub */
+        :global(.cv-plate) {
           opacity: 1;
-          transform: none;
         }
-        .cv-text {
-          display: flex;
-          flex-direction: column;
-          min-width: 0;
-        }
-        .cv-num,
-        .cv-icon,
-        .cv-card h3,
-        .cv-card p {
+        :global(.cv-p-glow) {
+          fill: none;
+          stroke: rgba(232, 114, 42, 0.5);
+          stroke-width: 7;
+          filter: blur(5px);
           opacity: 0;
-          transform: translateY(8px);
-          transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
+          transition: opacity 0.6s ease;
         }
-        .cv-station.is-on .cv-icon { opacity: 1; transform: none; transition-delay: 0.02s; }
-        .cv-station.is-on .cv-num { opacity: 1; transform: none; transition-delay: 0.08s; }
-        .cv-station.is-on .cv-card h3 { opacity: 1; transform: none; transition-delay: 0.14s; }
-        .cv-station.is-on .cv-card p { opacity: 1; transform: none; transition-delay: 0.2s; }
+        :global(.cv-p-fill) { fill: rgba(232, 114, 42, 0.1); opacity: 0; transition: opacity 0.6s ease; }
+        :global(.cv-p-stroke) {
+          fill: none;
+          stroke: var(--orange);
+          stroke-width: 3;
+          stroke-linecap: round;
+          stroke-linejoin: round;
+          stroke-dasharray: 1;
+          stroke-dashoffset: 1;
+          filter: drop-shadow(0 0 5px rgba(232, 114, 42, 0.85));
+        }
+        :global(.cv-p-pulse) {
+          fill: none;
+          stroke: #fff2e6;
+          stroke-width: 3.4;
+          stroke-linecap: round;
+          stroke-dasharray: 0.08 0.92;
+          stroke-dashoffset: 1;
+          opacity: 0;
+        }
+        :global(.cv-p.on .cv-p-glow) { opacity: 1; }
+        :global(.cv-p.on .cv-p-fill) { opacity: 1; }
+        :global(.cv-p.on .cv-p-pulse) {
+          opacity: 1;
+          animation: cvFlow 1.9s linear infinite;
+        }
+        @keyframes cvFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
 
-        .cv-num {
+        /* value cards overlaid at node positions */
+        .cv-vcard {
+          position: absolute;
+          width: max-content;
+          max-width: 230px;
+          opacity: 0;
+          transition: opacity 0.55s var(--ease);
+          pointer-events: none;
+        }
+        .cv-vcard.show { opacity: 1; }
+        .cv-vcard.up { transform: translate(-50%, calc(-100% - 22px)); text-align: center; }
+        .cv-vcard.left { transform: translate(calc(-100% - 24px), -50%); text-align: right; }
+        .cv-vcard.right { transform: translate(24px, -50%); text-align: left; }
+        .cv-vc-num {
+          display: block;
           font-family: var(--font-head);
           font-weight: 700;
-          font-size: 0.68rem;
+          font-size: 0.66rem;
           letter-spacing: 0.22em;
           color: var(--orange);
         }
-        .cv-icon {
-          flex: 0 0 auto;
-          display: grid;
+        .cv-vc-icon {
+          display: inline-grid;
           place-items: center;
-          width: clamp(44px, 4vw, 54px);
-          height: clamp(44px, 4vw, 54px);
-          border-radius: 13px;
+          width: 46px;
+          height: 46px;
+          border-radius: 12px;
+          margin: 0.35rem 0 0.1rem;
           color: var(--orange);
           background: rgba(232, 114, 42, 0.08);
           border: 1px solid rgba(232, 114, 42, 0.22);
+          transform: translateY(8px);
+          opacity: 0;
+          transition: opacity 0.45s var(--ease) 0.05s, transform 0.45s var(--ease) 0.05s;
         }
-        .cv-card h3 {
+        .cv-vcard.left .cv-vc-icon { margin-left: auto; }
+        .cv-vcard h3 {
           font-family: var(--font-head);
           font-weight: 800;
           text-transform: uppercase;
-          font-size: clamp(1.25rem, 2.1vw, 1.8rem);
+          font-size: clamp(1.2rem, 1.9vw, 1.7rem);
           color: #fff;
-          margin: 0.12rem 0 0.22rem;
+          margin: 0.3rem 0 0.25rem;
           line-height: 1;
+          transform: translateY(8px);
+          opacity: 0;
+          transition: opacity 0.45s var(--ease) 0.12s, transform 0.45s var(--ease) 0.12s;
         }
-        .cv-card p {
+        .cv-vcard p {
           color: var(--text-dim);
-          font-size: clamp(0.9rem, 1.15vw, 1rem);
+          font-size: clamp(0.86rem, 1.1vw, 0.98rem);
           line-height: 1.4;
-          max-width: 30ch;
+          transform: translateY(8px);
+          opacity: 0;
+          transition: opacity 0.45s var(--ease) 0.18s, transform 0.45s var(--ease) 0.18s;
         }
+        .cv-vcard.show .cv-vc-icon,
+        .cv-vcard.show h3,
+        .cv-vcard.show p { opacity: 1; transform: none; }
 
-        @media (max-width: 760px) {
-          .cv.is-live {
-            height: 280vh;
-          }
-          .cv-net {
-            max-width: 460px;
-          }
-          .cv-spine,
-          .cv-fill,
-          .cv-pulse,
-          .cv-entry,
-          .cv-exit {
-            left: 26px;
-          }
-          .cv-station {
-            grid-template-columns: 52px 1fr;
-            column-gap: 0.7rem;
-          }
-          .cv-node {
-            grid-column: 1;
-          }
-          .cv-station.left .cv-card,
-          .cv-station.right .cv-card {
-            grid-column: 2;
-            justify-self: start;
-            flex-direction: row;
-            text-align: left;
-            max-width: none;
-          }
-          .cv-station.left .cv-node::after {
-            right: auto;
-            left: 100%;
-            transform-origin: left center;
-            background: linear-gradient(90deg, var(--orange), transparent);
-          }
-          .cv-icon { width: 42px; height: 42px; }
-          .cv-card h3 { font-size: 1.25rem; }
-          .cv-card p { font-size: 0.9rem; }
+        @media (max-width: 820px) {
+          .cv.is-live { height: 300vh; }
+          .cv-diagram { width: min(96vw, calc((100dvh - 180px) * (1000 / 720))); }
+          .cv-vcard { max-width: 40vw; }
+          .cv-vcard.up { transform: translate(-50%, calc(-100% - 14px)); }
+          .cv-vcard.left { transform: translate(calc(-100% - 14px), -50%); }
+          .cv-vcard.right { transform: translate(14px, -50%); }
+          .cv-vc-icon { width: 38px; height: 38px; }
+          .cv-vcard h3 { font-size: clamp(1rem, 3.4vw, 1.3rem); }
+          .cv-vcard p { font-size: clamp(0.72rem, 2.6vw, 0.86rem); }
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .cv-card,
-          .cv-num,
-          .cv-icon,
-          .cv-card h3,
-          .cv-card p,
-          .cv-core,
-          .cv-node::after {
-            transition: none;
-          }
-          .cv-pulse {
-            display: none;
-          }
+          :global(.cv-p.on .cv-p-pulse) { animation: none; opacity: 0; }
+          .cv-vcard,
+          .cv-vc-icon,
+          .cv-vcard h3,
+          .cv-vcard p { transition: none; }
         }
       `}</style>
     </section>
