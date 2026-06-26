@@ -4,6 +4,7 @@ import PageHero from "@/components/PageHero";
 import { Reveal, CountUp } from "@/components/Primitives";
 import { aboutCopy, heroStats, locations, brand } from "@/lib/content";
 import CoreValues from "@/components/CoreValues";
+import AboutStory from "@/components/AboutStory";
 
 export const metadata = {
   title: "Who We Are — Powerline",
@@ -13,11 +14,15 @@ export const metadata = {
 // Egypt outline (reused from the network map) for the Footprint blueprint.
 const EGYPT =
   "M40 27 L190 43 L382 55 L418 35 L520 30 L554 49 L662 60 L695 45 L742 188 L698 316 L583 180 L572 148 L558 193 L663 362 L697 452 L742 533 L886 772 L29 772 L29 226 Z";
-// facility pins on the 940×820 viewBox (Cairo + 10th of Ramadan cluster)
+// facility pins on the 940×820 viewBox — geographically true to each site.
+// Cairo HQ sits at (478,144) on this projection (matches the Our Network map).
+//  1 Sales Office — Cairo, Heliopolis (NE of central Cairo)
+//  2 MV Factory — 10th of Ramadan City (Al-Sharqia, ~NE of Cairo toward Suez)
+//  3 LV & CSS Factory — 10th of Ramadan City (same cluster, Area A5)
 const PINS = [
-  { x: 470, y: 150 },
-  { x: 548, y: 168 },
-  { x: 566, y: 184 },
+  { x: 486, y: 142 },
+  { x: 513, y: 126 },
+  { x: 528, y: 138 },
 ];
 
 export default function AboutPage() {
@@ -25,42 +30,19 @@ export default function AboutPage() {
     <PageShell>
       <PageHero eyebrow="About Powerline" title="Who We" accent="Are" img="/img/facility-1.webp" />
 
-      {/* ════ ABOUT POWERLINE — cinematic full-bleed statement ════ */}
-      <section className="ab">
-        <div className="ab-bg" aria-hidden="true">
-          <img src="/img/facility-2.webp" alt="" loading="lazy" decoding="async" />
-          <div className="ab-veil" />
-          <div className="ab-grid" />
-        </div>
-        <span className="ab-watermark" aria-hidden="true">EST. 2012</span>
-        <div className="container ab-inner">
-          <Reveal>
-            <span className="eyebrow">The Powerline story</span>
-          </Reveal>
-          <Reveal delay={90}>
-            <p className="ab-statement">
-              Powerline was <em>born in Egypt</em> to prove that world-class
-              power solutions can be built here, not just imported. We build
-              where we add real value —{" "}
-              <em>engineering, fabrication, integration, and service</em> — and
-              partner with the world&rsquo;s best for the rest. The result:
-              high-quality power solutions, delivered on our word, at{" "}
-              <em>a price you can build on</em>.
-            </p>
-          </Reveal>
-          <Reveal delay={160}>
-            <Link href="/our-products" className="btn btn-primary ab-cta">
-              Explore our solutions
-            </Link>
-          </Reveal>
+      {/* ════ THE POWERLINE STORY — cinematic editorial opening ════ */}
+      <AboutStory />
 
-          <div className="ab-stats">
+      {/* ════ BY THE NUMBERS — instrument strip ════ */}
+      <section className="abn">
+        <div className="container">
+          <div className="abn-stats">
             {heroStats.map((s, i) => (
-              <Reveal as="div" className="ab-stat" key={s.label} delay={200 + i * 80}>
-                <div className="ab-stat-v">
+              <Reveal as="div" className="abn-stat" key={s.label} delay={i * 80}>
+                <div className="abn-stat-v">
                   <CountUp value={s.value} suffix={s.suffix} group={!s.plain} />
                 </div>
-                <div className="ab-stat-l">{s.label}</div>
+                <div className="abn-stat-l">{s.label}</div>
               </Reveal>
             ))}
           </div>
@@ -121,18 +103,12 @@ export default function AboutPage() {
 
           <Reveal delay={120}>
             <div className="tp-alliance">
-              <span className="tp-end" aria-hidden="true">
-                <span className="tp-end-label">Global</span>
-              </span>
               <span className="tp-wire left" aria-hidden="true" />
               <div className="tp-plate">
                 <span className="tp-sheen" aria-hidden="true" />
                 <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" loading="lazy" decoding="async" />
               </div>
               <span className="tp-wire right" aria-hidden="true" />
-              <span className="tp-end" aria-hidden="true">
-                <span className="tp-end-label">Local</span>
-              </span>
             </div>
           </Reveal>
           <Reveal delay={200}>
@@ -198,28 +174,14 @@ export default function AboutPage() {
       </section>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        /* ───────── ABOUT POWERLINE ───────── */
-        .ab { position:relative; overflow:hidden; padding: clamp(5rem,14vh,9rem) 0; min-height:80vh; display:flex; align-items:center; }
-        .ab-bg { position:absolute; inset:0; z-index:0; }
-        .ab-bg img { width:100%; height:100%; object-fit:cover; opacity:0.4; transform:scale(1.06); }
-        .ab-veil { position:absolute; inset:0; background:
-          linear-gradient(90deg, rgba(5,5,6,0.97) 0%, rgba(5,5,6,0.82) 42%, rgba(5,5,6,0.55) 100%),
-          linear-gradient(0deg, var(--bg) 3%, transparent 45%); }
-        .ab-grid { position:absolute; inset:0; opacity:.6;
-          background-image: linear-gradient(rgba(232,114,42,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(232,114,42,.05) 1px, transparent 1px);
-          background-size: 70px 70px; mask-image: radial-gradient(circle at 25% 45%, #000, transparent 72%);
-          -webkit-mask-image: radial-gradient(circle at 25% 45%, #000, transparent 72%); }
-        .ab-watermark { position:absolute; right:-2vw; bottom:-3vh; z-index:1; font-family:var(--font-head); font-weight:800; font-size:clamp(5rem,18vw,16rem); letter-spacing:-.04em; color:transparent; -webkit-text-stroke:1px rgba(232,114,42,.1); pointer-events:none; user-select:none; }
-        .ab-inner { position:relative; z-index:2; }
-        .ab-statement { font-family:var(--font-head); font-weight:400; color:#fff; font-size:clamp(1.45rem,2.9vw,2.5rem); line-height:1.42; max-width:24ch; margin:1.4rem 0 0; }
-        @media (min-width:900px){ .ab-statement{ max-width:34ch; } }
-        .ab-statement em { font-style:normal; color:var(--orange); }
-        .ab-cta { margin-top:2rem; }
-        .ab-stats { display:flex; flex-wrap:wrap; gap:0; margin-top:clamp(2.5rem,6vh,4rem); border-top:1px solid var(--line); }
-        .ab-stat { flex:1 1 160px; padding:1.4rem 1.4rem 0 0; border-right:1px solid var(--line); }
-        .ab-stat:last-child{ border-right:none; }
-        .ab-stat-v { font-family:var(--font-head); font-weight:800; font-size:clamp(1.7rem,3.4vw,2.7rem); color:#fff; line-height:1; }
-        .ab-stat-l { color:var(--text-faint); text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; margin-top:.5rem; }
+        /* ───────── BY THE NUMBERS (instrument strip) ───────── */
+        .abn { padding: clamp(3rem,8vh,5rem) 0; background: var(--bg); border-bottom:1px solid var(--line); }
+        .abn-stats { display:flex; flex-wrap:wrap; gap:0; }
+        .abn-stat { flex:1 1 160px; padding:0 1.6rem; border-right:1px solid var(--line); }
+        .abn-stat:first-child{ padding-left:0; }
+        .abn-stat:last-child{ border-right:none; }
+        .abn-stat-v { font-family:var(--font-head); font-weight:800; font-size:clamp(1.9rem,3.6vw,3rem); color:#fff; line-height:1; }
+        .abn-stat-l { color:var(--text-faint); text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; margin-top:.6rem; }
 
         /* ───────── MISSION & VISION ───────── */
         .mv2 { padding: clamp(4rem,11vh,8rem) 0; background: var(--bg-2); }
@@ -242,11 +204,11 @@ export default function AboutPage() {
 
         /* ───────── TRUSTED PARTNERS ───────── */
         .tp { padding: clamp(4.5rem,12vh,8rem) 0; }
-        .tp-head { max-width:60ch; margin:0 auto; text-align:center; }
+        .tp-head { text-align:center; }
         .tp-head :global(.eyebrow){ justify-content:center; }
-        .tp-head h2 { font-size:clamp(1.4rem,2.8vw,2.3rem); text-transform:uppercase; color:#fff; line-height:1.3; margin-top:1rem; }
+        .tp-head h2 { font-size:clamp(1.5rem,3vw,2.6rem); text-transform:uppercase; color:#fff; line-height:1.28; margin-top:1rem; }
         .tp-head h2 .kw { color:var(--orange); }
-        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:780px; }
+        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:920px; }
         .tp-wire { flex:1; height:2px; background:linear-gradient(90deg, transparent, rgba(232,114,42,.6)); position:relative; }
         .tp-wire.right { background:linear-gradient(90deg, rgba(232,114,42,.6), transparent); }
         .tp-wire::after { content:""; position:absolute; top:50%; width:7px; height:7px; border-radius:50%; background:var(--orange); transform:translateY(-50%); box-shadow:0 0 10px var(--orange); animation: tpFlow 3s linear infinite; }
@@ -254,8 +216,6 @@ export default function AboutPage() {
         .tp-wire.right::after { right:0; animation-name:tpFlowL; }
         @keyframes tpFlowR { from{ left:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ left:100%; opacity:0;} }
         @keyframes tpFlowL { from{ right:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ right:100%; opacity:0;} }
-        .tp-end { flex:0 0 auto; width:84px; height:84px; border-radius:50%; border:1px solid var(--line); display:grid; place-items:center; background:var(--bg-2); }
-        .tp-end-label { font-size:.66rem; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint); }
         .tp-plate { position:relative; flex:0 0 auto; width:min(46vw,360px); aspect-ratio:16/8; border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
         .tp-plate:hover { transform:translateY(-5px); box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 4px rgba(232,114,42,.18); }
         .tp-plate img { width:84%; height:auto; object-fit:contain; }
@@ -289,9 +249,8 @@ export default function AboutPage() {
           .mv2-col.vision { text-align:left; align-items:flex-start; }
           .mv2-col.vision p { margin-left:0; } .mv2-col.vision .mv2-icon { margin-left:0; }
           .mv2-col { min-height:0; }
-          .tp-alliance { flex-wrap:wrap; gap:1rem; }
-          .tp-wire, .tp-end { display:none; }
-          .tp-plate { width:min(86vw,380px); }
+          .tp-alliance { gap:.6rem; }
+          .tp-plate { width:min(70vw,340px); }
           .fp-grid { grid-template-columns:1fr; }
           .fp-map { order:-1; }
         }

@@ -22,10 +22,10 @@ const Icon = ({ name }) => (
 // hub + the five surrounding nodes (viewBox 1000×720). Order = activation order.
 const HUB = { x: 500, y: 362 };
 const POS = [
-  { x: 500, y: 96, anchor: "up" },     // 1 Integrity   — top
-  { x: 244, y: 280, anchor: "left" },  // 2 Realism     — upper-left
+  { x: 500, y: 150, anchor: "up" },    // 1 Integrity   — top (lowered for card headroom)
+  { x: 244, y: 300, anchor: "left" },  // 2 Realism     — upper-left
   { x: 348, y: 566, anchor: "left" },  // 3 Grit        — lower-left
-  { x: 756, y: 280, anchor: "right" }, // 4 Partnership — upper-right
+  { x: 756, y: 300, anchor: "right" }, // 4 Partnership — upper-right
   { x: 652, y: 566, anchor: "right" }, // 5 Ownership   — lower-right
 ];
 const NODES = values.map((v, i) => ({ ...v, ...POS[i] }));
@@ -210,13 +210,15 @@ export default function CoreValues() {
           margin-top: 0.6rem;
         }
 
-        /* the network canvas — fixed aspect so SVG nodes & HTML cards align */
+        /* the network canvas — fixed aspect so SVG nodes & HTML cards align.
+           A generous top margin + larger height reservation keep the top
+           value card well clear of the header above it. */
         .cv-diagram {
           position: relative;
           flex: 0 1 auto;
-          width: min(94vw, calc((100dvh - 290px) * (1000 / 720)));
+          width: min(90vw, calc((100dvh - 380px) * (1000 / 720)));
           aspect-ratio: 1000 / 720;
-          margin: 0 auto;
+          margin: clamp(2.5rem, 7vh, 5rem) auto 0;
         }
         .cv-svg {
           position: absolute;
@@ -317,7 +319,7 @@ export default function CoreValues() {
           pointer-events: none;
         }
         .cv-vcard.show { opacity: 1; }
-        .cv-vcard.up { transform: translate(-50%, calc(-100% - 22px)); text-align: center; }
+        .cv-vcard.up { transform: translate(-50%, calc(-100% - 16px)); text-align: center; }
         .cv-vcard.left { transform: translate(calc(-100% - 24px), -50%); text-align: right; }
         .cv-vcard.right { transform: translate(24px, -50%); text-align: left; }
         .cv-vc-num {
@@ -368,7 +370,7 @@ export default function CoreValues() {
         .cv-vcard.show p { opacity: 1; transform: none; }
 
         @media (max-width: 820px) {
-          .cv-diagram { width: min(96vw, calc((100dvh - 180px) * (1000 / 720))); }
+          .cv-diagram { width: min(96vw, calc((100dvh - 260px) * (1000 / 720))); }
           .cv-vcard { max-width: 40vw; }
           .cv-vcard.up { transform: translate(-50%, calc(-100% - 14px)); }
           .cv-vcard.left { transform: translate(calc(-100% - 14px), -50%); }
