@@ -186,7 +186,7 @@ export default function CoreValues() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: clamp(0.5rem, 2vh, 1.5rem);
+          gap: clamp(2rem, 6vh, 4.5rem);
           overflow: hidden;
           padding: clamp(2rem, 6vh, 4rem) 0;
         }
@@ -214,7 +214,7 @@ export default function CoreValues() {
         .cv-diagram {
           position: relative;
           flex: 0 1 auto;
-          width: min(94vw, calc((100dvh - 210px) * (1000 / 720)));
+          width: min(94vw, calc((100dvh - 290px) * (1000 / 720)));
           aspect-ratio: 1000 / 720;
           margin: 0 auto;
         }
