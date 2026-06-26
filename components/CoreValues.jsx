@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { values } from "@/lib/content";
 
 // The Powerline "P" — reused logo geometry; it is the central power hub.
@@ -40,8 +39,6 @@ function branch(n) {
   return `M ${HUB.x} ${HUB.y} Q ${(mx + nx * bow).toFixed(1)} ${(my + ny * bow).toFixed(1)} ${n.x} ${n.y}`;
 }
 
-const clamp = (v) => (v < 0 ? 0 : v > 1 ? 1 : v);
-
 /**
  * Core Values — one full-screen intelligent network. The Powerline "P" is the
  * central hub; five branches reach out to the five values (pure star topology —
@@ -75,43 +72,44 @@ export default function CoreValues() {
       return;
     }
 
-    root.current.classList.add("is-live");
-    gsap.registerPlugin(ScrollTrigger);
+    // One continuous cinematic timeline — built paused, then played ONCE the
+    // moment the section scrolls into view. Scroll only TRIGGERS it; it is not
+    // scrubbed. It ends on the full illuminated network and stays there.
+    const tl = gsap.timeline({ paused: true });
 
-    const P_PHASE = 0.13;
-    const span = (1 - P_PHASE) / NODES.length;
+    // 1 — the central P energises (its inner current loop starts via CSS)
+    tl.call(() => pGroup.classList.add("on"), null, 0);
+    tl.fromTo(pStroke, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.75, ease: "power2.out" }, 0);
 
-    const ctx = gsap.context(() => {
-      const st = ScrollTrigger.create({
-        trigger: root.current,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 0.5,
-        onUpdate: (self) => {
-          const p = self.progress;
-          // central P energises first, then keeps glowing
-          if (pStroke) pStroke.style.strokeDashoffset = String(1 - clamp(p / P_PHASE));
-          pGroup.classList.toggle("on", p > 0.015);
+    // 2 — branches grow out one after another; each lights its node, reveals
+    //     the value, then a shimmer returns to the hub
+    let t = 0.85;
+    branches.forEach((b, i) => {
+      tl.fromTo(b, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.55, ease: "power2.inOut" }, t);
+      tl.call(() => { snodes[i].classList.add("on"); cards[i].classList.add("show"); }, null, t + 0.42);
+      tl.fromTo(returns[i], { opacity: 0.95, strokeDashoffset: -0.86 }, { strokeDashoffset: 0, opacity: 0, duration: 0.45, ease: "power1.in" }, t + 0.5);
+      t += 0.62;
+    });
 
-          for (let i = 0; i < NODES.length; i++) {
-            const s = P_PHASE + i * span;
-            const local = clamp((p - s) / span);
-            const draw = clamp(local / 0.6);          // branch grows out
-            branches[i].style.strokeDashoffset = String(1 - draw);
-            snodes[i].classList.toggle("on", draw > 0.92);
-            cards[i].classList.toggle("show", draw > 0.86);
-            // energy returns to the hub over the tail of the slice
-            const ret = clamp((local - 0.6) / 0.4);
-            const live = draw > 0.98 && ret > 0 && ret < 1;
-            returns[i].style.opacity = live ? "0.95" : "0";
-            returns[i].style.strokeDashoffset = String(-0.86 * (1 - ret));
-          }
-        },
-      });
-      ScrollTrigger.refresh();
-      return () => st.kill();
-    }, root);
-    return () => ctx.revert();
+    // play once when the section enters the viewport — IntersectionObserver is
+    // independent of the smooth-scroll wiring, so it fires reliably
+    let played = false;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !played) {
+          played = true;
+          tl.play(0);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.3 }
+    );
+    io.observe(root.current);
+
+    return () => {
+      io.disconnect();
+      tl.kill();
+    };
   }, []);
 
   return (
@@ -179,22 +177,18 @@ export default function CoreValues() {
 
       <style jsx>{`
         .cv { position: relative; }
-        .cv.is-live { height: 320vh; }
+        /* a normal full-screen scene: it plays once on enter, then stays.
+           No tall scroll track, no pin — the user just scrolls past it. */
         .cv-sticky {
           min-height: 100vh;
           min-height: 100dvh;
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
+          gap: clamp(0.5rem, 2vh, 1.5rem);
           overflow: hidden;
-          padding: clamp(1.5rem, 4vh, 3rem) 0;
-        }
-        .cv.is-live .cv-sticky {
-          position: sticky;
-          top: 0;
-          height: 100vh;
-          height: 100dvh;
-          min-height: 0;
+          padding: clamp(2rem, 6vh, 4rem) 0;
         }
         .cv-head {
           flex: 0 0 auto;
@@ -222,7 +216,7 @@ export default function CoreValues() {
           flex: 0 1 auto;
           width: min(94vw, calc((100dvh - 210px) * (1000 / 720)));
           aspect-ratio: 1000 / 720;
-          margin: clamp(0.5rem, 2vh, 1.5rem) auto 0;
+          margin: 0 auto;
         }
         .cv-svg {
           position: absolute;
@@ -374,7 +368,6 @@ export default function CoreValues() {
         .cv-vcard.show p { opacity: 1; transform: none; }
 
         @media (max-width: 820px) {
-          .cv.is-live { height: 300vh; }
           .cv-diagram { width: min(96vw, calc((100dvh - 180px) * (1000 / 720))); }
           .cv-vcard { max-width: 40vw; }
           .cv-vcard.up { transform: translate(-50%, calc(-100% - 14px)); }
