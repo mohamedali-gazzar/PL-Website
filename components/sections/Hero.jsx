@@ -77,8 +77,10 @@ export default function Hero({ ready }) {
         <span className="eyebrow h-eyebrow">Electrical solutions since 2012</span>
 
         <h1 className="hero-title">
-          <span className="h-line"><span>Powering Progress</span></span>
-          <span className="h-line"><span>with <em>Precision</em></span></span>
+          <span className="h-line"><span>Built by <em>Powerline</em></span></span>
+          <span className="h-line"><span>where it counts</span></span>
+          <span className="h-line"><span>— partnered with the world</span></span>
+          <span className="h-line"><span>for the rest.</span></span>
         </h1>
 
         <p className="h-sub">
@@ -163,10 +165,10 @@ export default function Hero({ ready }) {
           padding-top: 6rem;
         }
         .hero-title {
-          font-size: clamp(2rem, 5.5vw, 4.6rem);
+          font-size: clamp(1.5rem, 4vw, 3.4rem);
           text-transform: uppercase;
-          margin: 1.4rem 0 1.6rem;
-          line-height: 1;
+          margin: 1.3rem 0 1.6rem;
+          line-height: 1.06;
         }
         .h-line {
           display: block;
