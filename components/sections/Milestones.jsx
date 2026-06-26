@@ -222,17 +222,17 @@ export default function Milestones() {
         }
         .ms-year:hover {
           color: #fff;
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
         }
         .ms-year.past {
           color: var(--text-dim);
-          border-color: rgba(241, 103, 34, 0.25);
+          border-color: rgba(232, 114, 42, 0.25);
         }
         .ms-year.on {
           color: #fff;
           background: var(--orange);
           border-color: var(--orange);
-          box-shadow: 0 0 18px rgba(241, 103, 34, 0.45);
+          box-shadow: 0 0 18px rgba(232, 114, 42, 0.45);
         }
 
         /* ── countdown clock ── */
@@ -294,7 +294,7 @@ export default function Milestones() {
           line-height: 0.8;
           letter-spacing: -0.04em;
           color: transparent;
-          -webkit-text-stroke: 1px rgba(241, 103, 34, 0.12);
+          -webkit-text-stroke: 1px rgba(232, 114, 42, 0.12);
           pointer-events: none;
           user-select: none;
           z-index: 0;
@@ -391,7 +391,7 @@ export default function Milestones() {
           inset: 0;
           pointer-events: none;
           border-radius: 20px;
-          box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
+          box-shadow: inset 0 0 0 1px rgba(232, 114, 42, 0.25);
         }
 
         /* play / pause */
@@ -414,7 +414,7 @@ export default function Milestones() {
         }
         .ms-pp:hover {
           color: var(--orange);
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
           transform: scale(1.08);
         }
 

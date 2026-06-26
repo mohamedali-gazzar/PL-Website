@@ -80,7 +80,7 @@ export default function EnergyRail() {
           margin-top: -4.5px;
           border-radius: 50%;
           background: var(--orange);
-          box-shadow: 0 0 14px var(--orange), 0 0 28px rgba(241, 103, 34, 0.5);
+          box-shadow: 0 0 14px var(--orange), 0 0 28px rgba(232, 114, 42, 0.5);
         }
         @media (max-width: 768px) {
           .rail {

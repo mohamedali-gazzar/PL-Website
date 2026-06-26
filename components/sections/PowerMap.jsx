@@ -105,7 +105,7 @@ export default function PowerMap() {
               className="pm-outline"
               d={EGYPT}
               fill="none"
-              stroke="rgba(241,103,34,0.55)"
+              stroke="rgba(232,114,42,0.55)"
               strokeWidth="1.6"
             />
 
@@ -205,8 +205,8 @@ export default function PowerMap() {
           transition: all 0.3s ease;
         }
         .pm-list-item.on {
-          border-color: rgba(241, 103, 34, 0.4);
-          background: rgba(241, 103, 34, 0.06);
+          border-color: rgba(232, 114, 42, 0.4);
+          background: rgba(232, 114, 42, 0.06);
         }
         .pm-dot {
           width: 9px;
@@ -250,7 +250,7 @@ export default function PowerMap() {
           transition: opacity 0.3s ease;
         }
         .pm-link.hot {
-          filter: drop-shadow(0 0 6px rgba(241, 103, 34, 0.8));
+          filter: drop-shadow(0 0 6px rgba(232, 114, 42, 0.8));
         }
         @keyframes pmFlow {
           to {
@@ -258,7 +258,7 @@ export default function PowerMap() {
           }
         }
         .pm-ping {
-          fill: rgba(241, 103, 34, 0.25);
+          fill: rgba(232, 114, 42, 0.25);
           transform-origin: center;
           transform-box: fill-box;
           animation: pmPing 2.6s ease-out infinite;

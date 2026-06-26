@@ -152,7 +152,7 @@ export default function EnergyField() {
            barely there when no pulse is on it */
         :global(.ef-track) {
           fill: none;
-          stroke: rgba(241, 103, 34, 0.16);
+          stroke: rgba(232, 114, 42, 0.16);
           stroke-width: 1;
           stroke-linecap: round;
           opacity: 0;
@@ -173,7 +173,7 @@ export default function EnergyField() {
           stroke-linecap: round;
           stroke-dasharray: 0.12 1;
           stroke-dashoffset: 1;
-          filter: drop-shadow(0 0 3px rgba(241, 103, 34, 0.8));
+          filter: drop-shadow(0 0 3px rgba(232, 114, 42, 0.8));
           animation: efPulse ${TRAVEL_S}s cubic-bezier(0.4, 0, 0.4, 1) forwards;
         }
         @keyframes efPulse {

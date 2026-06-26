@@ -147,10 +147,10 @@ export default function Hero({ ready }) {
           position: absolute;
           inset: 0;
           background-image: linear-gradient(
-              rgba(241, 103, 34, 0.06) 1px,
+              rgba(232, 114, 42, 0.06) 1px,
               transparent 1px
             ),
-            linear-gradient(90deg, rgba(241, 103, 34, 0.06) 1px, transparent 1px);
+            linear-gradient(90deg, rgba(232, 114, 42, 0.06) 1px, transparent 1px);
           background-size: 64px 64px;
           mask-image: radial-gradient(circle at 30% 50%, #000 0%, transparent 70%);
           -webkit-mask-image: radial-gradient(

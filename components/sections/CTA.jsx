@@ -29,7 +29,7 @@ export default function CTA() {
           padding: clamp(5rem, 14vh, 10rem) 0;
           background: radial-gradient(
               120% 120% at 50% 0%,
-              rgba(241, 103, 34, 0.16),
+              rgba(232, 114, 42, 0.16),
               transparent 55%
             ),
             var(--bg);

@@ -71,7 +71,7 @@ export default function ProductGrid({ items }) {
         }
         .prod:hover {
           transform: translateY(-5px);
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
           box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
         }
         .prod-thumb {

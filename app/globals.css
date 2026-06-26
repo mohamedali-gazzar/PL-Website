@@ -1,7 +1,7 @@
 /* ───────────────────────────────────────────────────────────────────────
    POWERLINE — design tokens & base styles
    Brand (from PL Brand Guidelines 2026):
-     Orange  #F16722   Charcoal #585859   White #FFFFFF
+     Orange  #e8722a   Charcoal #585859   White #FFFFFF
    Cinematic dark surface per creative direction.
    Headlines: Nexa (with graceful geometric fallback)  ·  Body: Poppins
    ─────────────────────────────────────────────────────────────────────── */
@@ -31,10 +31,10 @@
 }
 
 :root {
-  --orange: #f16722;
+  --orange: #e8722a;
   --orange-bright: #ff8a4c;
   --orange-deep: #c8501a;
-  --glow: 0 0 40px rgba(241, 103, 34, 0.45);
+  --glow: 0 0 40px rgba(232, 114, 42, 0.45);
   --charcoal: #585859;
   --white: #ffffff;
 
@@ -216,7 +216,7 @@ button {
 }
 .btn-primary:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 10px 60px rgba(241, 103, 34, 0.6);
+  box-shadow: 0 10px 60px rgba(232, 114, 42, 0.6);
 }
 .btn-ghost {
   background: transparent;
@@ -259,7 +259,7 @@ button {
   transition: background 0.2s, color 0.2s;
 }
 .drop-link:hover {
-  background: rgba(241, 103, 34, 0.12);
+  background: rgba(232, 114, 42, 0.12);
   color: var(--orange);
 }
 

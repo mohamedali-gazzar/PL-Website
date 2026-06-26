@@ -10,6 +10,7 @@ export default function Footer() {
         <div className="top">
           <div className="col brand-col">
             <img src="/img/logo.webp" alt="Powerline" className="flogo" />
+            <p className="ftag">{brand.tagline}</p>
             <p className="mission">{brand.mission}</p>
             <div className="socials">
               <a href={brand.facebook} target="_blank" rel="noreferrer" aria-label="Facebook">Facebook</a>
@@ -80,7 +81,16 @@ export default function Footer() {
         .flogo {
           height: 36px;
           width: auto;
-          margin-bottom: 1.3rem;
+          margin-bottom: 1rem;
+        }
+        .ftag {
+          color: var(--orange);
+          font-size: 0.82rem;
+          font-weight: 500;
+          letter-spacing: 0.02em;
+          line-height: 1.5;
+          max-width: 30ch;
+          margin: 0 0 1rem;
         }
         .mission {
           color: var(--text-dim);

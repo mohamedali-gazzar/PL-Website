@@ -59,7 +59,7 @@ export default function Memorial() {
           inset: 0;
           border-radius: 18%;
           box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.4),
-            0 0 40px rgba(241, 103, 34, 0.35);
+            0 0 40px rgba(232, 114, 42, 0.35);
           animation: breathe 4s ease-in-out infinite;
         }
         @keyframes breathe {

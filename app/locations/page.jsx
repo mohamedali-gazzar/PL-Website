@@ -51,13 +51,13 @@ export default function LocationsPage() {
         .locs { padding: clamp(3.5rem,9vh,6rem) 0 clamp(5rem,12vh,8rem); }
         .locs .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.3rem; }
         .loc { position:relative; padding:2.2rem 1.8rem; border:1px solid var(--line); border-radius:16px; background:var(--bg-2); transition: all .35s var(--ease); }
-        .loc:hover { border-color: rgba(241,103,34,.5); transform:translateY(-5px); }
+        .loc:hover { border-color: rgba(232,114,42,.5); transform:translateY(-5px); }
         .badge { font-family:var(--font-head); font-weight:700; color:var(--orange); }
         .loc h3 { font-size:1.5rem; text-transform:uppercase; margin:1rem 0 0.7rem; }
         .loc p { color:var(--text-dim); font-size:0.95rem; min-height:3em; }
         .dir { display:inline-block; margin-top:1.2rem; color:#fff; font-weight:600; font-size:0.9rem; }
         .loc:hover .dir { color:var(--orange); }
-        .contact-strip { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem; margin-top:3rem; padding:2.5rem; border:1px solid var(--line); border-radius:18px; background: radial-gradient(120% 140% at 0% 0%, rgba(241,103,34,.14), transparent 55%), var(--bg-2); }
+        .contact-strip { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem; margin-top:3rem; padding:2.5rem; border:1px solid var(--line); border-radius:18px; background: radial-gradient(120% 140% at 0% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); }
         .big-phone { display:block; font-family:var(--font-head); font-weight:800; font-size:clamp(1.6rem,4vw,2.6rem); margin-top:0.6rem; }
         .big-phone:hover { color:var(--orange); }
         .socials { display:flex; gap:1.2rem; }

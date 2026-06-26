@@ -100,7 +100,7 @@ export default function Values() {
         }
         .vcard:hover {
           transform: translateY(-6px);
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
           background: var(--bg-3);
         }
         .vicon {
@@ -111,7 +111,7 @@ export default function Values() {
           height: 52px;
           border-radius: 13px;
           border: 1px solid var(--line);
-          background: rgba(241, 103, 34, 0.08);
+          background: rgba(232, 114, 42, 0.08);
           color: var(--orange);
           margin-bottom: 1.4rem;
           transition: background 0.4s var(--ease), transform 0.4s var(--ease);
@@ -121,7 +121,7 @@ export default function Values() {
           height: 26px;
         }
         .vcard:hover .vicon {
-          background: rgba(241, 103, 34, 0.16);
+          background: rgba(232, 114, 42, 0.16);
           transform: translateY(-2px);
         }
         .vtop {

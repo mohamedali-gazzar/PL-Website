@@ -292,7 +292,7 @@ export default function Nav() {
         .drop-item:hover > :global(.drop-link),
         .drop-item:hover > :global(.drop-link) .drop-arrow {
           color: var(--orange);
-          background: rgba(241, 103, 34, 0.12);
+          background: rgba(232, 114, 42, 0.12);
         }
         .actions {
           display: flex;
@@ -404,7 +404,7 @@ export default function Nav() {
         }
         .dr-close:hover {
           color: var(--orange);
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
           transform: rotate(90deg);
         }
         .dr-nav {
@@ -473,7 +473,7 @@ export default function Nav() {
         .dr-sub {
           padding: 0.1rem 0 0.5rem 0.85rem;
           margin-bottom: 0.5rem;
-          border-left: 2px solid rgba(241, 103, 34, 0.35);
+          border-left: 2px solid rgba(232, 114, 42, 0.35);
         }
         .dr-sub :global(.dr-child) {
           display: block;
@@ -502,7 +502,7 @@ export default function Nav() {
         }
         .dr-grand :global(.dr-gchild:hover) {
           color: var(--orange);
-          border-color: rgba(241, 103, 34, 0.5);
+          border-color: rgba(232, 114, 42, 0.5);
         }
         .dr-foot {
           flex: 0 0 auto;

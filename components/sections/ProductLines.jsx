@@ -89,7 +89,7 @@ export default function ProductLines() {
           background: linear-gradient(
             90deg,
             transparent,
-            rgba(241, 103, 34, 0.25),
+            rgba(232, 114, 42, 0.25),
             transparent
           );
           overflow: hidden;
@@ -128,9 +128,9 @@ export default function ProductLines() {
         }
         .fcard:hover {
           transform: translateY(-10px);
-          border-color: rgba(241, 103, 34, 0.55);
+          border-color: rgba(232, 114, 42, 0.55);
           box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6),
-            0 0 40px rgba(241, 103, 34, 0.15);
+            0 0 40px rgba(232, 114, 42, 0.15);
         }
         .fcard-link {
           display: block;
@@ -162,7 +162,7 @@ export default function ProductLines() {
           font-weight: 800;
           font-size: 0.85rem;
           color: #fff;
-          background: rgba(241, 103, 34, 0.9);
+          background: rgba(232, 114, 42, 0.9);
           padding: 0.3rem 0.65rem;
           border-radius: 8px;
         }

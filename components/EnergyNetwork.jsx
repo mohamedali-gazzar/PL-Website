@@ -255,7 +255,7 @@ function EnergyNetwork() {
 
       <style jsx>{`
         .en {
-          --pl: 241, 103, 34;
+          --pl: 232, 114, 42;
           --hot: 255, 226, 188;
           --energy: cubic-bezier(0.4, 0, 0.2, 1);
           position: absolute;
@@ -373,7 +373,7 @@ function EnergyNetwork() {
           fill: none; stroke: rgba(var(--pl), 0.5); stroke-width: 7; filter: blur(5px);
         }
         .en-p-stroke {
-          fill: none; stroke: #f16722; stroke-width: 3;
+          fill: none; stroke: #e8722a; stroke-width: 3;
           stroke-linecap: round; stroke-linejoin: round;
           filter: drop-shadow(0 0 4px rgba(var(--pl), 0.8));
         }

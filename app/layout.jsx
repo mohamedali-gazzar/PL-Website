@@ -19,12 +19,12 @@ const montserrat = Montserrat({
 });
 
 export const metadata = {
-  title: "Powerline — Powering Progress with Precision",
+  title: "Powerline — Built where it counts, partnered for the rest",
   description:
     "Powerline is a leading provider of low and medium voltage electrical panels serving industries and infrastructure projects across Egypt and the region since 2012.",
   metadataBase: new URL("https://powerlinei.com"),
   openGraph: {
-    title: "Powerline — Powering Progress with Precision",
+    title: "Powerline — Built where it counts, partnered for the rest",
     description:
       "Low and medium voltage electrical solutions, designed and manufactured to international standards.",
     type: "website",

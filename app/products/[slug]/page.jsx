@@ -124,7 +124,7 @@ export default function ProductPage({ params }) {
         .grid { display:grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,4rem); align-items:start; }
         .media { position:relative; border-radius:20px; overflow:hidden; border:1px solid var(--line); background:var(--bg-2); }
         .media img { width:100%; aspect-ratio:1/1; object-fit:cover; }
-        .frame { position:absolute; inset:0; box-shadow: inset 0 0 0 1px rgba(241,103,34,.25); border-radius:20px; pointer-events:none; }
+        .frame { position:absolute; inset:0; box-shadow: inset 0 0 0 1px rgba(232,114,42,.25); border-radius:20px; pointer-events:none; }
         .detail h1 { font-size:clamp(2.2rem,5vw,3.6rem); text-transform:uppercase; margin:1rem 0 1.2rem; }
         .lead { color:var(--text-dim); font-size:1.08rem; line-height:1.6; }
         .specs { display:grid; grid-template-columns:repeat(2,1fr); gap:0.8rem; margin:2rem 0; }

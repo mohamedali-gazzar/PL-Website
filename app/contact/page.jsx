@@ -156,7 +156,7 @@ export default function ContactPage() {
         :global(.field textarea:focus) {
           outline: none;
           border-color: var(--orange);
-          box-shadow: 0 0 0 3px rgba(241, 103, 34, 0.18);
+          box-shadow: 0 0 0 3px rgba(232, 114, 42, 0.18);
         }
         :global(.field textarea) { resize: vertical; }
         :global(.field select option) { background: var(--bg-2); color: #fff; }
@@ -164,7 +164,7 @@ export default function ContactPage() {
         .submit { margin-top: 0.6rem; width: 100%; justify-content: center; }
         .form-err { color: #ff6b5e; font-size: 0.85rem; margin-top: 0.8rem; }
         .sent { text-align: center; padding: 3rem 1rem; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2); }
-        .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(241,103,34,.5); }
+        .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(232,114,42,.5); }
         .sent h3 { font-size: 1.8rem; text-transform: uppercase; }
         .sent p { color: var(--text-dim); margin-top: 0.8rem; }
         .sent a { color: var(--orange); }

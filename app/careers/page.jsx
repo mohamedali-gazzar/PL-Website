@@ -160,14 +160,14 @@ export default function CareersPage() {
         .careers { padding: clamp(3.5rem, 9vh, 6rem) 0 clamp(5rem, 12vh, 8rem); }
         .culture { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.3rem; }
         .cc { height: 100%; padding: 2rem 1.8rem; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-2); transition: all 0.35s var(--ease); }
-        .cc:hover { border-color: rgba(241, 103, 34, 0.5); transform: translateY(-5px); }
+        .cc:hover { border-color: rgba(232, 114, 42, 0.5); transform: translateY(-5px); }
         .cn { color: var(--orange); font-family: var(--font-head); font-weight: 700; }
         .cc h3 { font-size: 1.3rem; text-transform: uppercase; margin: 0.9rem 0 0.6rem; }
         .cc p { color: var(--text-dim); font-size: 0.92rem; }
         .values { margin: 3rem 0; }
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
-        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(241,103,34,.14), transparent 55%), var(--bg-2); max-width: 860px; }
+        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 860px; }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
         .apply-head p { color: var(--text-dim); max-width: 56ch; }
@@ -181,18 +181,18 @@ export default function CareersPage() {
           transition: border-color 0.25s, box-shadow 0.25s;
         }
         .field input:focus,
-        .field textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(241,103,34,.18); }
+        .field textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,114,42,.18); }
         .field textarea { resize: vertical; }
         .err { display: block; color: #ff6b5e; font-size: 0.78rem; font-style: normal; margin-top: 0.4rem; }
         /* file input */
         .file { position: relative; display: flex; align-items: center; gap: 0.9rem; border: 1px dashed var(--line); border-radius: 11px; padding: 0.7rem 0.9rem; background: var(--bg); }
         .file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
-        .file-btn { background: rgba(241,103,34,.15); color: var(--orange); border: 1px solid rgba(241,103,34,.4); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
+        .file-btn { background: rgba(232,114,42,.15); color: var(--orange); border: 1px solid rgba(232,114,42,.4); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
         .file-name { color: var(--text-faint); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .submit { margin-top: 0.6rem; }
         .form-err { color: #ff6b5e; font-size: 0.85rem; margin-top: 0.8rem; }
         .sent { text-align: center; padding: 2.5rem 1rem; }
-        .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(241,103,34,.5); }
+        .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(232,114,42,.5); }
         .sent h3 { font-size: 1.6rem; text-transform: uppercase; }
         .sent p { color: var(--text-dim); margin-top: 0.7rem; }
         .sent a { color: var(--orange); }

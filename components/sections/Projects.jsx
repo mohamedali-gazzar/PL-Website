@@ -241,7 +241,7 @@ export default function Projects() {
           transition: border-color 0.4s ease, transform 0.5s var(--ease);
         }
         .pj-card:hover {
-          border-color: rgba(241, 103, 34, 0.45);
+          border-color: rgba(232, 114, 42, 0.45);
           transform: translateY(-6px);
         }
         .pj-card-img {
@@ -282,7 +282,7 @@ export default function Projects() {
           height: 12px;
           border-radius: 50%;
           background: var(--orange);
-          box-shadow: 0 0 14px var(--orange), 0 0 28px rgba(241, 103, 34, 0.5);
+          box-shadow: 0 0 14px var(--orange), 0 0 28px rgba(232, 114, 42, 0.5);
         }
         .pj-type {
           font-size: 0.72rem;

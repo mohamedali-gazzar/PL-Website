@@ -74,7 +74,7 @@ export default function ProductGallery({ images, alt, badge }) {
           inset: 0;
           pointer-events: none;
           border-radius: 20px;
-          box-shadow: inset 0 0 0 1px rgba(241, 103, 34, 0.25);
+          box-shadow: inset 0 0 0 1px rgba(232, 114, 42, 0.25);
         }
 
         /* ============================================================
@@ -91,7 +91,7 @@ export default function ProductGallery({ images, alt, badge }) {
            No fade-in, no scale-up, no floating.
            ============================================================ */
         .pg-cert {
-          --pl: 241, 103, 34;
+          --pl: 232, 114, 42;
           position: absolute;
           top: 0;
           right: 0;
@@ -178,7 +178,7 @@ export default function ProductGallery({ images, alt, badge }) {
         }
         .thumb.on {
           border-color: var(--orange);
-          box-shadow: 0 0 0 2px rgba(241, 103, 34, 0.4);
+          box-shadow: 0 0 0 2px rgba(232, 114, 42, 0.4);
         }
       `}</style>
     </div>
