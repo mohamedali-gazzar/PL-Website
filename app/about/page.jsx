@@ -2,38 +2,8 @@ import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import { Reveal, CountUp } from "@/components/Primitives";
-import { aboutCopy, heroStats, values, locations, brand } from "@/lib/content";
-
-// One stroke icon per value card (consistent line icons, no emoji).
-const ICONS = {
-  shield: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M12 3l7 3v5c0 4.2-2.9 7.4-7 8.8C7.9 18.4 5 15.2 5 11V6l7-3z" />
-      <path d="M9 11.5l2 2 4-4" />
-    </svg>
-  ),
-  bulb: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M9 18h6" /><path d="M10 21h4" />
-      <path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8.9.9 1.5l.2 1h5l.2-1c.1-.6.4-1.1.9-1.5A6 6 0 0 0 12 3z" />
-    </svg>
-  ),
-  summit: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M3 20l6.5-13 4 7.5 2.2-3.5L21 20z" /><path d="M3 20h18" />
-    </svg>
-  ),
-  link: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="9" cy="12" r="5" /><circle cx="15" cy="12" r="5" />
-    </svg>
-  ),
-  flag: (
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M6 21V4" /><path d="M6 4h11l-2.2 4L17 12H6" />
-    </svg>
-  ),
-};
+import { aboutCopy, heroStats, locations, brand } from "@/lib/content";
+import CoreValues from "@/components/CoreValues";
 
 export const metadata = {
   title: "Who We Are — Powerline",
@@ -116,26 +86,15 @@ export default function AboutPage() {
               <img src="/img/abb-schneider.webp" alt="ABB and Schneider Electric" className="ps-logos" loading="lazy" decoding="async" />
             </div>
           </Reveal>
+        </div>
+      </section>
 
-          {/* Values */}
-          <Reveal>
-            <div className="vhead sec-head">
-              <span className="eyebrow">Our Values</span>
-              <h2 className="section-title">What we stand for</h2>
-            </div>
-          </Reveal>
-          <div className="vgrid">
-            {values.map((v, i) => (
-              <Reveal as="div" className="vcell" key={v.title} delay={i * 70}>
-                <div className="vcard">
-                  <span className="vicon">{ICONS[v.icon]}</span>
-                  <h3>{v.title}</h3>
-                  <p>{v.line}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
+      {/* Core Values — scroll-driven electrical grid; its energy flows on into
+          the Footprint section below */}
+      <CoreValues />
 
+      <section className="about about-foot">
+        <div className="container">
           {/* Footprint */}
           <Reveal>
             <div className="foot">
@@ -180,13 +139,9 @@ export default function AboutPage() {
         .partner h2 .kw { color:var(--orange); }
         .ps-logos { max-height: clamp(78px, 11vw, 124px); width:auto; aspect-ratio: 16 / 9; flex:0 0 auto; }
 
-        .vhead h2 { margin-top:1rem; }
-        .vgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.2rem; margin-bottom: clamp(3rem,8vh,5rem); }
-        .vcard { height:100%; padding:1.7rem 1.5rem; border:1px solid var(--line); border-radius:16px; background:var(--bg-2); transition: all .35s var(--ease); }
-        .vcell:hover .vcard { border-color: rgba(232,114,42,.5); transform: translateY(-4px); }
-        .vicon { display:inline-grid; place-items:center; width:50px; height:50px; border-radius:12px; color:var(--orange); background:rgba(232,114,42,.1); border:1px solid rgba(232,114,42,.25); }
-        .vcard h3 { font-size:1.15rem; text-transform:uppercase; margin:1rem 0 0.4rem; }
-        .vcard p { color:var(--text-dim); font-size:0.92rem; line-height:1.5; }
+        /* the Footprint follows Core Values — energy flows straight in, so trim
+           the top gap */
+        .about-foot { padding-top: clamp(1rem,3vh,2rem); }
 
         .foot { display:grid; grid-template-columns:1fr 1fr; gap:clamp(2rem,5vw,4.5rem); align-items:center; }
         .foot-text h2 { margin:1rem 0 1rem; }
