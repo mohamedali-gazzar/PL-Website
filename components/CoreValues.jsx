@@ -118,9 +118,9 @@ export default function CoreValues() {
         <div className="container cv-head">
           <span className="eyebrow">Our Values</span>
           <h2 className="cv-title">
-            Powered by the <span>P.</span>
+            What We <span>Stand For</span>
           </h2>
-          <p className="cv-lead">Five values, energised by one source.</p>
+          <p className="cv-lead">The principles wired into everything we build.</p>
         </div>
 
         <div className="cv-diagram" ref={diagram}>
@@ -216,9 +216,9 @@ export default function CoreValues() {
         .cv-diagram {
           position: relative;
           flex: 0 1 auto;
-          width: min(90vw, calc((100dvh - 380px) * (1000 / 720)));
+          width: min(94vw, calc((100dvh - 290px) * (1000 / 720)));
           aspect-ratio: 1000 / 720;
-          margin: clamp(2.5rem, 7vh, 5rem) auto 0;
+          margin: clamp(2.25rem, 6vh, 4.25rem) auto 0;
         }
         .cv-svg {
           position: absolute;

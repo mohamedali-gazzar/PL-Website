@@ -1,6 +1,5 @@
 import Link from "next/link";
 import PageShell from "@/components/PageShell";
-import PageHero from "@/components/PageHero";
 import { Reveal, CountUp } from "@/components/Primitives";
 import { aboutCopy, heroStats, locations, brand } from "@/lib/content";
 import CoreValues from "@/components/CoreValues";
@@ -28,9 +27,7 @@ const PINS = [
 export default function AboutPage() {
   return (
     <PageShell>
-      <PageHero eyebrow="About Powerline" title="Who We" accent="Are" img="/img/facility-1.webp" />
-
-      {/* ════ THE POWERLINE STORY — cinematic editorial opening ════ */}
+      {/* ════ ABOUT POWERLINE — unified cinematic hero (identity + story) ════ */}
       <AboutStory />
 
       {/* ════ BY THE NUMBERS — instrument strip ════ */}
@@ -58,9 +55,6 @@ export default function AboutPage() {
               <span className="mv2-tag">Our Mission</span>
               <span className="mv2-now">What drives us today</span>
               <p>{brand.mission}</p>
-              <svg className="mv2-icon" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M3 21h18" /><path d="M5 21V9l7-5 7 5v12" /><path d="M9 21v-6h6v6" />
-              </svg>
             </Reveal>
 
             <div className="mv2-seam" aria-hidden="true">
@@ -73,9 +67,6 @@ export default function AboutPage() {
               <span className="mv2-tag">Our Vision</span>
               <span className="mv2-now">Where we are headed</span>
               <p>{brand.vision}</p>
-              <svg className="mv2-icon" viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" /><path d="M12 3v3M12 18v3M3 12h3M18 12h3" /><path d="M12 8l2.2 4.2L12 16l-2.2-3.8L12 8z" />
-              </svg>
             </Reveal>
           </div>
         </div>
@@ -194,9 +185,6 @@ export default function AboutPage() {
         .mv2-now { font-family:var(--font-head); font-weight:700; text-transform:uppercase; font-size:clamp(1.3rem,2.4vw,2rem); color:#fff; margin:.5rem 0 1rem; line-height:1.05; }
         .mv2-col p { color:var(--text-dim); font-size:clamp(1rem,1.4vw,1.15rem); line-height:1.6; max-width:42ch; }
         .mv2-col.vision p { margin-left:auto; }
-        .mv2-icon { margin-top:1.4rem; color:var(--orange); }
-        .mv2-col.mission .mv2-icon { opacity:.9; }
-        .mv2-col.vision .mv2-icon { margin-left:auto; }
         .mv2-seam { position:relative; }
         .mv2-seam-line { position:absolute; left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%); background:linear-gradient(180deg, transparent, var(--orange) 20%, var(--orange) 80%, transparent); box-shadow:0 0 14px rgba(232,114,42,.5); }
         .mv2-seam-node { position:absolute; left:50%; top:50%; width:14px; height:14px; border-radius:50%; transform:translate(-50%,-50%); background:radial-gradient(circle,#fff,var(--orange) 60%); box-shadow:0 0 18px 4px rgba(232,114,42,.7); animation: mvPulse 2.4s ease-in-out infinite; }
@@ -206,7 +194,7 @@ export default function AboutPage() {
         .tp { padding: clamp(4.5rem,12vh,8rem) 0; }
         .tp-head { text-align:center; }
         .tp-head :global(.eyebrow){ justify-content:center; }
-        .tp-head h2 { font-size:clamp(1.5rem,3vw,2.6rem); text-transform:uppercase; color:#fff; line-height:1.28; margin-top:1rem; }
+        .tp-head h2 { font-size:clamp(1.1rem,2vw,1.65rem); text-transform:uppercase; color:#fff; line-height:1.4; margin-top:1rem; }
         .tp-head h2 .kw { color:var(--orange); }
         .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:920px; }
         .tp-wire { flex:1; height:2px; background:linear-gradient(90deg, transparent, rgba(232,114,42,.6)); position:relative; }
