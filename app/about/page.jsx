@@ -17,7 +17,6 @@ export default function AboutPage() {
         eyebrow="About Powerline"
         title="Who We"
         accent="Are"
-        lead={aboutCopy.lead}
         img="/img/facility-1.webp"
       />
 
