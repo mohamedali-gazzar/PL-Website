@@ -88,7 +88,7 @@ export default function AboutStory() {
     }
 
     const cleanups = [];
-    let raf2 = 0, raf3 = 0;
+    let raf3 = 0;
     let played = false;
     const start = () => {
       if (played) return;
@@ -144,42 +144,23 @@ export default function AboutStory() {
       el.classList.add("play", "lit", "nodes-lit", "finale-lit");
     }
 
-    // mouse parallax + cursor torch (fine pointers only) and scroll parallax
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    let mx = 0, my = 0, tx = -999, ty = -999, sy = 0;
-    const applyM = () => {
-      raf2 = 0;
-      el.style.setProperty("--mx", mx.toFixed(3));
-      el.style.setProperty("--my", my.toFixed(3));
-      el.style.setProperty("--tx", tx + "px");
-      el.style.setProperty("--ty", ty + "px");
-    };
-    const onMove = (e) => {
-      const r = el.getBoundingClientRect();
-      tx = e.clientX - r.left; ty = e.clientY - r.top;
-      mx = (tx / r.width - 0.5) * 2; my = (ty / r.height - 0.5) * 2;
-      if (!raf2) raf2 = requestAnimationFrame(applyM);
-    };
+    // scroll parallax only — mouse-move parallax + cursor torch disabled per preference
+    let sy = 0;
     const applyS = () => { raf3 = 0; el.style.setProperty("--sy", sy.toFixed(3)); };
     const onScroll = () => {
       const r = el.getBoundingClientRect(), vh = window.innerHeight || 1;
       sy = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / vh));
       if (!raf3) raf3 = requestAnimationFrame(applyS);
     };
-    if (fine) {
-      el.addEventListener("pointermove", onMove, { passive: true });
-      cleanups.push(() => el.removeEventListener("pointermove", onMove));
-    }
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     cleanups.push(() => window.removeEventListener("scroll", onScroll));
 
     return () => {
       cleanups.forEach((f) => f());
-      if (raf2) cancelAnimationFrame(raf2);
       if (raf3) cancelAnimationFrame(raf3);
       el.classList.remove("play", "lit", "nodes-lit", "finale-lit", "paused");
-      ["--mx", "--my", "--tx", "--ty", "--sy"].forEach((p) => el.style.removeProperty(p));
+      el.style.removeProperty("--sy");
     };
   }, []);
 
@@ -250,7 +231,6 @@ export default function AboutStory() {
         </svg>
 
         <div className="stage-bloom" />
-        <div className="stage-torch" />
         <div className="stage-veil" />
         <div className="stage-vignette" />
         <div className="stage-fade" />
@@ -333,25 +313,18 @@ export default function AboutStory() {
           position: absolute; inset: -3%;
           background: url("/img/facility-1.webp") center / cover no-repeat;
           opacity: 0.12; filter: grayscale(0.45) contrast(1.05);
-          transform: translate3d(calc(var(--mx, 0) * 6px), calc(var(--my, 0) * 6px + var(--sy, 0) * -18px), 0);
+          transform: translate3d(0, calc(var(--sy, 0) * -18px), 0);
         }
         .stage-grain { position: absolute; inset: 0; opacity: 0.045; mix-blend-mode: overlay; pointer-events: none; }
         .stage-svg {
           position: absolute; inset: 0; width: 100%; height: 100%;
-          transform: translate3d(calc(var(--mx, 0) * 12px), calc(var(--my, 0) * 12px + var(--sy, 0) * -34px), 0);
+          transform: translate3d(0, calc(var(--sy, 0) * -34px), 0);
         }
         .stage-bloom {
           position: absolute; inset: 0; opacity: 0;
           background: radial-gradient(38% 36% at 58% 22%, rgba(232, 114, 42, 0.5), transparent 62%);
           mix-blend-mode: screen;
-          transform: translate3d(calc(var(--mx, 0) * -8px), calc(var(--my, 0) * -8px), 0);
         }
-        .stage-torch {
-          position: absolute; inset: 0; pointer-events: none; opacity: 0;
-          background: radial-gradient(190px 190px at var(--tx, -999px) var(--ty, -999px), rgba(255, 186, 130, 0.16), transparent 70%);
-          mix-blend-mode: screen; transition: opacity 0.4s ease;
-        }
-        .story:hover .stage-torch { opacity: 1; }
         .stage-veil {
           position: absolute; inset: 0;
           background:
@@ -453,8 +426,7 @@ export default function AboutStory() {
         @keyframes finalePop { 0% { transform: scale(0.97); } 55% { transform: scale(1.035); } 100% { transform: scale(1); } }
 
         /* ── floating technical labels (desktop: absolute over the content plane) ── */
-        .story-labels { position: absolute; inset: 0; z-index: 2; margin: 0; padding: 0; list-style: none; pointer-events: none;
-          transform: translate3d(calc(var(--mx, 0) * 20px), calc(var(--my, 0) * 20px), 0); }
+        .story-labels { position: absolute; inset: 0; z-index: 2; margin: 0; padding: 0; list-style: none; pointer-events: none; }
         .lbl {
           position: absolute; transform: translate(-50%, -50%);
           display: inline-flex; align-items: center; gap: 0.5rem;
