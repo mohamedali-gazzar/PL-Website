@@ -1,7 +1,7 @@
 import Link from "next/link";
 import PageShell from "@/components/PageShell";
-import { Reveal, CountUp } from "@/components/Primitives";
-import { aboutCopy, heroStats, locations, brand } from "@/lib/content";
+import { Reveal } from "@/components/Primitives";
+import { aboutCopy, locations, brand } from "@/lib/content";
 import CoreValues from "@/components/CoreValues";
 import AboutStory from "@/components/AboutStory";
 
@@ -27,24 +27,8 @@ const PINS = [
 export default function AboutPage() {
   return (
     <PageShell>
-      {/* ════ ABOUT POWERLINE — unified cinematic hero (identity + story) ════ */}
+      {/* ════ ABOUT POWERLINE — unified cinematic hero (story + credentials) ════ */}
       <AboutStory />
-
-      {/* ════ BY THE NUMBERS — instrument strip ════ */}
-      <section className="abn">
-        <div className="container">
-          <div className="abn-stats">
-            {heroStats.map((s, i) => (
-              <Reveal as="div" className="abn-stat" key={s.label} delay={i * 80}>
-                <div className="abn-stat-v">
-                  <CountUp value={s.value} suffix={s.suffix} group={!s.plain} />
-                </div>
-                <div className="abn-stat-l">{s.label}</div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ════ MISSION & VISION — two forces, one seam ════ */}
       <section className="mv2">
@@ -165,15 +149,6 @@ export default function AboutPage() {
       </section>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        /* ───────── BY THE NUMBERS (instrument strip) ───────── */
-        .abn { padding: clamp(3rem,8vh,5rem) 0; background: var(--bg); border-bottom:1px solid var(--line); }
-        .abn-stats { display:flex; flex-wrap:wrap; gap:0; }
-        .abn-stat { flex:1 1 160px; padding:0 1.6rem; border-right:1px solid var(--line); }
-        .abn-stat:first-child{ padding-left:0; }
-        .abn-stat:last-child{ border-right:none; }
-        .abn-stat-v { font-family:var(--font-head); font-weight:800; font-size:clamp(1.9rem,3.6vw,3rem); color:#fff; line-height:1; }
-        .abn-stat-l { color:var(--text-faint); text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; margin-top:.6rem; }
-
         /* ───────── MISSION & VISION ───────── */
         .mv2 { padding: clamp(4rem,11vh,8rem) 0; background: var(--bg-2); }
         .mv2-grid { display:grid; grid-template-columns: 1fr 2px 1fr; gap: clamp(1.5rem,5vw,4.5rem); align-items:stretch; }
