@@ -403,7 +403,7 @@ export default function AboutStory() {
           margin: clamp(1.5rem, 4vh, 2.6rem) 0 clamp(1.6rem, 5vh, 3rem);
           max-width: min(52ch, 760px);
           font-family: var(--font-head); font-weight: 400;
-          font-size: clamp(1.2rem, 2vw, 1.95rem); line-height: 1.5; letter-spacing: -0.005em;
+          font-size: clamp(0.84rem, 1.4vw, 1.365rem); line-height: 1.5; letter-spacing: -0.005em;
           color: rgba(255, 255, 255, 0.72);
         }
         @media (max-width: 900px) { .story-copy { max-width: 94vw; } }
