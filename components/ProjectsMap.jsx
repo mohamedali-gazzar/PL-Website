@@ -42,7 +42,7 @@ export default function ProjectsMap() {
             A selection of PCSS compact-substation projects delivered nationwide.
             Hover a node to see the project.
           </p>
-          <p className="pm-count"><b>{pcssProjects.length}</b> PCSS projects and counting.</p>
+          <p className="pm-count"><b>+{pcssProjects.length}</b> PCSS projects and counting.</p>
         </div>
 
         <div className="pm-map">

@@ -6,7 +6,7 @@ import { pcssProjects } from "@/lib/pcssProjects";
 // A position-free way to show the sheer scale of the PCSS portfolio:
 // a count-up headline + an infinite marquee "roll-call" of every project name.
 const ROWS = 4;
-const BASE_DUR = 46; // seconds for the longest row; rows vary for an organic feel
+const BASE_DUR = 90; // seconds for the longest row; rows vary for an organic feel
 
 export default function ProjectsScale() {
   const root = useRef(null);
@@ -57,7 +57,7 @@ export default function ProjectsScale() {
     <section className="sc-sec" ref={root} aria-label="The scale of Powerline's PCSS portfolio">
       <div className="container sc-head">
         <span className="eyebrow">By the numbers</span>
-        <div className="sc-num" aria-hidden="true">{count}</div>
+        <div className="sc-num" aria-hidden="true">+{count}</div>
         <h2 className="section-title sc-title">
           PCSS substations delivered — <span className="kw">and counting</span>
         </h2>
