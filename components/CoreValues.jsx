@@ -186,9 +186,9 @@ export default function CoreValues() {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: clamp(2rem, 6vh, 4.5rem);
+          gap: clamp(1.75rem, 4vw, 3.25rem);
           overflow: hidden;
-          padding: clamp(2rem, 6vh, 4rem) 0;
+          padding: clamp(3rem, 6vw, 5rem) 0;
         }
         .cv-head {
           flex: 0 0 auto;
@@ -216,9 +216,9 @@ export default function CoreValues() {
         .cv-diagram {
           position: relative;
           flex: 0 1 auto;
-          width: min(94vw, calc((100dvh - 290px) * (1000 / 720)));
+          width: min(90vw, 860px);
           aspect-ratio: 1000 / 720;
-          margin: clamp(2.25rem, 6vh, 4.25rem) auto 0;
+          margin: clamp(2rem, 4vw, 3.5rem) auto 0;
         }
         .cv-svg {
           position: absolute;
@@ -370,7 +370,7 @@ export default function CoreValues() {
         .cv-vcard.show p { opacity: 1; transform: none; }
 
         @media (max-width: 820px) {
-          .cv-diagram { width: min(96vw, calc((100dvh - 260px) * (1000 / 720))); }
+          .cv-diagram { width: min(96vw, 600px); }
           .cv-vcard { max-width: 40vw; }
           .cv-vcard.up { transform: translate(-50%, calc(-100% - 14px)); }
           .cv-vcard.left { transform: translate(calc(-100% - 14px), -50%); }
