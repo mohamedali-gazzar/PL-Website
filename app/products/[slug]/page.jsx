@@ -4,6 +4,7 @@ import PageShell from "@/components/PageShell";
 import { Reveal } from "@/components/Primitives";
 import ProductGallery from "@/components/ProductGallery";
 import ProjectsMap from "@/components/ProjectsMap";
+import ProjectsScale from "@/components/ProjectsScale";
 import {
   products,
   lowVoltage,
@@ -116,6 +117,7 @@ export default function ProductPage({ params }) {
         </div>
       </section>
 
+      {params.slug === "pcss" && <ProjectsScale />}
       {params.slug === "pcss" && <ProjectsMap />}
 
       <style dangerouslySetInnerHTML={{ __html: `
