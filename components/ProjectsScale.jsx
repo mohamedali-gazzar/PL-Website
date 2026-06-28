@@ -94,7 +94,7 @@ export default function ProjectsScale() {
           border-top: 1px solid var(--line);
           overflow: hidden;
         }
-        .sc-head { text-align: center; max-width: 62ch; margin: 0 auto clamp(2.6rem, 6vh, 4rem); }
+        .sc-head { text-align: center; max-width: min(1080px, 92vw); margin: 0 auto clamp(2.6rem, 6vh, 4rem); }
         .sc-head :global(.eyebrow) { justify-content: center; }
 
         .sc-num {
@@ -111,8 +111,8 @@ export default function ProjectsScale() {
           letter-spacing: -0.02em;
         }
         .sc-title { margin: 0.4rem 0 1rem; }
-        .sc-title :global(.kw) { color: var(--orange); }
-        .sc-lead { color: var(--text-dim); font-size: clamp(0.98rem, 1.3vw, 1.1rem); line-height: 1.6; }
+        .sc-title :global(.kw) { display: block; color: var(--orange); }
+        .sc-lead { max-width: 58ch; margin: 0 auto; color: var(--text-dim); font-size: clamp(0.98rem, 1.3vw, 1.1rem); line-height: 1.6; }
 
         .sc-rows {
           display: flex;
