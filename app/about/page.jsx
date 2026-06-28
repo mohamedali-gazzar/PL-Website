@@ -150,7 +150,7 @@ export default function AboutPage() {
         @keyframes tpFlowL { from{ right:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ right:100%; opacity:0;} }
         .tp-plate { position:relative; flex:0 0 auto; width:min(52vw,470px); aspect-ratio:16/8; border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
         .tp-plate:hover { transform:translateY(-5px); box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 4px rgba(232,114,42,.18); }
-        .tp-plate img { width:91%; height:auto; object-fit:contain; }
+        .tp-plate img { width:96%; height:86%; object-fit:contain; }
         .tp-sheen { position:absolute; inset:0; z-index:2; background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.75) 50%, transparent 58%); background-size:280% 100%; background-position:160% 0; pointer-events:none; animation: tpSheen 5.5s ease-in-out infinite; }
         @keyframes tpSheen { 0%,72%{ background-position:160% 0;} 88%,100%{ background-position:-60% 0;} }
         .tp-caption { text-align:center; color:var(--text-dim); margin:1.8rem auto 0; max-width:46ch; font-size:.98rem; }
@@ -177,8 +177,8 @@ export default function AboutPage() {
 
         @media (max-width:860px){
           .mv2-grid { grid-template-columns:1fr; gap:0; }
-          .mv2-seam { height:60px; }
-          .mv2-seam-line { left:50%; width:2px; }
+          .mv2-seam { height:auto; padding:clamp(1.2rem,5vw,2rem) 0; }
+          .mv2-seam-line { left:0; right:0; top:50%; bottom:auto; width:auto; height:2px; transform:translateY(-50%); background:linear-gradient(90deg, transparent, var(--orange) 20%, var(--orange) 80%, transparent); }
           .mv2-col { min-height:0; }
           .tp-head { max-width:100%; }
           .tp-alliance { gap:.6rem; }

@@ -369,15 +369,26 @@ export default function CoreValues() {
         .cv-vcard.show h3,
         .cv-vcard.show p { opacity: 1; transform: none; }
 
-        @media (max-width: 820px) {
-          .cv-diagram { width: min(96vw, 600px); }
-          .cv-vcard { max-width: 40vw; }
-          .cv-vcard.up { transform: translate(-50%, calc(-100% - 14px)); }
-          .cv-vcard.left { transform: translate(calc(-100% - 14px), -50%); }
-          .cv-vcard.right { transform: translate(14px, -50%); }
-          .cv-vc-icon { width: 38px; height: 38px; }
-          .cv-vcard h3 { font-size: clamp(1rem, 3.4vw, 1.3rem); }
-          .cv-vcard p { font-size: clamp(0.72rem, 2.6vw, 0.86rem); }
+        /* Tablet / mobile: the radial overflows narrow screens, so show the
+           energised P-network as a compact visual and stack the five values as
+           a readable list below it — nothing clips off the sides. */
+        @media (max-width: 1024px) {
+          .cv-sticky { min-height: auto; justify-content: flex-start; gap: clamp(1.5rem, 5vw, 2.5rem); padding: clamp(3rem, 9vw, 5rem) 0; }
+          .cv-diagram { position: static; width: 100%; max-width: 560px; aspect-ratio: auto; height: auto; margin: clamp(1.25rem, 5vw, 2rem) auto 0; }
+          .cv-svg { position: relative; display: block; width: min(72vw, 380px); height: auto; aspect-ratio: 1000 / 720; margin: 0 auto clamp(0.75rem, 3vw, 1.5rem); }
+          .cv-vcard {
+            position: static; transform: none !important; left: auto !important; top: auto !important;
+            max-width: none; width: 100%; opacity: 1; text-align: left; margin-top: 0.7rem;
+            display: grid; grid-template-columns: 44px 1fr; grid-template-areas: "icon num" "icon title" "icon line";
+            column-gap: 0.9rem; row-gap: 0.12rem; align-items: center;
+            padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2);
+          }
+          .cv-vcard.up, .cv-vcard.left, .cv-vcard.right { text-align: left; }
+          .cv-vcard .cv-vc-num { grid-area: num; }
+          .cv-vcard.left .cv-vc-icon, .cv-vcard.right .cv-vc-icon { grid-area: icon; align-self: center; margin: 0; width: 44px; height: 44px; opacity: 1; transform: none; }
+          .cv-vcard .cv-vc-icon { grid-area: icon; align-self: center; margin: 0; width: 44px; height: 44px; opacity: 1; transform: none; }
+          .cv-vcard h3 { grid-area: title; margin: 0; font-size: 1.15rem; opacity: 1; transform: none; }
+          .cv-vcard p { grid-area: line; margin: 0; font-size: 0.9rem; opacity: 1; transform: none; }
         }
 
         @media (prefers-reduced-motion: reduce) {
