@@ -50,7 +50,7 @@ export default function AboutPage() {
         <div className="container">
           <Reveal>
             <div className="tp-head">
-              <span className="eyebrow">Trusted Partners</span>
+              <span className="eyebrow">Technology Partners</span>
               <h2>
                 We build where we <span className="kw">add value</span> — and{" "}
                 <span className="kw">partner with the world&rsquo;s best</span> for the rest.
@@ -148,9 +148,9 @@ export default function AboutPage() {
         .tp-wire.right::after { right:0; animation-name:tpFlowL; }
         @keyframes tpFlowR { from{ left:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ left:100%; opacity:0;} }
         @keyframes tpFlowL { from{ right:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ right:100%; opacity:0;} }
-        .tp-plate { position:relative; flex:0 0 auto; width:min(52vw,470px); aspect-ratio:16/8; border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
+        .tp-plate { position:relative; flex:0 0 auto; width:min(48vw,440px); aspect-ratio:2/1; border-radius:14px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
         .tp-plate:hover { transform:translateY(-5px); box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 4px rgba(232,114,42,.18); }
-        .tp-plate img { width:96%; height:86%; object-fit:contain; }
+        .tp-plate img { width:96%; height:90%; object-fit:contain; }
         .tp-sheen { position:absolute; inset:0; z-index:2; background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.75) 50%, transparent 58%); background-size:280% 100%; background-position:160% 0; pointer-events:none; animation: tpSheen 5.5s ease-in-out infinite; }
         @keyframes tpSheen { 0%,72%{ background-position:160% 0;} 88%,100%{ background-position:-60% 0;} }
         .tp-caption { text-align:center; color:var(--text-dim); margin:1.8rem auto 0; max-width:46ch; font-size:.98rem; }
@@ -179,11 +179,15 @@ export default function AboutPage() {
           .mv2-grid { grid-template-columns:1fr; gap:0; }
           .mv2-seam { height:auto; padding:clamp(1.2rem,5vw,2rem) 0; }
           .mv2-seam-line { left:0; right:0; top:50%; bottom:auto; width:auto; height:2px; transform:translateY(-50%); background:linear-gradient(90deg, transparent, var(--orange) 20%, var(--orange) 80%, transparent); }
-          .mv2-col { min-height:0; }
+          .mv2-col, .mv2-col.mission, .mv2-col.vision { min-height:0; text-align:center; align-items:center; justify-content:flex-start; }
+          .mv2-col p, .mv2-col.vision p { margin-left:auto; margin-right:auto; }
           .tp-head { max-width:100%; }
           .tp-alliance { gap:.6rem; }
-          .tp-plate { width:min(84vw,420px); }
+          .tp-plate { width:min(82vw,360px); }
           .fp-cards { grid-template-columns:1fr; }
+        }
+        @media (max-width:760px){
+          .mv2, .tp, .fp { padding-top: clamp(2.4rem,8vw,3.4rem); padding-bottom: clamp(2.4rem,8vw,3.4rem); }
         }
       ` }} />
     </PageShell>

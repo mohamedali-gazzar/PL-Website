@@ -52,6 +52,7 @@ function branch(n) {
 export default function CoreValues() {
   const root = useRef(null);
   const diagram = useRef(null);
+  const fit = useRef(null);
 
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -112,6 +113,56 @@ export default function CoreValues() {
     };
   }, []);
 
+  // Fit the desktop radial onto narrow screens (<=1024px): render it at a fixed
+  // design width and uniformly scale the whole thing down so it looks identical
+  // to desktop and no value text clips off the sides.
+  useEffect(() => {
+    const fitEl = fit.current, dia = diagram.current;
+    if (!fitEl || !dia) return;
+    const DESIGN_W = 720;
+    const apply = () => {
+      if (window.innerWidth > 1024) {
+        dia.style.width = "";
+        dia.style.transform = "";
+        dia.style.transformOrigin = "";
+        dia.style.margin = "";
+        fitEl.style.height = "";
+        return;
+      }
+      dia.style.transform = "none";
+      dia.style.transformOrigin = "top left";
+      dia.style.margin = "0";
+      dia.style.width = DESIGN_W + "px";
+      const dr = dia.getBoundingClientRect();
+      let minL = 0, maxR = dr.width, minT = 0, maxB = dr.height;
+      dia.querySelectorAll(".cv-vcard").forEach((c) => {
+        const b = c.getBoundingClientRect();
+        minL = Math.min(minL, b.left - dr.left);
+        maxR = Math.max(maxR, b.right - dr.left);
+        minT = Math.min(minT, b.top - dr.top);
+        maxB = Math.max(maxB, b.bottom - dr.top);
+      });
+      const cW = maxR - minL, cH = maxB - minT;
+      const avail = fitEl.clientWidth;
+      const s = Math.min(0.8, (avail - 18) / cW);
+      const offX = (avail - cW * s) / 2 - minL * s;
+      const offY = -minT * s;
+      dia.style.transform = `translate(${offX.toFixed(2)}px, ${offY.toFixed(2)}px) scale(${s.toFixed(4)})`;
+      fitEl.style.height = (cH * s).toFixed(2) + "px";
+    };
+    apply();
+    const r = requestAnimationFrame(apply);
+    const t1 = setTimeout(apply, 300);
+    const t2 = setTimeout(apply, 900);
+    window.addEventListener("resize", apply);
+    return () => {
+      cancelAnimationFrame(r);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener("resize", apply);
+    };
+  }, []);
+
   return (
     <section className="cv" ref={root} aria-label="Our values">
       <div className="cv-sticky">
@@ -123,6 +174,7 @@ export default function CoreValues() {
           <p className="cv-lead">The principles wired into everything we build.</p>
         </div>
 
+        <div className="cv-fit" ref={fit}>
         <div className="cv-diagram" ref={diagram}>
           <svg className="cv-svg" viewBox="0 0 1000 720" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
             <defs>
@@ -173,6 +225,7 @@ export default function CoreValues() {
             </div>
           ))}
         </div>
+        </div>
       </div>
 
       <style jsx>{`
@@ -213,12 +266,17 @@ export default function CoreValues() {
         /* the network canvas — fixed aspect so SVG nodes & HTML cards align.
            A generous top margin + larger height reservation keep the top
            value card well clear of the header above it. */
-        .cv-diagram {
+        .cv-fit {
           position: relative;
           flex: 0 1 auto;
+          width: 100%;
+          margin: clamp(2rem, 4vw, 3.5rem) auto 0;
+        }
+        .cv-diagram {
+          position: relative;
           width: min(90vw, 860px);
           aspect-ratio: 1000 / 720;
-          margin: clamp(2rem, 4vw, 3.5rem) auto 0;
+          margin: 0 auto;
         }
         .cv-svg {
           position: absolute;
@@ -369,26 +427,18 @@ export default function CoreValues() {
         .cv-vcard.show h3,
         .cv-vcard.show p { opacity: 1; transform: none; }
 
-        /* Tablet / mobile: the radial overflows narrow screens, so show the
-           energised P-network as a compact visual and stack the five values as
-           a readable list below it — nothing clips off the sides. */
+        /* Tablet / mobile: the radial would overflow narrow screens, so the JS
+           fitter renders it at a fixed design width and scales the whole thing
+           down to fit — identical to desktop, just smaller, nothing clipped.
+           Card type is enlarged so it stays legible after the down-scale. */
         @media (max-width: 1024px) {
-          .cv-sticky { min-height: auto; justify-content: flex-start; gap: clamp(1.5rem, 5vw, 2.5rem); padding: clamp(3rem, 9vw, 5rem) 0; }
-          .cv-diagram { position: static; width: 100%; max-width: 560px; aspect-ratio: auto; height: auto; margin: clamp(1.25rem, 5vw, 2rem) auto 0; }
-          .cv-svg { position: relative; display: block; width: min(72vw, 380px); height: auto; aspect-ratio: 1000 / 720; margin: 0 auto clamp(0.75rem, 3vw, 1.5rem); }
-          .cv-vcard {
-            position: static; transform: none !important; left: auto !important; top: auto !important;
-            max-width: none; width: 100%; opacity: 1; text-align: left; margin-top: 0.7rem;
-            display: grid; grid-template-columns: 44px 1fr; grid-template-areas: "icon num" "icon title" "icon line";
-            column-gap: 0.9rem; row-gap: 0.12rem; align-items: center;
-            padding: 0.85rem 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-2);
-          }
-          .cv-vcard.up, .cv-vcard.left, .cv-vcard.right { text-align: left; }
-          .cv-vcard .cv-vc-num { grid-area: num; }
-          .cv-vcard.left .cv-vc-icon, .cv-vcard.right .cv-vc-icon { grid-area: icon; align-self: center; margin: 0; width: 44px; height: 44px; opacity: 1; transform: none; }
-          .cv-vcard .cv-vc-icon { grid-area: icon; align-self: center; margin: 0; width: 44px; height: 44px; opacity: 1; transform: none; }
-          .cv-vcard h3 { grid-area: title; margin: 0; font-size: 1.15rem; opacity: 1; transform: none; }
-          .cv-vcard p { grid-area: line; margin: 0; font-size: 0.9rem; opacity: 1; transform: none; }
+          .cv-sticky { min-height: auto; justify-content: flex-start; gap: clamp(1.25rem, 4vw, 2rem); padding: clamp(2.5rem, 8vw, 4rem) 0; }
+          .cv-fit { overflow: hidden; }
+          .cv-vcard { max-width: 250px; }
+          .cv-vcard h3 { font-size: 1.95rem; overflow-wrap: break-word; }
+          .cv-vcard p { font-size: 1.4rem; line-height: 1.3; }
+          .cv-vc-num { font-size: 1rem; }
+          .cv-vc-icon { width: 56px; height: 56px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
