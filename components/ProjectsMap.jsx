@@ -34,7 +34,7 @@ export default function ProjectsMap() {
 
   return (
     <section className="pm-sec" ref={root} aria-label="PCSS projects across Egypt">
-      <div className="container">
+      <div className="container pm-grid">
         <div className="pm-head">
           <span className="eyebrow">Projects</span>
           <h2 className="section-title pm-title">Deployed across Egypt</h2>
@@ -42,6 +42,7 @@ export default function ProjectsMap() {
             A selection of PCSS compact-substation projects delivered nationwide.
             Hover a node to see the project.
           </p>
+          <p className="pm-count"><b>{pcssProjects.length}</b> PCSS projects and counting.</p>
         </div>
 
         <div className="pm-map">
@@ -82,21 +83,20 @@ export default function ProjectsMap() {
             ))}
           </div>
         </div>
-
-        <p className="pm-count"><b>{pcssProjects.length}</b> PCSS projects and counting.</p>
       </div>
 
       <style jsx>{`
         .pm-sec { padding: clamp(4rem, 11vh, 7rem) 0; background: linear-gradient(180deg, var(--bg), #060607); border-top: 1px solid var(--line); }
-        .pm-head { text-align: center; max-width: 60ch; margin: 0 auto clamp(2rem, 5vh, 3.2rem); }
-        .pm-head :global(.eyebrow) { justify-content: center; }
+        .pm-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 4.5rem); align-items: center; }
+        .pm-head { text-align: left; max-width: 46ch; }
+        .pm-head :global(.eyebrow) { justify-content: flex-start; }
         .pm-title { margin: 1rem 0 1rem; }
         .pm-lead { color: var(--text-dim); font-size: clamp(0.98rem, 1.3vw, 1.1rem); line-height: 1.6; }
 
         .pm-map {
           position: relative;
-          width: min(100%, 720px);
-          margin: 0 auto;
+          width: 100%;
+          margin: 0;
           aspect-ratio: ${VW} / ${VH};
           overflow: visible;
         }
@@ -154,11 +154,17 @@ export default function ProjectsMap() {
         }
         .pm-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
-        .pm-count { text-align: center; color: var(--text-dim); margin: clamp(1.6rem, 4vh, 2.4rem) 0 0; font-size: 0.95rem; }
+        .pm-count { text-align: left; color: var(--text-dim); margin: clamp(1.4rem, 3.5vh, 2rem) 0 0; font-size: 0.95rem; }
         .pm-count b { color: var(--orange); font-family: var(--font-head); font-weight: 800; font-size: 1.1rem; }
 
+        @media (max-width: 860px) {
+          .pm-grid { grid-template-columns: 1fr; gap: clamp(1.8rem, 5vw, 2.6rem); }
+          .pm-head { text-align: center; max-width: 60ch; margin: 0 auto; }
+          .pm-head :global(.eyebrow) { justify-content: center; }
+          .pm-count { text-align: center; }
+          .pm-map { max-width: 560px; margin: 0 auto; }
+        }
         @media (max-width: 640px) {
-          .pm-map { width: 100%; }
           .pm-label { font-size: 0.68rem; max-width: 150px; }
           .pm-node { width: 26px; height: 26px; }
         }
