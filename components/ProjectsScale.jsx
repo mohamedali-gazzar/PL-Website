@@ -124,7 +124,9 @@ export default function ProjectsScale() {
         }
         .sc-sec.in .sc-rows { opacity: 1; transition: opacity 0.9s ease 0.2s; }
 
-        .sc-row { overflow: hidden; }
+        /* Vertical padding gives the hover lift clip-safe room (overflow:hidden
+           clips to the padding box); negative margin keeps the row rhythm. */
+        .sc-row { overflow: hidden; padding: 6px 0; margin: -6px 0; }
         .sc-track { display: flex; gap: clamp(0.55rem, 1.3vw, 0.85rem); width: max-content; will-change: transform; }
         .sc-track.ltr { animation: sc-ltr var(--dur) linear infinite; }
         .sc-track.rtl { animation: sc-rtl var(--dur) linear infinite; }
