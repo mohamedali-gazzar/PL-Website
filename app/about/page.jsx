@@ -74,7 +74,7 @@ export default function AboutPage() {
           </Reveal>
           <Reveal delay={200}>
             <p className="tp-caption">
-              World-class technology partners — integrated and supported on the ground.
+              &ldquo;World-class technology, integrated and backed by Powerline on the ground.&rdquo;
             </p>
           </Reveal>
         </div>
@@ -138,7 +138,7 @@ export default function AboutPage() {
         .tp-head :global(.eyebrow){ justify-content:center; }
         .tp-head h2 { font-size:clamp(1.1rem,2vw,1.65rem); text-transform:uppercase; color:#fff; line-height:1.4; margin-top:1rem; }
         .tp-head h2 .kw { color:var(--orange); }
-        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:920px; }
+        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:1040px; }
         .tp-wire { flex:1; height:2px; background:linear-gradient(90deg, transparent, rgba(232,114,42,.6)); position:relative; }
         .tp-wire.right { background:linear-gradient(90deg, rgba(232,114,42,.6), transparent); }
         .tp-wire::after { content:""; position:absolute; top:50%; width:7px; height:7px; border-radius:50%; background:var(--orange); transform:translateY(-50%); box-shadow:0 0 10px var(--orange); animation: tpFlow 3s linear infinite; }
@@ -146,19 +146,19 @@ export default function AboutPage() {
         .tp-wire.right::after { right:0; animation-name:tpFlowL; }
         @keyframes tpFlowR { from{ left:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ left:100%; opacity:0;} }
         @keyframes tpFlowL { from{ right:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ right:100%; opacity:0;} }
-        .tp-plate { position:relative; flex:0 0 auto; width:min(46vw,360px); aspect-ratio:16/8; border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
+        .tp-plate { position:relative; flex:0 0 auto; width:min(52vw,470px); aspect-ratio:16/8; border-radius:16px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
         .tp-plate:hover { transform:translateY(-5px); box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 4px rgba(232,114,42,.18); }
-        .tp-plate img { width:84%; height:auto; object-fit:contain; }
+        .tp-plate img { width:91%; height:auto; object-fit:contain; }
         .tp-sheen { position:absolute; inset:0; z-index:2; background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.75) 50%, transparent 58%); background-size:280% 100%; background-position:160% 0; pointer-events:none; animation: tpSheen 5.5s ease-in-out infinite; }
         @keyframes tpSheen { 0%,72%{ background-position:160% 0;} 88%,100%{ background-position:-60% 0;} }
         .tp-caption { text-align:center; color:var(--text-dim); margin:1.8rem auto 0; max-width:46ch; font-size:.98rem; }
 
         /* ───────── OUR FOOTPRINT ───────── */
         .fp { padding: clamp(4rem,11vh,7.5rem) 0 clamp(5rem,12vh,8rem); background: linear-gradient(180deg, var(--bg), #060607); }
-        .fp-head { text-align:center; max-width:62ch; margin:0 auto clamp(2.5rem,6vh,4rem); }
-        .fp-head :global(.eyebrow){ justify-content:center; }
-        .fp-title { margin:1rem 0 1rem; }
-        .fp-note { color:var(--text-dim); font-size:clamp(.98rem,1.3vw,1.1rem); line-height:1.6; }
+        .fp-head { text-align:center; max-width:860px; margin:0 auto clamp(2.5rem,6vh,4rem); }
+        .fp-head .eyebrow{ justify-content:center; }
+        .fp-title { margin:1rem auto; text-wrap:balance; }
+        .fp-note { color:var(--text-dim); font-size:clamp(.98rem,1.3vw,1.1rem); line-height:1.6; max-width:56ch; margin:0 auto; }
         .fp-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(1rem,2vw,1.6rem); }
         .fp-card { position:relative; display:flex; flex-direction:column; padding:clamp(1.5rem,2.6vw,2.3rem); border:1px solid var(--line); border-radius:18px; background:var(--bg-2); overflow:hidden; transition:border-color .35s, transform .35s var(--ease), background .35s; }
         .fp-card::before { content:""; position:absolute; left:0; top:0; height:3px; width:0; background:linear-gradient(90deg,var(--orange),transparent); transition:width .45s var(--ease); }
@@ -180,7 +180,7 @@ export default function AboutPage() {
           .mv2-col { min-height:0; }
           .tp-head { max-width:100%; }
           .tp-alliance { gap:.6rem; }
-          .tp-plate { width:min(70vw,340px); }
+          .tp-plate { width:min(84vw,420px); }
           .fp-cards { grid-template-columns:1fr; }
         }
       ` }} />
