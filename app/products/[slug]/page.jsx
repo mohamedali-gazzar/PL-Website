@@ -3,6 +3,7 @@ import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import { Reveal } from "@/components/Primitives";
 import ProductGallery from "@/components/ProductGallery";
+import ProjectsMap from "@/components/ProjectsMap";
 import {
   products,
   lowVoltage,
@@ -114,6 +115,8 @@ export default function ProductPage({ params }) {
           </div>
         </div>
       </section>
+
+      {params.slug === "pcss" && <ProjectsMap />}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .pd { padding: clamp(8rem,18vh,11rem) 0 clamp(5rem,12vh,8rem); }
