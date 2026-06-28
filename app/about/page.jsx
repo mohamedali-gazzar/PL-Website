@@ -52,13 +52,14 @@ export default function AboutPage() {
             <div className="tp-head">
               <span className="eyebrow">Trusted Partners</span>
               <h2>
-                We are the <span className="kw">trusted partners</span> to{" "}
-                <span className="kw">global leaders</span> — offering{" "}
-                <span className="kw">technical expertise</span>,{" "}
-                <span className="kw">product support</span>, and{" "}
-                <span className="kw">performance optimization</span> to keep power
-                systems running smoothly.
+                We build where we <span className="kw">add value</span> — and{" "}
+                <span className="kw">partner with the world&rsquo;s best</span> for the rest.
               </h2>
+              <p className="tp-sub">
+                Engineering, fabrication, integration, and service, built by
+                Powerline &mdash; powered by world-class technology from ABB and
+                Schneider Electric.
+              </p>
             </div>
           </Reveal>
 
@@ -136,8 +137,9 @@ export default function AboutPage() {
         .tp { padding: clamp(4.5rem,12vh,8rem) 0; }
         .tp-head { max-width:76%; margin:0 auto; text-align:center; }
         .tp-head :global(.eyebrow){ justify-content:center; }
-        .tp-head h2 { font-size:clamp(1.1rem,2vw,1.65rem); text-transform:uppercase; color:#fff; line-height:1.4; margin-top:1rem; }
+        .tp-head h2 { font-size:clamp(1.45rem,2.8vw,2.25rem); text-transform:uppercase; color:#fff; line-height:1.25; margin-top:1rem; }
         .tp-head h2 .kw { color:var(--orange); }
+        .tp-sub { margin:1.1rem auto 0; max-width:58ch; color:var(--text-dim); font-size:clamp(1rem,1.4vw,1.18rem); line-height:1.6; }
         .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:1040px; }
         .tp-wire { flex:1; height:2px; background:linear-gradient(90deg, transparent, rgba(232,114,42,.6)); position:relative; }
         .tp-wire.right { background:linear-gradient(90deg, rgba(232,114,42,.6), transparent); }
