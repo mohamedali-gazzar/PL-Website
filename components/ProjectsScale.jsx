@@ -7,6 +7,16 @@ import { pcssProjects } from "@/lib/pcssProjects";
 // a count-up headline + an infinite marquee "roll-call" of every project name.
 const ROWS = 4;
 const BASE_DUR = 90; // seconds for the longest row; rows vary for an organic feel
+const MIN_PER_HALF = 12; // repeat short rows so each marquee half always fills the viewport
+
+// Repeat items until there are at least `min`, so a small project list still
+// produces a track wide enough for a seamless, gap-free loop.
+function repeatToMin(items, min) {
+  if (items.length === 0) return [];
+  const out = [];
+  while (out.length < min) out.push(...items);
+  return out;
+}
 
 export default function ProjectsScale() {
   const root = useRef(null);
@@ -68,21 +78,25 @@ export default function ProjectsScale() {
       </div>
 
       <div className="sc-rows" aria-hidden="true">
-        {rows.map((row, r) => (
-          <div className="sc-row" key={r}>
-            <div
-              className={`sc-track ${r % 2 ? "rtl" : "ltr"}`}
-              style={{ "--dur": `${BASE_DUR - (ROWS - 1 - r) * 4}s` }}
-            >
-              {[...row, ...row].map((p, i) => (
-                <span className="sc-chip" key={i} dir="auto" data-dup={i >= row.length ? "1" : undefined}>
-                  <span className="sc-dot" />
-                  {p.name}
-                </span>
-              ))}
+        {rows.map((row, r) => {
+          const half = repeatToMin(row, MIN_PER_HALF);
+          const track = [...half, ...half];
+          return (
+            <div className="sc-row" key={r}>
+              <div
+                className={`sc-track ${r % 2 ? "rtl" : "ltr"}`}
+                style={{ "--dur": `${BASE_DUR - (ROWS - 1 - r) * 4}s` }}
+              >
+                {track.map((p, i) => (
+                  <span className="sc-chip" key={i} dir="auto" data-dup={i >= row.length ? "1" : undefined}>
+                    <span className="sc-dot" />
+                    {p.name}
+                  </span>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <p className="sc-foot">Hover to pause · a selection of delivered projects</p>
