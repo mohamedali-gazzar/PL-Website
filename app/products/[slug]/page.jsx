@@ -3,7 +3,6 @@ import Link from "next/link";
 import PageShell from "@/components/PageShell";
 import { Reveal } from "@/components/Primitives";
 import ProductGallery from "@/components/ProductGallery";
-import ProjectsMap from "@/components/ProjectsMap";
 import ProjectsScale from "@/components/ProjectsScale";
 import {
   products,
@@ -118,7 +117,6 @@ export default function ProductPage({ params }) {
       </section>
 
       {params.slug === "pcss" && <ProjectsScale />}
-      {params.slug === "pcss" && <ProjectsMap />}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .pd { padding: clamp(8rem,18vh,11rem) 0 clamp(5rem,12vh,8rem); }

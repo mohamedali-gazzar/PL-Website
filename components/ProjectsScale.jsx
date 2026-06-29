@@ -8,6 +8,9 @@ import { pcssProjects } from "@/lib/pcssProjects";
 const ROWS = 4;
 const BASE_DUR = 90; // seconds for the longest row; rows vary for an organic feel
 const MIN_PER_HALF = 12; // repeat short rows so each marquee half always fills the viewport
+// Headline count = the full number of PCSS projects delivered to date. The
+// marquee below shows a curated selection of named reference projects.
+const TOTAL_DELIVERED = 65;
 
 // Repeat items until there are at least `min`, so a small project list still
 // produces a track wide enough for a seamless, gap-free loop.
@@ -20,7 +23,7 @@ function repeatToMin(items, min) {
 
 export default function ProjectsScale() {
   const root = useRef(null);
-  const total = pcssProjects.length;
+  const total = TOTAL_DELIVERED;
   const [count, setCount] = useState(0);
 
   // Interleave the projects across the marquee rows so each row is varied.
@@ -66,14 +69,15 @@ export default function ProjectsScale() {
   return (
     <section className="sc-sec" ref={root} aria-label="The scale of Powerline's PCSS portfolio">
       <div className="container sc-head">
-        <span className="eyebrow">By the numbers</span>
+        <span className="eyebrow">Track record</span>
         <div className="sc-num" aria-hidden="true">+{count}</div>
         <h2 className="section-title sc-title">
           PCSS substations delivered — <span className="kw">and counting</span>
         </h2>
         <p className="sc-lead">
-          A large and growing portfolio of compact secondary substations engineered,
-          fabricated, and commissioned by Powerline. Hover any project to pause the roll.
+          Compact secondary substations engineered, fabricated, and commissioned by
+          Powerline for clients across Egypt — a portfolio that keeps growing.
+          Below is a selection of delivered reference projects.
         </p>
       </div>
 
@@ -99,7 +103,7 @@ export default function ProjectsScale() {
         })}
       </div>
 
-      <p className="sc-foot">Hover to pause · a selection of delivered projects</p>
+      <p className="sc-foot">Hover any project to pause the roll</p>
 
       <style jsx>{`
         .sc-sec {
