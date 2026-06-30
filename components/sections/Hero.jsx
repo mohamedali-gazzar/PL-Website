@@ -81,7 +81,7 @@ export default function Hero({ ready }) {
         <h1 className="hero-title">
           <span className="h-line"><span>Built by <em>Powerline</em></span></span>
           <span className="h-line"><span>where it counts</span></span>
-          <span className="h-line"><span>— partnered with the world</span></span>
+          <span className="h-line"><span>partnered with the world</span></span>
           <span className="h-line"><span>for the rest.</span></span>
         </h1>
 
@@ -126,6 +126,8 @@ export default function Hero({ ready }) {
           display: flex;
           align-items: center;
           overflow: hidden;
+          /* Clear the fixed navbar so the eyebrow never collides with the logo. */
+          padding-top: clamp(6.5rem, 12vh, 8rem);
         }
         .hero-media {
           position: absolute;
@@ -170,13 +172,13 @@ export default function Hero({ ready }) {
         .hero-content {
           position: relative;
           z-index: 2;
-          padding-top: 2rem;
+          padding-top: 0;
         }
         .hero-title {
-          font-size: clamp(1.5rem, 4vw, 3.4rem);
+          font-size: clamp(1.4rem, 3.4vw, 2.9rem);
           text-transform: uppercase;
           margin: 1rem 0 1.3rem;
-          line-height: 1.06;
+          line-height: 1.07;
         }
         .h-line {
           display: block;
@@ -266,9 +268,11 @@ export default function Hero({ ready }) {
           text-transform: uppercase;
         }
         @media (max-width: 640px) {
+          .hero { padding-top: clamp(5.5rem, 16vw, 7rem); }
           .h-credits {
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.4rem 0;
+            gap: 1.1rem 0;
+            margin-top: 0.7rem;
           }
           .h-stat:nth-child(odd) {
             border-left: none;
