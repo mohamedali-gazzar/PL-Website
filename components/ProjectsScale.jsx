@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { pcssProjects } from "@/lib/pcssProjects";
 
-// A position-free way to show the sheer scale of the PCSS portfolio:
+// A position-free way to show the sheer scale of a product's portfolio:
 // a count-up headline + an infinite marquee "roll-call" of every project name.
+// Reused across products (PCSS / PRAL / PSEC) via props.
 const ROWS = 4;
 const BASE_DUR = 90; // seconds for the longest row; rows vary for an organic feel
 const MIN_PER_HALF = 12; // repeat short rows so each marquee half always fills the viewport
-// Headline count = the full number of PCSS projects delivered to date. The
-// marquee below shows a curated selection of named reference projects.
-const TOTAL_DELIVERED = 65;
 
 // Repeat items until there are at least `min`, so a small project list still
 // produces a track wide enough for a seamless, gap-free loop.
@@ -21,14 +18,23 @@ function repeatToMin(items, min) {
   return out;
 }
 
-export default function ProjectsScale() {
+export default function ProjectsScale({
+  projects = [],
+  total,
+  title,
+  lead,
+  eyebrow = "Track record",
+  ariaLabel = "Project track record",
+}) {
   const root = useRef(null);
-  const total = TOTAL_DELIVERED;
+  // Headline count: an explicit `total` (e.g. PCSS shows the full delivered
+  // count over a curated subset) or, by default, the number of listed projects.
+  const target = typeof total === "number" ? total : projects.length;
   const [count, setCount] = useState(0);
 
   // Interleave the projects across the marquee rows so each row is varied.
   const rows = Array.from({ length: ROWS }, () => []);
-  pcssProjects.forEach((p, i) => rows[i % ROWS].push(p));
+  projects.forEach((p, i) => rows[i % ROWS].push(p));
 
   useEffect(() => {
     const el = root.current;
@@ -38,7 +44,7 @@ export default function ProjectsScale() {
     const run = () => {
       el.classList.add("in");
       if (reduce) {
-        setCount(total);
+        setCount(target);
         return;
       }
       const dur = 1500;
@@ -47,7 +53,7 @@ export default function ProjectsScale() {
         if (start === null) start = ts;
         const t = Math.min(1, (ts - start) / dur);
         const eased = 1 - Math.pow(1 - t, 3);
-        setCount(Math.round(eased * total));
+        setCount(Math.round(eased * target));
         if (t < 1) requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
@@ -64,21 +70,17 @@ export default function ProjectsScale() {
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [total]);
+  }, [target]);
 
   return (
-    <section className="sc-sec" ref={root} aria-label="The scale of Powerline's PCSS portfolio">
+    <section className="sc-sec" ref={root} aria-label={ariaLabel}>
       <div className="container sc-head">
-        <span className="eyebrow">Track record</span>
+        <span className="eyebrow">{eyebrow}</span>
         <div className="sc-num" aria-hidden="true">+{count}</div>
         <h2 className="section-title sc-title">
-          PCSS substations delivered — <span className="kw">and counting</span>
+          {title} — <span className="kw">and counting</span>
         </h2>
-        <p className="sc-lead">
-          Compact secondary substations engineered, fabricated, and commissioned by
-          Powerline for clients across Egypt — a portfolio that keeps growing.
-          Below is a selection of delivered reference projects.
-        </p>
+        <p className="sc-lead">{lead}</p>
       </div>
 
       <div className="sc-rows" aria-hidden="true">

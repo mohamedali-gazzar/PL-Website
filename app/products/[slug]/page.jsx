@@ -4,6 +4,9 @@ import PageShell from "@/components/PageShell";
 import { Reveal } from "@/components/Primitives";
 import ProductGallery from "@/components/ProductGallery";
 import ProjectsScale from "@/components/ProjectsScale";
+import { pcssProjects } from "@/lib/pcssProjects";
+import { pralProjects } from "@/lib/pralProjects";
+import { psecProjects } from "@/lib/psecProjects";
 import {
   products,
   lowVoltage,
@@ -11,6 +14,38 @@ import {
   supplies,
   brand,
 } from "@/lib/content";
+
+// Products that get a "track record" scale section (count-up + project marquee).
+const scaleSections = {
+  pcss: {
+    projects: pcssProjects,
+    total: 65,
+    title: "PCSS substations delivered",
+    ariaLabel: "The scale of Powerline's PCSS portfolio",
+    lead:
+      "Compact secondary substations engineered, fabricated, and commissioned by " +
+      "Powerline for clients across Egypt — a portfolio that keeps growing. " +
+      "Below is a selection of delivered reference projects.",
+  },
+  pral: {
+    projects: pralProjects,
+    title: "PRAL ring main units delivered",
+    ariaLabel: "The scale of Powerline's PRAL portfolio",
+    lead:
+      "Air-insulated ring main units engineered and commissioned by Powerline for " +
+      "distribution networks across Egypt — a portfolio that keeps growing. " +
+      "Below is a selection of delivered reference projects.",
+  },
+  psec: {
+    projects: psecProjects,
+    title: "PSEC ring main units delivered",
+    ariaLabel: "The scale of Powerline's PSEC portfolio",
+    lead:
+      "SF6 ring main units engineered and commissioned by Powerline for " +
+      "distribution networks across Egypt — a portfolio that keeps growing. " +
+      "Below is a selection of delivered reference projects.",
+  },
+};
 
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",
@@ -116,7 +151,7 @@ export default function ProductPage({ params }) {
         </div>
       </section>
 
-      {params.slug === "pcss" && <ProjectsScale />}
+      {scaleSections[params.slug] && <ProjectsScale {...scaleSections[params.slug]} />}
 
       <style dangerouslySetInnerHTML={{ __html: `
         .pd { padding: clamp(8rem,18vh,11rem) 0 clamp(5rem,12vh,8rem); }

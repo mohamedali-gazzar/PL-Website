@@ -121,8 +121,8 @@ export default function Hero({ ready }) {
       <style jsx>{`
         .hero {
           position: relative;
-          min-height: 100vh;
-          min-height: 100dvh;
+          height: 100vh;
+          height: 100dvh;
           display: flex;
           align-items: center;
           overflow: hidden;
@@ -170,12 +170,12 @@ export default function Hero({ ready }) {
         .hero-content {
           position: relative;
           z-index: 2;
-          padding-top: 6rem;
+          padding-top: 2rem;
         }
         .hero-title {
           font-size: clamp(1.5rem, 4vw, 3.4rem);
           text-transform: uppercase;
-          margin: 1.3rem 0 1.6rem;
+          margin: 1rem 0 1.3rem;
           line-height: 1.06;
         }
         .h-line {
@@ -193,13 +193,13 @@ export default function Hero({ ready }) {
           max-width: 56ch;
           font-size: clamp(1rem, 1.5vw, 1.2rem);
           color: var(--text-dim);
-          margin: 0 0 2.2rem;
+          margin: 0 0 1.6rem;
         }
         .h-actions {
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
-          margin-bottom: 3.5rem;
+          margin-bottom: 2rem;
         }
         .h-stats {
           margin-top: clamp(1rem, 2vh, 1.5rem);
