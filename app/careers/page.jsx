@@ -12,6 +12,27 @@ const culture = [
   { t: "Grow with us", d: "From two advanced facilities and a fast-growing portfolio, there's room to build a long career." },
 ];
 
+// Decorative circuit/feeder motif for the application form's right panel:
+// a vertical bus with tapped branches, travelling current sparks and pulsing
+// junction nodes. Purely ornamental (aria-hidden); CSS-animated, reduced-motion safe.
+const AP_BRANCHES = [
+  "M150 96 Q108 96 74 128",
+  "M150 210 Q198 210 232 180",
+  "M150 300 Q104 300 66 330",
+  "M150 396 Q200 396 236 372",
+  "M150 470 Q112 470 84 498",
+];
+const AP_NODES = [
+  { x: 150, y: 24, r: 4 },
+  { x: 74, y: 128, r: 4 },
+  { x: 232, y: 180, r: 4 },
+  { x: 150, y: 300, r: 6, hub: true },
+  { x: 66, y: 330, r: 4 },
+  { x: 236, y: 372, r: 4 },
+  { x: 84, y: 498, r: 4 },
+  { x: 150, y: 536, r: 4 },
+];
+
 export default function CareersPage() {
   const [status, setStatus] = useState("idle"); // idle | error | submitting | sent
   const [errors, setErrors] = useState({});
@@ -89,6 +110,7 @@ export default function CareersPage() {
           {/* Application form */}
           <Reveal>
             <div className="apply">
+              <div className="apply-main">
               <div className="apply-head">
                 <span className="eyebrow">Join the team</span>
                 <h2 className="section-title">Apply now</h2>
@@ -151,6 +173,33 @@ export default function CareersPage() {
                   {status === "error" && <p className="form-err" role="alert">Please fix the highlighted fields.</p>}
                 </form>
               )}
+              </div>
+
+              <div className="apply-aside" aria-hidden="true">
+                <span className="ap-glow" />
+                <svg className="ap-svg" viewBox="0 0 300 560" fill="none" preserveAspectRatio="xMidYMid meet">
+                  <defs>
+                    <pattern id="apGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+                      <path d="M30 0H0V30" stroke="rgba(232,114,42,0.07)" strokeWidth="1" fill="none" />
+                    </pattern>
+                  </defs>
+                  <rect width="300" height="560" fill="url(#apGrid)" />
+                  <path className="ap-trace" d="M150 18 L150 542" />
+                  {AP_BRANCHES.map((d, i) => (
+                    <path className="ap-trace" d={d} key={`t${i}`} />
+                  ))}
+                  <path className="ap-spark" d="M150 18 L150 542" pathLength="1" style={{ "--d": "4.5s" }} />
+                  {AP_BRANCHES.map((d, i) => (
+                    <path className="ap-spark" d={d} pathLength="1" key={`s${i}`} style={{ "--d": `${2.6 + i * 0.45}s` }} />
+                  ))}
+                  {AP_NODES.map((n, i) => (
+                    <g transform={`translate(${n.x} ${n.y})`} key={`n${i}`}>
+                      <circle className="ap-ping" r={n.r * 2.4} style={{ "--pd": `${2.6 + i * 0.22}s` }} />
+                      <circle className={`ap-node${n.hub ? " hub" : ""}`} r={n.r} />
+                    </g>
+                  ))}
+                </svg>
+              </div>
             </div>
           </Reveal>
         </div>
@@ -167,7 +216,41 @@ export default function CareersPage() {
         .values { margin: 3rem 0; }
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
-        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 860px; }
+        .apply {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) clamp(220px, 32%, 330px);
+          gap: clamp(1.8rem, 4vw, 3.2rem);
+          align-items: stretch;
+          padding: clamp(2rem, 5vw, 3.5rem);
+          border: 1px solid var(--line); border-radius: 20px;
+          background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2);
+        }
+        .apply-main { min-width: 0; }
+        /* decorative circuit panel */
+        .apply-aside {
+          position: relative; align-self: stretch; min-height: 440px;
+          border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
+          background: var(--bg);
+        }
+        .ap-glow { position: absolute; inset: 0; pointer-events: none;
+          background: radial-gradient(60% 46% at 58% 32%, rgba(232,114,42,.18), transparent 72%); }
+        .ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+        .ap-trace { stroke: rgba(232,114,42,.4); stroke-width: 1.4; }
+        .ap-spark { stroke: #fff2e6; stroke-width: 2.2; stroke-linecap: round;
+          stroke-dasharray: 0.08 0.92; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite; }
+        .ap-node { fill: var(--orange); filter: drop-shadow(0 0 5px rgba(232,114,42,.9)); }
+        .ap-node.hub { fill: #fff2e6; }
+        .ap-ping { fill: rgba(232,114,42,.22); transform-box: fill-box; transform-origin: center;
+          animation: apPing var(--pd, 2.8s) ease-out infinite; }
+        @keyframes apFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+        @keyframes apPing { 0% { transform: scale(.5); opacity: .7; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
+        @media (max-width: 920px) {
+          .apply { grid-template-columns: 1fr; }
+          .apply-aside { display: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ap-spark, .ap-ping { animation: none; opacity: 0; }
+        }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
         .apply-head p { color: var(--text-dim); max-width: 56ch; }
