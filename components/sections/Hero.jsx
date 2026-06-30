@@ -103,6 +103,7 @@ export default function Hero({ ready }) {
         <div className="h-stats">
           <div className="h-bus" aria-hidden="true">
             <span className="h-bus-line" />
+            <span className="h-bus-pulse" />
           </div>
           <ul className="h-credits">
             {heroStats.map((s) => (
@@ -210,7 +211,28 @@ export default function Hero({ ready }) {
           position: relative;
           height: 3px;
           border-radius: 3px;
-          overflow: hidden;
+          overflow: visible;
+        }
+        .h-bus-pulse {
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--orange);
+          box-shadow: 0 0 10px var(--orange);
+          transform: translateY(-50%);
+          animation: hBusFlow 3s linear infinite;
+        }
+        @keyframes hBusFlow {
+          from { left: 0; opacity: 0; }
+          10% { opacity: 1; }
+          90% { opacity: 1; }
+          to { left: 100%; opacity: 0; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .h-bus-pulse { animation: none; opacity: 0; }
         }
         .h-bus-line {
           position: absolute;
