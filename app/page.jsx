@@ -15,7 +15,6 @@ import Hero from "@/components/sections/Hero";
 import Projects from "@/components/sections/Projects";
 import ProductLines from "@/components/sections/ProductLines";
 import Milestones from "@/components/sections/Milestones";
-import PowerMap from "@/components/sections/PowerMap";
 import Values from "@/components/sections/Values";
 import Safety from "@/components/sections/Safety";
 
@@ -73,7 +72,6 @@ export default function Home() {
         <Projects />
         <ProductLines />
         <Milestones />
-        <PowerMap />
         <Values />
         <Safety />
         <PowerlineEffect />

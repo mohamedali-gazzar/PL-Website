@@ -35,6 +35,7 @@ export default function Hero({ ready }) {
       gsap.set(".h-eyebrow", { opacity: 0, y: 20 });
       gsap.set(".h-sub", { opacity: 0, y: 24 });
       gsap.set(".h-actions > *", { opacity: 0, y: 20 });
+      gsap.set(".h-bus-line", { scaleX: 0 });
       gsap.set(".h-stat", { opacity: 0, y: 30 });
     }, root);
     return () => ctx.revert();
@@ -51,7 +52,8 @@ export default function Hero({ ready }) {
         .to(".h-eyebrow", { opacity: 1, y: 0, duration: 0.6 }, 0)
         .to(".h-sub", { opacity: 1, y: 0, duration: 0.7 }, "-=0.45")
         .to(".h-actions > *", { opacity: 1, y: 0, stagger: 0.08, duration: 0.5 }, "-=0.4")
-        .to(".h-stat", { opacity: 1, y: 0, stagger: 0.08, duration: 0.6 }, "-=0.35");
+        .to(".h-bus-line", { scaleX: 1, duration: 1.0, ease: "power2.out" }, "-=0.25")
+        .to(".h-stat", { opacity: 1, y: 0, stagger: 0.09, duration: 0.6 }, "-=0.7");
     }, root);
     return () => ctx.revert();
   }, [ready]);
@@ -99,14 +101,20 @@ export default function Hero({ ready }) {
         </div>
 
         <div className="h-stats">
-          {heroStats.map((s) => (
-            <div className="h-stat" key={s.label}>
-              <div className="num">
-                <CountUp value={s.value} suffix={s.suffix} group={!s.plain} />
-              </div>
-              <div className="lbl">{s.label}</div>
-            </div>
-          ))}
+          <div className="h-bus" aria-hidden="true">
+            <span className="h-bus-line" />
+          </div>
+          <ul className="h-credits">
+            {heroStats.map((s) => (
+              <li className="h-stat" key={s.label}>
+                <span className="h-tap" aria-hidden="true" />
+                <div className="num">
+                  <CountUp value={s.value} suffix={s.suffix} group={!s.plain} />
+                </div>
+                <div className="lbl">{s.label}</div>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
 
@@ -194,23 +202,84 @@ export default function Hero({ ready }) {
           margin-bottom: 3.5rem;
         }
         .h-stats {
-          display: flex;
-          flex-wrap: wrap;
-          gap: clamp(1.5rem, 5vw, 4rem);
+          margin-top: clamp(1rem, 2vh, 1.5rem);
+        }
+        .h-bus {
+          position: relative;
+          height: 3px;
+          border-radius: 3px;
+          overflow: hidden;
+        }
+        .h-bus-line {
+          position: absolute;
+          inset: 0;
+          transform-origin: center;
+          transform: scaleX(1);
+          background: linear-gradient(
+            90deg,
+            rgba(232, 114, 42, 0) 0%,
+            rgba(232, 114, 42, 0.78) 12%,
+            rgba(232, 114, 42, 0.85) 50%,
+            rgba(232, 114, 42, 0.78) 88%,
+            rgba(232, 114, 42, 0) 100%
+          );
+          box-shadow: 0 0 18px rgba(232, 114, 42, 0.42);
+        }
+        .h-credits {
+          list-style: none;
+          margin: clamp(1.2rem, 3vh, 2rem) 0 0;
+          padding: 0;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .h-stat {
+          position: relative;
+          padding: clamp(1rem, 2.2vh, 1.5rem) clamp(0.9rem, 2vw, 1.6rem) 0;
+        }
+        .h-stat + .h-stat {
+          border-left: 1px solid var(--line);
+        }
+        .h-tap {
+          position: absolute;
+          top: 0;
+          left: clamp(0.9rem, 2vw, 1.6rem);
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: var(--orange);
+          box-shadow: 0 0 10px rgba(232, 114, 42, 0.9);
+          transform: translateY(-50%);
         }
         .h-stat .num {
           font-family: var(--font-head);
           font-weight: 800;
-          font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+          font-size: clamp(1.7rem, 3.2vw, 2.8rem);
           color: #fff;
           line-height: 1;
         }
         .h-stat .lbl {
-          font-size: 0.78rem;
-          letter-spacing: 0.04em;
+          display: block;
+          margin-top: 0.55rem;
+          font-size: 0.72rem;
+          letter-spacing: 0.08em;
           color: var(--text-faint);
           text-transform: uppercase;
-          margin-top: 0.4rem;
+        }
+        @media (max-width: 640px) {
+          .h-credits {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.4rem 0;
+          }
+          .h-stat:nth-child(odd) {
+            border-left: none;
+          }
+          .h-stat:nth-child(n + 3) {
+            border-top: 1px solid var(--line);
+            padding-top: clamp(1.1rem, 3vh, 1.6rem);
+          }
+          .h-stat:nth-child(n + 3) .h-tap {
+            display: none;
+          }
         }
         .h-scroll {
           position: absolute;
