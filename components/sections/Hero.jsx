@@ -211,25 +211,28 @@ export default function Hero({ ready }) {
           position: relative;
           height: 3px;
           border-radius: 3px;
-          overflow: visible;
+          overflow: hidden;
         }
         .h-bus-pulse {
           position: absolute;
-          top: 50%;
+          top: 0;
           left: 0;
-          width: 7px;
-          height: 7px;
-          border-radius: 50%;
-          background: var(--orange);
-          box-shadow: 0 0 10px var(--orange);
-          transform: translateY(-50%);
-          animation: hBusFlow 3s linear infinite;
+          height: 100%;
+          width: 140px;
+          opacity: 0;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 242, 230, 0.95),
+            transparent
+          );
+          animation: hBusFlow 3.6s ease-in-out 1.2s infinite;
         }
         @keyframes hBusFlow {
-          from { left: 0; opacity: 0; }
-          10% { opacity: 1; }
-          90% { opacity: 1; }
-          to { left: 100%; opacity: 0; }
+          0% { transform: translateX(-140px); opacity: 0; }
+          12% { opacity: 1; }
+          82% { opacity: 1; }
+          100% { transform: translateX(100vw); opacity: 0; }
         }
         @media (prefers-reduced-motion: reduce) {
           .h-bus-pulse { animation: none; opacity: 0; }
