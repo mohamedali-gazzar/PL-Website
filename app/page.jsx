@@ -15,7 +15,7 @@ import Hero from "@/components/sections/Hero";
 import Projects from "@/components/sections/Projects";
 import ProductLines from "@/components/sections/ProductLines";
 import Milestones from "@/components/sections/Milestones";
-import Values from "@/components/sections/Values";
+import CoreValues from "@/components/CoreValues";
 import Safety from "@/components/sections/Safety";
 
 // Lazy: the trailing sections (all AFTER the last pinned section, Safety, so
@@ -72,7 +72,7 @@ export default function Home() {
         <Projects />
         <ProductLines />
         <Milestones />
-        <Values />
+        <CoreValues />
         <Safety />
         <PowerlineEffect />
         <Logos />

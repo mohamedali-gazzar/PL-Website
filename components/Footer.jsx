@@ -78,13 +78,13 @@ export default function Footer() {
           border-bottom: 1px solid var(--line);
         }
         .flogo {
-          height: 36px;
+          height: 54px;
           width: auto;
-          margin-bottom: 1rem;
+          margin-bottom: 1.1rem;
         }
         .ftag {
           color: var(--orange);
-          font-size: 0.82rem;
+          font-size: 0.98rem;
           font-weight: 500;
           letter-spacing: 0.02em;
           line-height: 1.5;
