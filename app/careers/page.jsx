@@ -3,8 +3,8 @@
 import { useState } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
-import { Reveal } from "@/components/Primitives";
-import { values, brand, formEmail } from "@/lib/content";
+import { Reveal, Field } from "@/components/Primitives";
+import { values, brand, formEmail, isValidEmail } from "@/lib/content";
 
 const culture = [
   { t: "Engineer real impact", d: "Your work energises hospitals, communities and industries across the region — not slideware." },
@@ -23,7 +23,7 @@ export default function CareersPage() {
     const data = new FormData(form);
     const err = {};
     if (!data.get("name")?.trim()) err.name = "Please enter your name";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.get("email") || "")) err.email = "Enter a valid email";
+    if (!isValidEmail(data.get("email"))) err.email = "Enter a valid email";
     const cv = data.get("cv");
     if (!cv || !cv.name) err.cv = "Please attach your CV";
     setErrors(err);
@@ -104,26 +104,12 @@ export default function CareersPage() {
               ) : (
                 <form onSubmit={onSubmit} noValidate>
                   <div className="row2">
-                    <label className="field">
-                      <span>Full name *</span>
-                      <input type="text" name="name" autoComplete="name" />
-                      {errors.name && <em className="err">{errors.name}</em>}
-                    </label>
-                    <label className="field">
-                      <span>Email *</span>
-                      <input type="email" name="email" autoComplete="email" />
-                      {errors.email && <em className="err">{errors.email}</em>}
-                    </label>
+                    <Field name="name" label="Full name *" error={errors.name} />
+                    <Field name="email" label="Email *" type="email" error={errors.email} />
                   </div>
                   <div className="row2">
-                    <label className="field">
-                      <span>Phone</span>
-                      <input type="tel" name="phone" autoComplete="tel" />
-                    </label>
-                    <label className="field">
-                      <span>Position of interest</span>
-                      <input type="text" name="position" placeholder="e.g. Panel Engineer" />
-                    </label>
+                    <Field name="phone" label="Phone" type="tel" autoComplete="tel" />
+                    <Field name="position" label="Position of interest" placeholder="e.g. Panel Engineer" />
                   </div>
                   <label className="field">
                     <span>Message</span>

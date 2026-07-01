@@ -69,3 +69,14 @@ export function CountUp({ value, suffix = "", prefix = "", duration = 1600, grou
     </span>
   );
 }
+
+/** Labelled text field with inline error — shared by the contact + careers forms. */
+export function Field({ name, label, type = "text", error, autoComplete = name, placeholder }) {
+  return (
+    <label className="field">
+      <span>{label}</span>
+      <input type={type} name={name} autoComplete={autoComplete} placeholder={placeholder} />
+      {error && <em className="err">{error}</em>}
+    </label>
+  );
+}

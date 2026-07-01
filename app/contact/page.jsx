@@ -3,8 +3,8 @@
 import { useState } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
-import { Reveal } from "@/components/Primitives";
-import { brand, locations, productLines, formEmail } from "@/lib/content";
+import { Reveal, Field } from "@/components/Primitives";
+import { brand, locations, productLines, formEmail, isValidEmail } from "@/lib/content";
 
 export default function ContactPage() {
   const [status, setStatus] = useState("idle"); // idle | error | submitting | sent
@@ -15,7 +15,7 @@ export default function ContactPage() {
     const data = Object.fromEntries(new FormData(e.currentTarget));
     const err = {};
     if (!data.name?.trim()) err.name = "Please enter your name";
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email || "")) err.email = "Enter a valid email";
+    if (!isValidEmail(data.email)) err.email = "Enter a valid email";
     if (!data.message?.trim()) err.message = "Tell us about your project";
     setErrors(err);
     if (Object.keys(err).length) {
@@ -184,15 +184,5 @@ export default function ContactPage() {
         }
       `}</style>
     </PageShell>
-  );
-}
-
-function Field({ name, label, type = "text", error }) {
-  return (
-    <label className="field">
-      <span>{label}</span>
-      <input type={type} name={name} autoComplete={name} />
-      {error && <em className="err">{error}</em>}
-    </label>
   );
 }

@@ -310,36 +310,6 @@ export default function Hero({ ready }) {
             display: none;
           }
         }
-        .h-scroll {
-          position: absolute;
-          bottom: 2rem;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 3;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.7rem;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: var(--text-faint);
-        }
-        .h-scroll i {
-          width: 1px;
-          height: 46px;
-          background: linear-gradient(var(--orange), transparent);
-          animation: flow 1.8s var(--ease) infinite;
-        }
-        @keyframes flow {
-          0% { transform: scaleY(0); transform-origin: top; }
-          40% { transform: scaleY(1); transform-origin: top; }
-          60% { transform: scaleY(1); transform-origin: bottom; }
-          100% { transform: scaleY(0); transform-origin: bottom; }
-        }
-        @media (max-width: 600px) {
-          .h-scroll { display: none; }
-        }
       `}</style>
     </section>
   );
