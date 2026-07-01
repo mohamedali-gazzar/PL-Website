@@ -12,31 +12,6 @@ const culture = [
   { t: "Grow with us", d: "From two advanced facilities and a fast-growing portfolio, there's room to build a long career." },
 ];
 
-// Decorative "half network": a hub near the card's right edge with branches
-// fanning out only to the LEFT into the card (the other half bleeds off), each
-// reaching a satellite node — travelling current radiates from the hub and the
-// hub/nodes pulse. Purely ornamental (aria-hidden), masked to fade under the form.
-const AP_HUB = { x: 612, y: 262 };
-const AP_NODES = [
-  { x: 360, y: 74 },
-  { x: 470, y: 140 },
-  { x: 280, y: 168 },
-  { x: 242, y: 278 },
-  { x: 280, y: 388 },
-  { x: 470, y: 388 },
-  { x: 360, y: 452 },
-];
-// gently bowed branch from the hub out to a node
-function apBranch(n, bow) {
-  const { x: hx, y: hy } = AP_HUB;
-  const mx = (hx + n.x) / 2, my = (hy + n.y) / 2;
-  const dx = n.x - hx, dy = n.y - hy, len = Math.hypot(dx, dy) || 1;
-  const ux = -dy / len, uy = dx / len;
-  const b = bow * (n.y < hy ? -1 : 1);
-  return `M ${hx} ${hy} Q ${(mx + ux * b).toFixed(1)} ${(my + uy * b).toFixed(1)} ${n.x} ${n.y}`;
-}
-const AP_NET = AP_NODES.map((n, i) => apBranch(n, 18 + (i % 3) * 8));
-
 export default function CareersPage() {
   const [status, setStatus] = useState("idle"); // idle | error | submitting | sent
   const [errors, setErrors] = useState({});
@@ -114,7 +89,6 @@ export default function CareersPage() {
           {/* Application form */}
           <Reveal>
             <div className="apply">
-              <div className="apply-main">
               <div className="apply-head">
                 <span className="eyebrow">Join the team</span>
                 <h2 className="section-title">Apply now</h2>
@@ -177,32 +151,6 @@ export default function CareersPage() {
                   {status === "error" && <p className="form-err" role="alert">Please fix the highlighted fields.</p>}
                 </form>
               )}
-              </div>
-
-              <div className="apply-fx" aria-hidden="true">
-                <span className="ap-glow" />
-                <svg className="ap-svg" viewBox="0 0 640 520" fill="none" preserveAspectRatio="xMaxYMid slice">
-                  {AP_NET.map((d, i) => (
-                    <path className="ap-trace" d={d} key={`t${i}`} />
-                  ))}
-                  {[0, 2, 4, 6].map((i) => (
-                    <path className="ap-spark" d={AP_NET[i]} pathLength="1" key={`s${i}`} style={{ "--d": `${2.8 + i * 0.3}s` }} />
-                  ))}
-                  {AP_NODES.map((n, i) => (
-                    <g transform={`translate(${n.x} ${n.y})`} key={`v${i}`}>
-                      {i % 2 === 0 && <circle className="ap-ring" r="8" style={{ "--rd": `${3 + i * 0.3}s` }} />}
-                      <circle className="ap-pad" r="4.4" />
-                      <circle className="ap-via" r="2.1" />
-                    </g>
-                  ))}
-                  <g transform={`translate(${AP_HUB.x} ${AP_HUB.y})`}>
-                    <circle className="ap-ring" r="12" style={{ "--rd": "3.4s" }} />
-                    <circle className="ap-ring" r="12" style={{ "--rd": "3.4s", animationDelay: "-1.7s" }} />
-                    <circle className="ap-pad" r="8" />
-                    <circle className="ap-hub" r="4.6" />
-                  </g>
-                </svg>
-              </div>
             </div>
           </Reveal>
         </div>
@@ -219,40 +167,7 @@ export default function CareersPage() {
         .values { margin: 3rem 0; }
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
-        .apply {
-          position: relative; overflow: hidden;
-          padding: clamp(2rem, 5vw, 3.5rem);
-          border: 1px solid var(--line); border-radius: 20px;
-          background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2);
-        }
-        .apply-main { position: relative; z-index: 2; max-width: 640px; }
-        /* decorative energy filaments — bleeds into the card, no separate box */
-        .apply-fx {
-          position: absolute; inset: 0; z-index: 0; pointer-events: none;
-          -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 48%);
-          mask-image: linear-gradient(90deg, transparent 0%, #000 48%);
-        }
-        .ap-glow { position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(44% 58% at 90% 50%, rgba(232,114,42,.18), transparent 70%); }
-        .ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-        .ap-trace { stroke: rgba(232,114,42,.3); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-        .ap-pad { fill: none; stroke: rgba(232,114,42,.5); stroke-width: 1.3; }
-        .ap-via { fill: var(--orange); filter: drop-shadow(0 0 4px rgba(232,114,42,.9)); }
-        .ap-hub { fill: #fff2e6; filter: drop-shadow(0 0 8px rgba(232,114,42,1)); }
-        .ap-spark { stroke: #ffcf9e; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-          stroke-dasharray: 0.12 0.88; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite;
-          filter: drop-shadow(0 0 4px rgba(232,114,42,.7)); }
-        .ap-ring { fill: none; stroke: rgba(232,114,42,.65); stroke-width: 1.4;
-          transform-box: fill-box; transform-origin: center; animation: apRing var(--rd, 3s) ease-out infinite; }
-        @keyframes apFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-        @keyframes apRing { 0% { transform: scale(.3); opacity: .85; } 100% { transform: scale(2.8); opacity: 0; } }
-        @media (max-width: 920px) {
-          .apply-main { max-width: none; }
-          .apply-fx { display: none; }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .ap-spark, .ap-ring { animation: none; opacity: 0; }
-        }
+        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 860px; }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
         .apply-head p { color: var(--text-dim); max-width: 56ch; }
