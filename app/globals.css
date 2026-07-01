@@ -49,7 +49,7 @@
   --font-head: "Nexa", var(--font-montserrat), var(--font-poppins), system-ui, sans-serif;
   --font-body: var(--font-poppins), system-ui, -apple-system, sans-serif;
 
-  --container: min(100%, 1920px);
+  --container: 100%;
   --pad: clamp(1.1rem, 2.5vw, 2.25rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
