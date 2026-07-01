@@ -31,7 +31,7 @@ export default function Nav() {
 
   return (
     <>
-      <header className={`nav ${scrolled ? "is-scrolled" : ""}`}>
+      <header className={`nav ${scrolled ? "is-scrolled" : ""} ${open ? "nav-hidden" : ""}`}>
         <div className="nav-inner">
           <Link href="/" className="brand" aria-label="Powerline home">
             <img src="/img/logo-white.webp" alt="Powerline" className="brand-logo" />
@@ -183,7 +183,8 @@ export default function Nav() {
           right: 0;
           z-index: var(--z-nav);
           transition: background 0.4s var(--ease), backdrop-filter 0.4s,
-            border-color 0.4s, padding 0.4s var(--ease);
+            border-color 0.4s, padding 0.4s var(--ease), opacity 0.3s var(--ease),
+            visibility 0.3s;
           border-bottom: 1px solid transparent;
           padding: 0.6rem 0;
         }
@@ -191,6 +192,13 @@ export default function Nav() {
           background: rgba(5, 5, 6, 0.72);
           backdrop-filter: blur(14px);
           border-bottom-color: var(--line);
+        }
+        /* while the mobile drawer is open, hide the fixed header so its logo
+           can't overlap the drawer's own logo (the drawer has its own close). */
+        .nav.nav-hidden {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
         }
         .nav-inner {
           max-width: var(--container);
@@ -339,7 +347,7 @@ export default function Nav() {
         .overlay {
           position: fixed;
           inset: 0;
-          z-index: 90;
+          z-index: 200;
           background: rgba(3, 3, 4, 0.55);
           backdrop-filter: blur(5px);
           opacity: 0;
