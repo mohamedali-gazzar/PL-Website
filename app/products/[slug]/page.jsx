@@ -8,6 +8,7 @@ import { pcssProjects } from "@/lib/pcssProjects";
 import { pralProjects } from "@/lib/pralProjects";
 import { psecProjects } from "@/lib/psecProjects";
 import { lvProjects } from "@/lib/lvProjects";
+import { trProjects } from "@/lib/trProjects";
 import {
   products,
   lowVoltage,
@@ -61,6 +62,16 @@ const lvSection = {
 ["plp", "pro-e", "minicenter", "unikit", "sr-basic"].forEach((slug) => {
   scaleSections[slug] = lvSection;
 });
+
+scaleSections["dry-type-transformers"] = {
+  projects: trProjects,
+  title: "Dry-type transformers delivered",
+  ariaLabel: "The scale of Powerline's dry-type transformer portfolio",
+  lead:
+    "Air-cooled dry-type distribution transformers supplied and commissioned by " +
+    "Powerline for clients across Egypt — a portfolio that keeps growing. " +
+    "Below is a selection of delivered reference projects.",
+};
 
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",

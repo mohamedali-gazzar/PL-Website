@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 // a count-up headline + an infinite marquee "roll-call" of every project name.
 // Reused across products (PCSS / PRAL / PSEC) via props.
 const ROWS = 4;
-const BASE_DUR = 90; // seconds for the longest row; rows vary for an organic feel
+const BASE_DUR = 130; // seconds for the longest row; rows vary for an organic feel
 const MIN_PER_HALF = 12; // repeat short rows so each marquee half always fills the viewport
 
 // Repeat items until there are at least `min`, so a small project list still
