@@ -12,23 +12,33 @@ const culture = [
   { t: "Grow with us", d: "From two advanced facilities and a fast-growing portfolio, there's room to build a long career." },
 ];
 
-// Decorative energy filaments that bleed into the application card from the
-// right — curved traces with travelling current sparks and a few soft pulsing
-// nodes. Purely ornamental (aria-hidden), masked to fade under the form.
-const AP_LINES = [
-  "M660 34 Q470 78 372 168 Q320 216 300 300",
-  "M660 150 Q516 176 428 256 Q372 308 356 380",
-  "M660 258 Q536 278 452 344",
-  "M660 356 Q520 366 452 432",
-  "M660 452 Q548 452 500 502",
+// Decorative circuit-board schematic that bleeds into the application card
+// from the right: a vertical bus feeding orthogonal taps (with 45° chamfers)
+// into junction vias and two components, with travelling current and radar
+// ring-pulses. Purely ornamental (aria-hidden), masked to fade under the form.
+const AP_BUS = "M556 30 V486";
+const AP_TAPS = [
+  "M556 96 H452",
+  "M556 170 H432 L404 198 V252",
+  "M556 256 H488",
+  "M556 338 H440",
+  "M556 412 H452 L428 388 V346",
+  "M556 132 H664",
+  "M556 300 H664",
 ];
-const AP_DOTS = [
-  { x: 300, y: 300, r: 3.5 },
-  { x: 356, y: 380, r: 3 },
-  { x: 452, y: 344, r: 3.5 },
-  { x: 452, y: 432, r: 3 },
-  { x: 470, y: 80, r: 3 },
-  { x: 560, y: 214, r: 4 },
+const AP_VIAS = [
+  { x: 452, y: 96 },
+  { x: 404, y: 252 },
+  { x: 488, y: 256 },
+  { x: 440, y: 338 },
+  { x: 428, y: 346 },
+  { x: 556, y: 30, ring: true },
+  { x: 556, y: 486 },
+  { x: 556, y: 256, ring: true },
+];
+const AP_CHIPS = [
+  { x: 482, y: 85, w: 44, h: 22 },
+  { x: 470, y: 327, w: 42, h: 24 },
 ];
 
 export default function CareersPage() {
@@ -176,16 +186,22 @@ export default function CareersPage() {
               <div className="apply-fx" aria-hidden="true">
                 <span className="ap-glow" />
                 <svg className="ap-svg" viewBox="0 0 640 520" fill="none" preserveAspectRatio="xMaxYMid slice">
-                  {AP_LINES.map((d, i) => (
+                  <path className="ap-trace" d={AP_BUS} />
+                  {AP_TAPS.map((d, i) => (
                     <path className="ap-trace" d={d} key={`t${i}`} />
                   ))}
-                  {AP_LINES.map((d, i) => (
-                    <path className="ap-spark" d={d} pathLength="1" key={`s${i}`} style={{ "--d": `${3 + i * 0.5}s` }} />
+                  {AP_CHIPS.map((c, i) => (
+                    <rect className="ap-chip" x={c.x} y={c.y} width={c.w} height={c.h} rx="4" key={`c${i}`} />
                   ))}
-                  {AP_DOTS.map((n, i) => (
-                    <g transform={`translate(${n.x} ${n.y})`} key={`n${i}`}>
-                      <circle className="ap-ping" r={n.r * 2.6} style={{ "--pd": `${2.8 + i * 0.3}s` }} />
-                      <circle className="ap-node" r={n.r} />
+                  <path className="ap-spark" d={AP_BUS} pathLength="1" style={{ "--d": "5s" }} />
+                  {[1, 3, 5].map((i) => (
+                    <path className="ap-spark" d={AP_TAPS[i]} pathLength="1" key={`s${i}`} style={{ "--d": `${3.2 + i * 0.4}s` }} />
+                  ))}
+                  {AP_VIAS.map((n, i) => (
+                    <g transform={`translate(${n.x} ${n.y})`} key={`v${i}`}>
+                      {n.ring && <circle className="ap-ring" r="9" style={{ "--rd": `${3 + i * 0.35}s` }} />}
+                      <circle className="ap-pad" r="4.6" />
+                      <circle className="ap-via" r="2.2" />
                     </g>
                   ))}
                 </svg>
@@ -222,20 +238,23 @@ export default function CareersPage() {
         .ap-glow { position: absolute; inset: 0; pointer-events: none;
           background: radial-gradient(48% 62% at 86% 16%, rgba(232,114,42,.18), transparent 70%); }
         .ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-        .ap-trace { stroke: rgba(232,114,42,.26); stroke-width: 1.3; }
-        .ap-spark { stroke: #ffd9b8; stroke-width: 2; stroke-linecap: round;
-          stroke-dasharray: 0.06 0.94; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite; }
-        .ap-node { fill: var(--orange); filter: drop-shadow(0 0 5px rgba(232,114,42,.8)); }
-        .ap-ping { fill: rgba(232,114,42,.2); transform-box: fill-box; transform-origin: center;
-          animation: apPing var(--pd, 3s) ease-out infinite; }
+        .ap-trace { stroke: rgba(232,114,42,.3); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+        .ap-chip { fill: rgba(232,114,42,.05); stroke: rgba(232,114,42,.32); stroke-width: 1.2; }
+        .ap-pad { fill: none; stroke: rgba(232,114,42,.5); stroke-width: 1.3; }
+        .ap-via { fill: var(--orange); filter: drop-shadow(0 0 4px rgba(232,114,42,.9)); }
+        .ap-spark { stroke: #ffcf9e; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+          stroke-dasharray: 0.12 0.88; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite;
+          filter: drop-shadow(0 0 4px rgba(232,114,42,.7)); }
+        .ap-ring { fill: none; stroke: rgba(232,114,42,.65); stroke-width: 1.4;
+          transform-box: fill-box; transform-origin: center; animation: apRing var(--rd, 3s) ease-out infinite; }
         @keyframes apFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-        @keyframes apPing { 0% { transform: scale(.5); opacity: .65; } 80%, 100% { transform: scale(1.7); opacity: 0; } }
+        @keyframes apRing { 0% { transform: scale(.3); opacity: .85; } 100% { transform: scale(2.8); opacity: 0; } }
         @media (max-width: 920px) {
           .apply-main { max-width: none; }
           .apply-fx { display: none; }
         }
         @media (prefers-reduced-motion: reduce) {
-          .ap-spark, .ap-ping { animation: none; opacity: 0; }
+          .ap-spark, .ap-ring { animation: none; opacity: 0; }
         }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
