@@ -12,25 +12,23 @@ const culture = [
   { t: "Grow with us", d: "From two advanced facilities and a fast-growing portfolio, there's room to build a long career." },
 ];
 
-// Decorative circuit/feeder motif for the application form's right panel:
-// a vertical bus with tapped branches, travelling current sparks and pulsing
-// junction nodes. Purely ornamental (aria-hidden); CSS-animated, reduced-motion safe.
-const AP_BRANCHES = [
-  "M150 96 Q108 96 74 128",
-  "M150 210 Q198 210 232 180",
-  "M150 300 Q104 300 66 330",
-  "M150 396 Q200 396 236 372",
-  "M150 470 Q112 470 84 498",
+// Decorative energy filaments that bleed into the application card from the
+// right — curved traces with travelling current sparks and a few soft pulsing
+// nodes. Purely ornamental (aria-hidden), masked to fade under the form.
+const AP_LINES = [
+  "M660 34 Q470 78 372 168 Q320 216 300 300",
+  "M660 150 Q516 176 428 256 Q372 308 356 380",
+  "M660 258 Q536 278 452 344",
+  "M660 356 Q520 366 452 432",
+  "M660 452 Q548 452 500 502",
 ];
-const AP_NODES = [
-  { x: 150, y: 24, r: 4 },
-  { x: 74, y: 128, r: 4 },
-  { x: 232, y: 180, r: 4 },
-  { x: 150, y: 300, r: 6, hub: true },
-  { x: 66, y: 330, r: 4 },
-  { x: 236, y: 372, r: 4 },
-  { x: 84, y: 498, r: 4 },
-  { x: 150, y: 536, r: 4 },
+const AP_DOTS = [
+  { x: 300, y: 300, r: 3.5 },
+  { x: 356, y: 380, r: 3 },
+  { x: 452, y: 344, r: 3.5 },
+  { x: 452, y: 432, r: 3 },
+  { x: 470, y: 80, r: 3 },
+  { x: 560, y: 214, r: 4 },
 ];
 
 export default function CareersPage() {
@@ -175,27 +173,19 @@ export default function CareersPage() {
               )}
               </div>
 
-              <div className="apply-aside" aria-hidden="true">
+              <div className="apply-fx" aria-hidden="true">
                 <span className="ap-glow" />
-                <svg className="ap-svg" viewBox="0 0 300 560" fill="none" preserveAspectRatio="xMidYMid meet">
-                  <defs>
-                    <pattern id="apGrid" width="30" height="30" patternUnits="userSpaceOnUse">
-                      <path d="M30 0H0V30" stroke="rgba(232,114,42,0.07)" strokeWidth="1" fill="none" />
-                    </pattern>
-                  </defs>
-                  <rect width="300" height="560" fill="url(#apGrid)" />
-                  <path className="ap-trace" d="M150 18 L150 542" />
-                  {AP_BRANCHES.map((d, i) => (
+                <svg className="ap-svg" viewBox="0 0 640 520" fill="none" preserveAspectRatio="xMaxYMid slice">
+                  {AP_LINES.map((d, i) => (
                     <path className="ap-trace" d={d} key={`t${i}`} />
                   ))}
-                  <path className="ap-spark" d="M150 18 L150 542" pathLength="1" style={{ "--d": "4.5s" }} />
-                  {AP_BRANCHES.map((d, i) => (
-                    <path className="ap-spark" d={d} pathLength="1" key={`s${i}`} style={{ "--d": `${2.6 + i * 0.45}s` }} />
+                  {AP_LINES.map((d, i) => (
+                    <path className="ap-spark" d={d} pathLength="1" key={`s${i}`} style={{ "--d": `${3 + i * 0.5}s` }} />
                   ))}
-                  {AP_NODES.map((n, i) => (
+                  {AP_DOTS.map((n, i) => (
                     <g transform={`translate(${n.x} ${n.y})`} key={`n${i}`}>
-                      <circle className="ap-ping" r={n.r * 2.4} style={{ "--pd": `${2.6 + i * 0.22}s` }} />
-                      <circle className={`ap-node${n.hub ? " hub" : ""}`} r={n.r} />
+                      <circle className="ap-ping" r={n.r * 2.6} style={{ "--pd": `${2.8 + i * 0.3}s` }} />
+                      <circle className="ap-node" r={n.r} />
                     </g>
                   ))}
                 </svg>
@@ -217,36 +207,32 @@ export default function CareersPage() {
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
         .apply {
-          display: grid;
-          grid-template-columns: minmax(0, 1fr) clamp(220px, 32%, 330px);
-          gap: clamp(1.8rem, 4vw, 3.2rem);
-          align-items: stretch;
+          position: relative; overflow: hidden;
           padding: clamp(2rem, 5vw, 3.5rem);
           border: 1px solid var(--line); border-radius: 20px;
           background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2);
         }
-        .apply-main { min-width: 0; }
-        /* decorative circuit panel */
-        .apply-aside {
-          position: relative; align-self: stretch; min-height: 440px;
-          border: 1px solid var(--line); border-radius: 14px; overflow: hidden;
-          background: var(--bg);
+        .apply-main { position: relative; z-index: 2; max-width: 640px; }
+        /* decorative energy filaments — bleeds into the card, no separate box */
+        .apply-fx {
+          position: absolute; inset: 0; z-index: 0; pointer-events: none;
+          -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 48%);
+          mask-image: linear-gradient(90deg, transparent 0%, #000 48%);
         }
         .ap-glow { position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(60% 46% at 58% 32%, rgba(232,114,42,.18), transparent 72%); }
+          background: radial-gradient(48% 62% at 86% 16%, rgba(232,114,42,.18), transparent 70%); }
         .ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-        .ap-trace { stroke: rgba(232,114,42,.4); stroke-width: 1.4; }
-        .ap-spark { stroke: #fff2e6; stroke-width: 2.2; stroke-linecap: round;
-          stroke-dasharray: 0.08 0.92; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite; }
-        .ap-node { fill: var(--orange); filter: drop-shadow(0 0 5px rgba(232,114,42,.9)); }
-        .ap-node.hub { fill: #fff2e6; }
-        .ap-ping { fill: rgba(232,114,42,.22); transform-box: fill-box; transform-origin: center;
-          animation: apPing var(--pd, 2.8s) ease-out infinite; }
+        .ap-trace { stroke: rgba(232,114,42,.26); stroke-width: 1.3; }
+        .ap-spark { stroke: #ffd9b8; stroke-width: 2; stroke-linecap: round;
+          stroke-dasharray: 0.06 0.94; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite; }
+        .ap-node { fill: var(--orange); filter: drop-shadow(0 0 5px rgba(232,114,42,.8)); }
+        .ap-ping { fill: rgba(232,114,42,.2); transform-box: fill-box; transform-origin: center;
+          animation: apPing var(--pd, 3s) ease-out infinite; }
         @keyframes apFlow { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
-        @keyframes apPing { 0% { transform: scale(.5); opacity: .7; } 80%, 100% { transform: scale(1.6); opacity: 0; } }
+        @keyframes apPing { 0% { transform: scale(.5); opacity: .65; } 80%, 100% { transform: scale(1.7); opacity: 0; } }
         @media (max-width: 920px) {
-          .apply { grid-template-columns: 1fr; }
-          .apply-aside { display: none; }
+          .apply-main { max-width: none; }
+          .apply-fx { display: none; }
         }
         @media (prefers-reduced-motion: reduce) {
           .ap-spark, .ap-ping { animation: none; opacity: 0; }

@@ -182,8 +182,8 @@ export default function AboutPage() {
           .mv2-col, .mv2-col.mission, .mv2-col.vision { min-height:0; text-align:center; align-items:center; justify-content:flex-start; }
           .mv2-col p, .mv2-col.vision p { margin-left:auto; margin-right:auto; }
           .tp-head { max-width:100%; }
-          .tp-alliance { gap:.6rem; }
-          .tp-plate { width:min(82vw,360px); }
+          .tp-alliance { gap:.7rem; }
+          .tp-plate { width:min(54vw,240px); }
           .fp-cards { grid-template-columns:1fr; }
         }
         @media (max-width:760px){
