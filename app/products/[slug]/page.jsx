@@ -7,6 +7,7 @@ import ProjectsScale from "@/components/ProjectsScale";
 import { pcssProjects } from "@/lib/pcssProjects";
 import { pralProjects } from "@/lib/pralProjects";
 import { psecProjects } from "@/lib/psecProjects";
+import { lvProjects } from "@/lib/lvProjects";
 import {
   products,
   lowVoltage,
@@ -46,6 +47,20 @@ const scaleSections = {
       "Below is a selection of delivered reference projects.",
   },
 };
+
+// All low-voltage products share the same LV project reference list.
+const lvSection = {
+  projects: lvProjects,
+  title: "Low voltage boards delivered",
+  ariaLabel: "The scale of Powerline's low-voltage portfolio",
+  lead:
+    "Type-tested low voltage boards engineered, built, and delivered by " +
+    "Powerline for clients across Egypt — a portfolio that keeps growing. " +
+    "Below is a selection of delivered reference projects.",
+};
+["plp", "pro-e", "minicenter", "unikit", "sr-basic"].forEach((slug) => {
+  scaleSections[slug] = lvSection;
+});
 
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",
