@@ -12,34 +12,30 @@ const culture = [
   { t: "Grow with us", d: "From two advanced facilities and a fast-growing portfolio, there's room to build a long career." },
 ];
 
-// Decorative circuit-board schematic that bleeds into the application card
-// from the right: a vertical bus feeding orthogonal taps (with 45° chamfers)
-// into junction vias and two components, with travelling current and radar
-// ring-pulses. Purely ornamental (aria-hidden), masked to fade under the form.
-const AP_BUS = "M556 30 V486";
-const AP_TAPS = [
-  "M556 96 H452",
-  "M556 170 H432 L404 198 V252",
-  "M556 256 H488",
-  "M556 338 H440",
-  "M556 412 H452 L428 388 V346",
-  "M556 132 H664",
-  "M556 300 H664",
+// Decorative "half network": a hub near the card's right edge with branches
+// fanning out only to the LEFT into the card (the other half bleeds off), each
+// reaching a satellite node — travelling current radiates from the hub and the
+// hub/nodes pulse. Purely ornamental (aria-hidden), masked to fade under the form.
+const AP_HUB = { x: 612, y: 262 };
+const AP_NODES = [
+  { x: 360, y: 74 },
+  { x: 470, y: 140 },
+  { x: 280, y: 168 },
+  { x: 242, y: 278 },
+  { x: 280, y: 388 },
+  { x: 470, y: 388 },
+  { x: 360, y: 452 },
 ];
-const AP_VIAS = [
-  { x: 452, y: 96 },
-  { x: 404, y: 252 },
-  { x: 488, y: 256 },
-  { x: 440, y: 338 },
-  { x: 428, y: 346 },
-  { x: 556, y: 30, ring: true },
-  { x: 556, y: 486 },
-  { x: 556, y: 256, ring: true },
-];
-const AP_CHIPS = [
-  { x: 482, y: 85, w: 44, h: 22 },
-  { x: 470, y: 327, w: 42, h: 24 },
-];
+// gently bowed branch from the hub out to a node
+function apBranch(n, bow) {
+  const { x: hx, y: hy } = AP_HUB;
+  const mx = (hx + n.x) / 2, my = (hy + n.y) / 2;
+  const dx = n.x - hx, dy = n.y - hy, len = Math.hypot(dx, dy) || 1;
+  const ux = -dy / len, uy = dx / len;
+  const b = bow * (n.y < hy ? -1 : 1);
+  return `M ${hx} ${hy} Q ${(mx + ux * b).toFixed(1)} ${(my + uy * b).toFixed(1)} ${n.x} ${n.y}`;
+}
+const AP_NET = AP_NODES.map((n, i) => apBranch(n, 18 + (i % 3) * 8));
 
 export default function CareersPage() {
   const [status, setStatus] = useState("idle"); // idle | error | submitting | sent
@@ -186,24 +182,25 @@ export default function CareersPage() {
               <div className="apply-fx" aria-hidden="true">
                 <span className="ap-glow" />
                 <svg className="ap-svg" viewBox="0 0 640 520" fill="none" preserveAspectRatio="xMaxYMid slice">
-                  <path className="ap-trace" d={AP_BUS} />
-                  {AP_TAPS.map((d, i) => (
+                  {AP_NET.map((d, i) => (
                     <path className="ap-trace" d={d} key={`t${i}`} />
                   ))}
-                  {AP_CHIPS.map((c, i) => (
-                    <rect className="ap-chip" x={c.x} y={c.y} width={c.w} height={c.h} rx="4" key={`c${i}`} />
+                  {[0, 2, 4, 6].map((i) => (
+                    <path className="ap-spark" d={AP_NET[i]} pathLength="1" key={`s${i}`} style={{ "--d": `${2.8 + i * 0.3}s` }} />
                   ))}
-                  <path className="ap-spark" d={AP_BUS} pathLength="1" style={{ "--d": "5s" }} />
-                  {[1, 3, 5].map((i) => (
-                    <path className="ap-spark" d={AP_TAPS[i]} pathLength="1" key={`s${i}`} style={{ "--d": `${3.2 + i * 0.4}s` }} />
-                  ))}
-                  {AP_VIAS.map((n, i) => (
+                  {AP_NODES.map((n, i) => (
                     <g transform={`translate(${n.x} ${n.y})`} key={`v${i}`}>
-                      {n.ring && <circle className="ap-ring" r="9" style={{ "--rd": `${3 + i * 0.35}s` }} />}
-                      <circle className="ap-pad" r="4.6" />
-                      <circle className="ap-via" r="2.2" />
+                      {i % 2 === 0 && <circle className="ap-ring" r="8" style={{ "--rd": `${3 + i * 0.3}s` }} />}
+                      <circle className="ap-pad" r="4.4" />
+                      <circle className="ap-via" r="2.1" />
                     </g>
                   ))}
+                  <g transform={`translate(${AP_HUB.x} ${AP_HUB.y})`}>
+                    <circle className="ap-ring" r="12" style={{ "--rd": "3.4s" }} />
+                    <circle className="ap-ring" r="12" style={{ "--rd": "3.4s", animationDelay: "-1.7s" }} />
+                    <circle className="ap-pad" r="8" />
+                    <circle className="ap-hub" r="4.6" />
+                  </g>
                 </svg>
               </div>
             </div>
@@ -236,12 +233,12 @@ export default function CareersPage() {
           mask-image: linear-gradient(90deg, transparent 0%, #000 48%);
         }
         .ap-glow { position: absolute; inset: 0; pointer-events: none;
-          background: radial-gradient(48% 62% at 86% 16%, rgba(232,114,42,.18), transparent 70%); }
+          background: radial-gradient(44% 58% at 90% 50%, rgba(232,114,42,.18), transparent 70%); }
         .ap-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
         .ap-trace { stroke: rgba(232,114,42,.3); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-        .ap-chip { fill: rgba(232,114,42,.05); stroke: rgba(232,114,42,.32); stroke-width: 1.2; }
         .ap-pad { fill: none; stroke: rgba(232,114,42,.5); stroke-width: 1.3; }
         .ap-via { fill: var(--orange); filter: drop-shadow(0 0 4px rgba(232,114,42,.9)); }
+        .ap-hub { fill: #fff2e6; filter: drop-shadow(0 0 8px rgba(232,114,42,1)); }
         .ap-spark { stroke: #ffcf9e; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
           stroke-dasharray: 0.12 0.88; stroke-dashoffset: 1; animation: apFlow var(--d, 3s) linear infinite;
           filter: drop-shadow(0 0 4px rgba(232,114,42,.7)); }
