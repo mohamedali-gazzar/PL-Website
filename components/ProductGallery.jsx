@@ -62,12 +62,14 @@ export default function ProductGallery({ images, alt, badge }) {
           border-radius: 20px;
           overflow: hidden;
           border: 1px solid var(--line);
-          background: var(--bg-3);
+          /* white so off-ratio images (e.g. certificates) show whole, padded
+             with white space rather than being cropped */
+          background: #fff;
         }
         .main img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
         }
         .frame {
           position: absolute;
@@ -163,7 +165,7 @@ export default function ProductGallery({ images, alt, badge }) {
           padding: 0;
           border-radius: 12px;
           border: 1px solid var(--line);
-          background: var(--bg-3);
+          background: #fff;
           cursor: pointer;
           overflow: hidden;
           transition: border-color 0.25s, transform 0.25s var(--ease);
@@ -171,7 +173,7 @@ export default function ProductGallery({ images, alt, badge }) {
         .thumb img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
         }
         .thumb:hover {
           transform: translateY(-3px);

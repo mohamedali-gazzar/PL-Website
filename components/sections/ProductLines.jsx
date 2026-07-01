@@ -77,8 +77,11 @@ export default function ProductLines() {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: clamp(1rem, 1.5vw, 1.6rem);
-          align-items: start;
+          align-items: stretch;
         }
+        /* each card is wrapped in a .reveal grid item — let the card fill it so
+           all cards in a row share the tallest card's height */
+        .flow > :global(.reveal) { display: flex; min-width: 0; }
         /* flowing energy line behind the cards */
         .flow-line {
           position: absolute;
@@ -117,6 +120,7 @@ export default function ProductLines() {
         .fcard {
           position: relative;
           z-index: 1;
+          flex: 1;
           border: 1px solid var(--line);
           border-radius: 20px;
           overflow: hidden;
@@ -133,7 +137,9 @@ export default function ProductLines() {
             0 0 40px rgba(232, 114, 42, 0.15);
         }
         .fcard-link {
-          display: block;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
         .fcard-media {
           position: relative;
@@ -184,6 +190,9 @@ export default function ProductLines() {
         }
         .fcard-body {
           padding: 1.6rem 1.6rem 1.9rem;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
         .fcard-body h3 {
           font-size: clamp(1.5rem, 2.2vw, 2rem);
@@ -201,6 +210,7 @@ export default function ProductLines() {
           gap: 1.8rem;
           padding-top: 1.1rem;
           border-top: 1px solid var(--line);
+          margin-top: auto;
         }
         .fv {
           display: block;
