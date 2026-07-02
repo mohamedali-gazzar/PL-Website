@@ -49,8 +49,8 @@ function Marquee({ items, reverse, alt }) {
         }
         .logo {
           flex: 0 0 auto;
-          height: 100px;
-          width: 184px;
+          height: 6.25rem;
+          width: 11.5rem;
           display: flex;
           align-items: center;
           justify-content: center;

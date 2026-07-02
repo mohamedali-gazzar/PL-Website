@@ -227,8 +227,8 @@ export default function Projects() {
         .pj-card {
           flex: 0 0 auto;
           margin-right: clamp(1.5rem, 3vw, 3rem);
-          width: clamp(280px, 30vw, 400px);
-          height: clamp(300px, 42vh, 430px);
+          width: clamp(17.5rem, 30vw, 25rem);
+          height: clamp(18.75rem, 42vh, 26.875rem);
           position: relative;
           border: 1px solid var(--line);
           border-radius: 18px;

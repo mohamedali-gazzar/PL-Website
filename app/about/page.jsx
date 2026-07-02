@@ -121,7 +121,7 @@ export default function AboutPage() {
         /* ───────── MISSION & VISION ───────── */
         .mv2 { padding: clamp(4rem,11vh,8rem) 0; background: var(--bg-2); }
         .mv2-grid { display:grid; grid-template-columns: 1fr 2px 1fr; gap: clamp(1.5rem,5vw,4.5rem); align-items:stretch; }
-        .mv2-col { position:relative; display:flex; flex-direction:column; padding: clamp(1.5rem,3vw,2.5rem) 0; min-height: 340px; }
+        .mv2-col { position:relative; display:flex; flex-direction:column; padding: clamp(1.5rem,3vw,2.5rem) 0; min-height: 21.25rem; }
         .mv2-col.mission { justify-content:flex-end; }       /* grounded — today */
         .mv2-col.vision { justify-content:flex-start; text-align:left; align-items:flex-start; } /* reaching — future (left-aligned) */
         .mv2-ghost { font-family:var(--font-head); font-weight:800; font-size:clamp(3.5rem,8vw,6.5rem); line-height:.8; color:transparent; -webkit-text-stroke:1px rgba(232,114,42,.16); margin-bottom:.6rem; }
@@ -140,7 +140,7 @@ export default function AboutPage() {
         .tp-head h2 { font-size:clamp(1.45rem,2.8vw,2.25rem); text-transform:uppercase; color:#fff; line-height:1.25; margin-top:1rem; }
         .tp-head h2 .kw { color:var(--orange); }
         .tp-sub { margin:1.1rem auto 0; max-width:58ch; color:var(--text-dim); font-size:clamp(1rem,1.4vw,1.18rem); line-height:1.6; }
-        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:1040px; }
+        .tp-alliance { display:flex; align-items:center; justify-content:center; gap:0; margin: clamp(2.5rem,7vh,4.5rem) auto 0; max-width:65rem; }
         .tp-wire { flex:1; height:2px; background:linear-gradient(90deg, transparent, rgba(232,114,42,.6)); position:relative; }
         .tp-wire.right { background:linear-gradient(90deg, rgba(232,114,42,.6), transparent); }
         .tp-wire::after { content:""; position:absolute; top:50%; width:7px; height:7px; border-radius:50%; background:var(--orange); transform:translateY(-50%); box-shadow:0 0 10px var(--orange); animation: tpFlow 3s linear infinite; }
@@ -148,7 +148,7 @@ export default function AboutPage() {
         .tp-wire.right::after { right:0; animation-name:tpFlowL; }
         @keyframes tpFlowR { from{ left:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ left:100%; opacity:0;} }
         @keyframes tpFlowL { from{ right:0; opacity:0;} 10%{opacity:1;} 90%{opacity:1;} to{ right:100%; opacity:0;} }
-        .tp-plate { position:relative; flex:0 0 auto; width:min(48vw,460px); aspect-ratio:3.2/1; border-radius:14px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
+        .tp-plate { position:relative; flex:0 0 auto; width:min(48vw,28.75rem); aspect-ratio:3.2/1; border-radius:14px; overflow:hidden; background:#fff; border:1px solid rgba(232,114,42,.4); box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 0 4px rgba(232,114,42,.08); display:grid; place-items:center; transition:transform .4s var(--ease), box-shadow .4s; }
         .tp-plate:hover { transform:translateY(-5px); box-shadow:0 30px 70px rgba(0,0,0,.6), 0 0 0 4px rgba(232,114,42,.18); }
         .tp-plate img { width:78%; height:auto; object-fit:contain; }
         .tp-sheen { position:absolute; inset:0; z-index:2; background:linear-gradient(115deg, transparent 42%, rgba(255,255,255,.75) 50%, transparent 58%); background-size:280% 100%; background-position:160% 0; pointer-events:none; animation: tpSheen 5.5s ease-in-out infinite; }
@@ -157,7 +157,7 @@ export default function AboutPage() {
 
         /* ───────── OUR FOOTPRINT ───────── */
         .fp { padding: clamp(4rem,11vh,7.5rem) 0 clamp(5rem,12vh,8rem); background: linear-gradient(180deg, var(--bg), #060607); }
-        .fp-head { text-align:center; max-width:860px; margin:0 auto clamp(2.5rem,6vh,4rem); }
+        .fp-head { text-align:center; max-width:53.75rem; margin:0 auto clamp(2.5rem,6vh,4rem); }
         .fp-head .eyebrow{ justify-content:center; }
         .fp-title { margin:1rem auto; text-wrap:balance; }
         .fp-note { color:var(--text-dim); font-size:clamp(.98rem,1.3vw,1.1rem); line-height:1.6; max-width:56ch; margin:0 auto; }

@@ -274,7 +274,7 @@ export default function CoreValues() {
         }
         .cv-diagram {
           position: relative;
-          width: min(90vw, 860px);
+          width: min(90vw, 53.75rem);
           aspect-ratio: 1000 / 720;
           margin: 0 auto;
         }
@@ -371,7 +371,7 @@ export default function CoreValues() {
         .cv-vcard {
           position: absolute;
           width: max-content;
-          max-width: 230px;
+          max-width: 14.375rem;
           opacity: 0;
           transition: opacity 0.55s var(--ease);
           pointer-events: none;

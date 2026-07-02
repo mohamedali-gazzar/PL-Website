@@ -79,10 +79,17 @@ html {
    can still zoom. Kicks in only above 1920px, so laptops are untouched. */
 @media (min-width: 1921px) {
   :root {
-    /* Grow with width, but never beyond what the viewport HEIGHT can fit
-       (the 2.1vh term), so a wide-but-short window doesn't inflate the hero
-       past the fold. Tall large monitors are governed by the width term. */
-    font-size: clamp(16px, min(calc(16px + (100vw - 1920px) * 0.006), 2.1vh), 24px);
+    /* Grow the root PROPORTIONALLY with viewport width so the page stays a
+       uniformly-scaled version of itself at any size — including deep browser
+       zoom-out, where the layout viewport becomes 2x-4x wider. Everything is
+       rem/clamp, so this scales type, spacing, container and hero together and
+       the content keeps filling the screen instead of shrinking into a small
+       centred block with huge empty margins.
+       The 2.1vh term caps growth to what a short viewport can fit vertically
+       (real wide-but-short windows only — zoom preserves aspect ratio so it
+       never bites there). The 64px ceiling is only a runaway backstop; it sits
+       far above any realistic zoom so scaling stays linear in practice. */
+    font-size: clamp(16px, min(calc(16px + (100vw - 1920px) * 0.006), 2.1vh), 64px);
   }
 }
 
@@ -286,6 +293,10 @@ button {
 .brand-logo {
   height: 5.5rem; /* 88px at base; scales with the root on large screens */
   width: auto;
+  /* exempt from the global img{max-width:100%} — otherwise, once the root
+     scales up, the auto width is clamped to the flex item's box and the
+     aspect ratio drags the height back down (logo stops scaling). */
+  max-width: none;
   display: block;
   transition: height 0.4s var(--ease);
 }

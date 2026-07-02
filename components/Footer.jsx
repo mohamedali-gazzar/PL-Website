@@ -78,8 +78,9 @@ export default function Footer() {
           border-bottom: 1px solid var(--line);
         }
         .flogo {
-          height: 54px;
+          height: 3.375rem;
           width: auto;
+          max-width: none;
           margin-bottom: 1.1rem;
         }
         .ftag {

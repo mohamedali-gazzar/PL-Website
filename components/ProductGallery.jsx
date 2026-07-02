@@ -160,8 +160,8 @@ export default function ProductGallery({ images, alt, badge }) {
           flex-wrap: wrap;
         }
         .thumb {
-          width: 84px;
-          height: 84px;
+          width: 5.25rem;
+          height: 5.25rem;
           padding: 0;
           border-radius: 12px;
           border: 1px solid var(--line);

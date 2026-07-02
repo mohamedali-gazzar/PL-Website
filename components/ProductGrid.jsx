@@ -51,7 +51,7 @@ export default function ProductGrid({ items }) {
       <style jsx>{`
         .grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          grid-template-columns: repeat(auto-fill, minmax(min(17.5rem, 100%), 1fr));
           gap: 1.3rem;
         }
         .prod-wrap {

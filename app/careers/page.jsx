@@ -153,7 +153,7 @@ export default function CareersPage() {
         .values { margin: 3rem 0; }
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
-        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 860px; }
+        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 53.75rem; }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
         .apply-head p { color: var(--text-dim); max-width: 56ch; }

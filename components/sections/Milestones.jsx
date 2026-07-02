@@ -400,8 +400,8 @@ export default function Milestones() {
           right: 0;
           bottom: 0;
           z-index: 3;
-          width: 60px;
-          height: 60px;
+          width: 3.75rem;
+          height: 3.75rem;
           display: grid;
           place-items: center;
           border-radius: 50%;

@@ -243,7 +243,7 @@ export default function Nav() {
           position: absolute;
           top: 100%;
           left: 0;
-          min-width: 230px;
+          min-width: 14.375rem;
           padding: 0.5rem;
           background: rgba(12, 12, 14, 0.95);
           backdrop-filter: blur(16px);
@@ -280,7 +280,7 @@ export default function Nav() {
           top: -0.5rem;
           left: 100%;
           margin-left: 0.4rem;
-          min-width: 215px;
+          min-width: 13.4375rem;
           padding: 0.5rem;
           background: rgba(12, 12, 14, 0.97);
           backdrop-filter: blur(16px);

@@ -190,7 +190,7 @@ export default function ProjectsScale({
           .sc-sec.in .sc-head, .sc-sec.in .sc-rows { transition: none; }
           .sc-rows {
             -webkit-mask-image: none; mask-image: none;
-            max-width: var(--maxw, 1200px); padding: 0 clamp(1.2rem, 5vw, 2rem);
+            max-width: var(--maxw, 75rem); padding: 0 clamp(1.2rem, 5vw, 2rem);
             margin-left: auto; margin-right: auto;
           }
           .sc-row { overflow: visible; }
