@@ -187,11 +187,11 @@ export default function Hero({ ready }) {
           display: flex;
           flex-direction: column;
           width: 100%;
-          /* keep content anchored left at ~1920 on ultra-wide (video fills the
-             rest) so nothing stretches; unchanged at <=1920. */
-          max-width: 1920px;
-          margin-left: 0;
-          margin-right: auto;
+          /* Centered and capped at 120rem (=1920px at base). Below 1920 this is
+             full-width and unchanged; above 1920 the root scales so it grows and
+             stays centered — no more 1920px block pinned to the left. */
+          max-width: 120rem;
+          margin-inline: auto;
         }
         .hero-title {
           font-size: clamp(1.5rem, 3.6vw, 3.4rem);

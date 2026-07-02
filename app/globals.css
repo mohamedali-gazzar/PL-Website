@@ -49,7 +49,10 @@
   --font-head: "Nexa", var(--font-montserrat), var(--font-poppins), system-ui, sans-serif;
   --font-body: var(--font-poppins), system-ui, -apple-system, sans-serif;
 
-  --container: 100%;
+  /* Centered page width. 120rem = 1920px at the base 16px root, so screens up
+     to 1920 are full-width and unchanged; above 1920 the root scales (below),
+     so this grows with it and the content is centered instead of edge-to-edge. */
+  --container: 120rem;
   --pad: clamp(1.1rem, 2.5vw, 2.25rem);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 
@@ -66,6 +69,21 @@
 
 html {
   -webkit-text-size-adjust: 100%;
+}
+
+/* ── Large-desktop fluid scaling ──────────────────────────────────────────
+   The whole UI is sized in rem/clamp, so growing the root font-size on wide
+   screens scales everything — type, spacing, buttons, logo, stats, nav — in
+   proportion, filling large monitors instead of freezing at laptop size.
+   No zoom / transform: this is real layout the browser reflows and the user
+   can still zoom. Kicks in only above 1920px, so laptops are untouched. */
+@media (min-width: 1921px) {
+  :root {
+    /* Grow with width, but never beyond what the viewport HEIGHT can fit
+       (the 2.1vh term), so a wide-but-short window doesn't inflate the hero
+       past the fold. Tall large monitors are governed by the width term. */
+    font-size: clamp(16px, min(calc(16px + (100vw - 1920px) * 0.006), 2.1vh), 24px);
+  }
 }
 
 /* Lenis smooth-scroll wiring */
@@ -266,13 +284,13 @@ button {
 /* Nav logo sizing — global because it lives inside a Next <Link>
    that doesn't receive styled-jsx scope classes. */
 .brand-logo {
-  height: 88px;
+  height: 5.5rem; /* 88px at base; scales with the root on large screens */
   width: auto;
   display: block;
   transition: height 0.4s var(--ease);
 }
 .nav.is-scrolled .brand-logo {
-  height: 66px;
+  height: 4.125rem; /* 66px at base */
 }
 
 @media (prefers-reduced-motion: reduce) {
