@@ -122,18 +122,24 @@ export default function Hero({ ready }) {
       <style jsx>{`
         .hero {
           position: relative;
-          height: 100vh;
-          height: 100dvh;
+          /* min-height (not a fixed height) so tall content is never clipped;
+             the content is sized fluidly below to fit within the first screen. */
+          min-height: 100vh;
+          min-height: 100svh;
           display: flex;
           align-items: center;
-          overflow: hidden;
-          /* Clear the fixed navbar so the eyebrow never collides with the logo. */
-          padding-top: clamp(6.5rem, 12vh, 8rem);
+          /* Clear the fixed navbar; both paddings shrink on short/zoomed
+             viewports so the stats always fit inside the first screen. */
+          padding-top: clamp(5.25rem, 9vh, 7.5rem);
+          padding-bottom: clamp(1.5rem, 4vh, 2.75rem);
         }
         .hero-media {
           position: absolute;
           inset: 0;
           z-index: 0;
+          /* clip the slight video/poster over-scale here instead of on .hero,
+             so hero content can never be clipped */
+          overflow: hidden;
         }
         .hero-media img,
         .hero-video {
@@ -184,7 +190,7 @@ export default function Hero({ ready }) {
         .hero-title {
           font-size: clamp(1.4rem, 3.4vw, 2.9rem);
           text-transform: uppercase;
-          margin: 1rem 0 1.3rem;
+          margin: clamp(0.55rem, 1.4vh, 1rem) 0 clamp(0.8rem, 1.8vh, 1.3rem);
           line-height: 1.07;
         }
         .h-line {
@@ -202,13 +208,13 @@ export default function Hero({ ready }) {
           max-width: 56ch;
           font-size: clamp(1rem, 1.5vw, 1.2rem);
           color: var(--text-dim);
-          margin: 0 0 1.6rem;
+          margin: 0 0 clamp(1rem, 2.2vh, 1.6rem);
         }
         .h-actions {
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
-          margin-bottom: 2rem;
+          margin-bottom: clamp(1.1rem, 2.6vh, 2rem);
         }
         .h-stats {
           margin-top: clamp(1rem, 2vh, 1.5rem);
@@ -297,6 +303,12 @@ export default function Hero({ ready }) {
           letter-spacing: 0.08em;
           color: var(--text-faint);
           text-transform: uppercase;
+        }
+        /* very large screens: let the background fill a touch more; the content
+           stays capped at 1920 (above) so it never stretches with the frame */
+        @media (min-width: 1921px) {
+          .hero-media img,
+          .hero-video { transform: scale(1.1); }
         }
         @media (max-width: 640px) {
           .hero { padding-top: clamp(5.5rem, 16vw, 7rem); }
