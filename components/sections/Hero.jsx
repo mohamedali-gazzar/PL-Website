@@ -122,16 +122,16 @@ export default function Hero({ ready }) {
       <style jsx>{`
         .hero {
           position: relative;
-          /* min-height (not a fixed height) so tall content is never clipped;
-             the content is sized fluidly below to fit within the first screen. */
+          /* min-height (not a fixed height) so tall content is never clipped. */
           min-height: 100vh;
           min-height: 100svh;
           display: flex;
-          align-items: center;
-          /* Clear the fixed navbar; both paddings shrink on short/zoomed
-             viewports so the stats always fit inside the first screen. */
-          padding-top: clamp(5.25rem, 9vh, 7.5rem);
-          padding-bottom: clamp(1.5rem, 4vh, 2.75rem);
+          flex-direction: column;
+          /* Clear the fixed navbar. The copy sits in the upper area and the stats
+             are pinned to the bottom (below), so the hero fills the screen
+             top-to-bottom and feels spacious instead of centered/squeezed. */
+          padding-top: clamp(7rem, 10vh, 8.5rem);
+          padding-bottom: clamp(2rem, 4vh, 3.25rem);
         }
         .hero-media {
           position: absolute;
@@ -179,19 +179,23 @@ export default function Hero({ ready }) {
         .hero-content {
           position: relative;
           z-index: 2;
-          padding-top: 0;
-          /* On ultra-wide screens keep the content anchored to the left at its
-             ~1920 width (video fills the rest) so the stats don't spread apart.
-             Unchanged at <=1920 (content is narrower than the cap anyway). */
+          /* fill the hero height and distribute: copy at the top, stats pinned
+             to the bottom (via .h-stats margin-top:auto below). */
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          /* keep content anchored left at ~1920 on ultra-wide (video fills the
+             rest) so nothing stretches; unchanged at <=1920. */
           max-width: 1920px;
           margin-left: 0;
           margin-right: auto;
         }
         .hero-title {
-          font-size: clamp(1.4rem, 3.4vw, 2.9rem);
+          font-size: clamp(1.5rem, 3.6vw, 3.4rem);
           text-transform: uppercase;
-          margin: clamp(0.55rem, 1.4vh, 1rem) 0 clamp(0.8rem, 1.8vh, 1.3rem);
-          line-height: 1.07;
+          margin: 1.1rem 0 1.5rem;
+          line-height: 1.06;
         }
         .h-line {
           display: block;
@@ -208,16 +212,18 @@ export default function Hero({ ready }) {
           max-width: 56ch;
           font-size: clamp(1rem, 1.5vw, 1.2rem);
           color: var(--text-dim);
-          margin: 0 0 clamp(1rem, 2.2vh, 1.6rem);
+          margin: 0 0 2rem;
         }
         .h-actions {
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
-          margin-bottom: clamp(1.1rem, 2.6vh, 2rem);
+          margin-bottom: 2rem;
         }
         .h-stats {
-          margin-top: clamp(1rem, 2vh, 1.5rem);
+          /* pin the stats to the bottom; the flexible gap above it is the
+             breathing room that grows on tall/large screens. */
+          margin-top: auto;
         }
         .h-bus {
           position: relative;
@@ -304,6 +310,22 @@ export default function Hero({ ready }) {
           color: var(--text-faint);
           text-transform: uppercase;
         }
+        /* Short/zoomed viewports: tighten only the copy's internal SPACING (the
+           navbar-clearing top padding and the big title stay) so the bottom-pinned
+           stats never collide with the copy. */
+        @media (max-height: 760px) {
+          .hero { padding-bottom: clamp(1.5rem, 3vh, 2.25rem); }
+          .hero-title { margin: 0.7rem 0 1rem; }
+          .h-sub { margin-bottom: 1.4rem; }
+          .h-actions { margin-bottom: 1.4rem; }
+        }
+        /* Very short viewports only: nudge the title down a touch — still bold. */
+        @media (max-height: 680px) {
+          .hero-title { font-size: clamp(1.3rem, 3.1vw, 2.6rem); margin: 0.5rem 0 0.8rem; }
+          .h-sub { margin-bottom: 1.1rem; }
+          .h-actions { margin-bottom: 1.1rem; }
+          .h-credits { margin-top: clamp(0.9rem, 2vh, 1.3rem); }
+        }
         /* very large screens: let the background fill a touch more; the content
            stays capped at 1920 (above) so it never stretches with the frame */
         @media (min-width: 1921px) {
@@ -312,6 +334,13 @@ export default function Hero({ ready }) {
         }
         @media (max-width: 640px) {
           .hero { padding-top: clamp(5.5rem, 16vw, 7rem); }
+          /* on phones keep the content grouped/centred (not pinned to the bottom)
+             and tighter so it fits the first screen */
+          .hero-content { justify-content: center; }
+          .h-stats { margin-top: clamp(1.5rem, 5vh, 2.5rem); }
+          .hero-title { margin: 0.6rem 0 0.9rem; }
+          .h-sub { margin-bottom: 1.3rem; }
+          .h-actions { margin-bottom: 1.5rem; }
           .h-credits {
             grid-template-columns: repeat(2, 1fr);
             gap: 1.1rem 0;
