@@ -324,8 +324,10 @@ export default function Hero({ ready }) {
           .hero-title { margin: 0.7rem 0 1rem; }
           .h-sub { margin-bottom: 1.4rem; }
         }
-        /* Very short viewports only: nudge the title down a touch — still bold. */
-        @media (max-height: 680px) {
+        /* Cramped / zoomed viewports: ease the title + spacing down a touch so the
+           copy can never collide with the stats line. Kicks in below 730px height —
+           genuinely large screens (taller) keep the full-scale title. */
+        @media (max-height: 730px) {
           .hero-title { font-size: clamp(1.3rem, 3.1vw, 2.6rem); margin: 0.5rem 0 0.8rem; }
           .h-sub { margin-bottom: 1.1rem; }
           .h-credits { margin-top: clamp(0.9rem, 2vh, 1.3rem); }
