@@ -174,6 +174,12 @@ export default function Hero({ ready }) {
           position: relative;
           z-index: 2;
           padding-top: 0;
+          /* On ultra-wide screens keep the content anchored to the left at its
+             ~1920 width (video fills the rest) so the stats don't spread apart.
+             Unchanged at <=1920 (content is narrower than the cap anyway). */
+          max-width: 1920px;
+          margin-left: 0;
+          margin-right: auto;
         }
         .hero-title {
           font-size: clamp(1.4rem, 3.4vw, 2.9rem);
