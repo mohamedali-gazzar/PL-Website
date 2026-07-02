@@ -19,7 +19,7 @@ export default function ContactPage() {
     if (!data.message?.trim()) err.message = "Tell us about your project";
     setErrors(err);
     if (Object.keys(err).length) {
-      setStatus("error");
+      setStatus("invalid");
       return;
     }
     setStatus("submitting");
@@ -42,9 +42,12 @@ export default function ContactPage() {
         }),
       });
       const out = await res.json().catch(() => ({}));
-      setStatus(out.success === "true" || out.success === true ? "sent" : "error");
+      // NOTE: FormSubmit returns success:"false" until the recipient inbox
+      // (formEmail) has clicked the one-time "Activate Form" link it emails on
+      // the first submission. Once activated this resolves to "true".
+      setStatus(out.success === "true" || out.success === true ? "sent" : "failed");
     } catch {
-      setStatus("error");
+      setStatus("failed");
     }
   };
 
@@ -99,8 +102,15 @@ export default function ContactPage() {
                 <button type="submit" className="btn btn-primary submit" disabled={status === "submitting"}>
                   {status === "submitting" ? "Sending…" : "Send Quotation Request"}
                 </button>
-                {status === "error" && (
+                {status === "invalid" && (
                   <p className="form-err" role="alert">Please fix the highlighted fields.</p>
+                )}
+                {status === "failed" && (
+                  <p className="form-err" role="alert">
+                    Sorry, we couldn&apos;t send your request just now. Please try again, or
+                    email <a href={`mailto:${formEmail}`}>{formEmail}</a> or call{" "}
+                    <a href={`tel:${brand.phone}`}>{brand.phoneDisplay}</a>.
+                  </p>
                 )}
               </form>
             )}
@@ -136,33 +146,9 @@ export default function ContactPage() {
         .contact { padding: clamp(3.5rem, 9vh, 6rem) 0 clamp(5rem, 12vh, 8rem); }
         .grid { display: grid; grid-template-columns: 1.4fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); }
         .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        :global(.field) { display: block; margin-bottom: 1.1rem; }
-        :global(.field span) { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; letter-spacing: 0.02em; }
-        :global(.field input),
-        :global(.field select),
-        :global(.field textarea) {
-          width: 100%;
-          background: var(--bg-2);
-          border: 1px solid var(--line);
-          border-radius: 11px;
-          padding: 0.85rem 1rem;
-          color: #fff;
-          font-family: var(--font-body);
-          font-size: 0.95rem;
-          transition: border-color 0.25s, box-shadow 0.25s;
-        }
-        :global(.field input:focus),
-        :global(.field select:focus),
-        :global(.field textarea:focus) {
-          outline: none;
-          border-color: var(--orange);
-          box-shadow: 0 0 0 3px rgba(232, 114, 42, 0.18);
-        }
-        :global(.field textarea) { resize: vertical; }
-        :global(.field select option) { background: var(--bg-2); color: #fff; }
-        :global(.err) { display: block; color: #ff6b5e; font-size: 0.78rem; font-style: normal; margin-top: 0.4rem; }
+        /* .field / .err / .form-err styles are global (app/globals.css) so the
+           shared <Field> primitive is styled here and on the careers page. */
         .submit { margin-top: 0.6rem; width: 100%; justify-content: center; }
-        .form-err { color: #ff6b5e; font-size: 0.85rem; margin-top: 0.8rem; }
         .sent { text-align: center; padding: 3rem 1rem; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-2); }
         .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(232,114,42,.5); }
         .sent h3 { font-size: 1.8rem; text-transform: uppercase; }

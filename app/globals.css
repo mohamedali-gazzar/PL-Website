@@ -194,6 +194,68 @@ button {
   margin-bottom: 1rem;
 }
 
+/* ── Shared form fields (contact + careers) ───────────────────────────────
+   Global, not page-scoped: the <Field> primitive is rendered outside each
+   page's styled-jsx scope, so page-local `.field` rules never reach it — that
+   left the careers inputs unstyled. Direct-child combinators so the careers
+   file-input (nested in .file) keeps its own styling. */
+.field {
+  display: block;
+  margin-bottom: 1.1rem;
+}
+.field > span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.02em;
+}
+.field > input,
+.field > select,
+.field > textarea {
+  width: 100%;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 0.85rem 1rem;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.field > input:focus,
+.field > select:focus,
+.field > textarea:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232, 114, 42, 0.18);
+}
+.field > textarea {
+  resize: vertical;
+  min-height: 6rem;
+}
+.field select option {
+  background: var(--bg-2);
+  color: #fff;
+}
+.err {
+  display: block;
+  color: #ff6b5e;
+  font-size: 0.78rem;
+  font-style: normal;
+  margin-top: 0.4rem;
+}
+/* form-level status message under the submit button */
+.form-err {
+  color: #ff6b5e;
+  font-size: 0.85rem;
+  margin-top: 0.8rem;
+}
+.form-err a {
+  color: var(--orange);
+  text-decoration: underline;
+}
+
 /* Landing electric ambiance — fixed behind content */
 .page-electric {
   position: fixed;

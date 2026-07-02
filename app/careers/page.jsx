@@ -28,7 +28,7 @@ export default function CareersPage() {
     if (!cv || !cv.name) err.cv = "Please attach your CV";
     setErrors(err);
     if (Object.keys(err).length) {
-      setStatus("error");
+      setStatus("invalid");
       return;
     }
     setStatus("submitting");
@@ -36,7 +36,9 @@ export default function CareersPage() {
       // FormSubmit's AJAX endpoint can't carry file attachments, so we post the
       // multipart form to the standard endpoint straight from the browser (a
       // real Referer is required — server-side fetch strips it). The response is
-      // opaque under no-cors, so we treat a completed request as success.
+      // opaque under no-cors, so we can't read it — a completed request is
+      // treated as success. (Delivery still requires the one-time FormSubmit
+      // activation link sent to formEmail on the first submission.)
       data.append("_subject", `New job application — ${data.get("name")}`);
       data.append("_template", "table");
       data.append("_captcha", "false");
@@ -47,7 +49,7 @@ export default function CareersPage() {
       });
       setStatus("sent");
     } catch {
-      setStatus("error");
+      setStatus("failed");
     }
   };
 
@@ -134,7 +136,13 @@ export default function CareersPage() {
                   <button type="submit" className="btn btn-primary submit" disabled={status === "submitting"}>
                     {status === "submitting" ? "Sending…" : "Submit Application"}
                   </button>
-                  {status === "error" && <p className="form-err" role="alert">Please fix the highlighted fields.</p>}
+                  {status === "invalid" && <p className="form-err" role="alert">Please fix the highlighted fields.</p>}
+                  {status === "failed" && (
+                    <p className="form-err" role="alert">
+                      Sorry, we couldn&apos;t send your application just now. Please try again, or
+                      email <a href={`mailto:${formEmail}`}>{formEmail}</a>.
+                    </p>
+                  )}
                 </form>
               )}
             </div>
@@ -153,30 +161,19 @@ export default function CareersPage() {
         .values { margin: 3rem 0; }
         .vlist { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; }
         .vchip { padding: 0.6rem 1.1rem; border: 1px solid var(--line); border-radius: 999px; font-size: 0.85rem; color: var(--text); background: var(--bg-2); }
-        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-2); max-width: 53.75rem; }
+        .apply { padding: clamp(2rem, 5vw, 3.5rem); border: 1px solid var(--line); border-radius: 20px; background: radial-gradient(130% 140% at 100% 0%, rgba(232,114,42,.14), transparent 55%), var(--bg-3); max-width: 53.75rem; }
         .apply-head { margin-bottom: 2rem; }
         .apply-head h2 { margin: 0.8rem 0 0.7rem; }
         .apply-head p { color: var(--text-dim); max-width: 56ch; }
         .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .field { display: block; margin-bottom: 1.1rem; }
-        .field span { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 0.5rem; }
-        .field input,
-        .field textarea {
-          width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: 11px;
-          padding: 0.85rem 1rem; color: #fff; font-family: var(--font-body); font-size: 0.95rem;
-          transition: border-color 0.25s, box-shadow 0.25s;
-        }
-        .field input:focus,
-        .field textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(232,114,42,.18); }
-        .field textarea { resize: vertical; }
-        .err { display: block; color: #ff6b5e; font-size: 0.78rem; font-style: normal; margin-top: 0.4rem; }
-        /* file input */
-        .file { position: relative; display: flex; align-items: center; gap: 0.9rem; border: 1px dashed var(--line); border-radius: 11px; padding: 0.7rem 0.9rem; background: var(--bg); }
+        /* .field / .err / .form-err are global (app/globals.css) so the shared
+           <Field> primitive is styled — same look as the contact form. */
+        /* file input (careers-only) */
+        .file { position: relative; display: flex; align-items: center; gap: 0.9rem; border: 1px dashed var(--line); border-radius: 11px; padding: 0.7rem 0.9rem; background: var(--bg-2); }
         .file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
         .file-btn { background: rgba(232,114,42,.15); color: var(--orange); border: 1px solid rgba(232,114,42,.4); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem; font-weight: 600; white-space: nowrap; }
         .file-name { color: var(--text-faint); font-size: 0.85rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .submit { margin-top: 0.6rem; }
-        .form-err { color: #ff6b5e; font-size: 0.85rem; margin-top: 0.8rem; }
         .sent { text-align: center; padding: 2.5rem 1rem; }
         .check { width: 60px; height: 60px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 1.6rem; margin: 0 auto 1.2rem; box-shadow: 0 0 30px rgba(232,114,42,.5); }
         .sent h3 { font-size: 1.6rem; text-transform: uppercase; }
