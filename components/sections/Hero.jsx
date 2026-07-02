@@ -76,6 +76,7 @@ export default function Hero({ ready }) {
       </div>
 
       <div className="container hero-content">
+        <div className="h-copy">
         <span className="eyebrow h-eyebrow">Electrical solutions since 2012</span>
 
         <h1 className="hero-title">
@@ -98,6 +99,7 @@ export default function Hero({ ready }) {
           <Link href="/low-voltage" className="btn btn-ghost">
             Explore Solutions
           </Link>
+        </div>
         </div>
 
         <div className="h-stats">
@@ -218,12 +220,16 @@ export default function Hero({ ready }) {
           display: flex;
           gap: 1rem;
           flex-wrap: wrap;
-          margin-bottom: 2rem;
+          margin-bottom: 0;
+        }
+        /* Centre the copy in the space above the stats — the free space is split
+           equally above and below it. The stats stay the last item at the bottom. */
+        .h-copy {
+          margin: auto 0;
+          width: 100%;
         }
         .h-stats {
-          /* pin the stats to the bottom; the flexible gap above it is the
-             breathing room that grows on tall/large screens. */
-          margin-top: auto;
+          margin-top: 0;
         }
         .h-bus {
           position: relative;
@@ -311,19 +317,17 @@ export default function Hero({ ready }) {
           text-transform: uppercase;
         }
         /* Short/zoomed viewports: tighten only the copy's internal SPACING (the
-           navbar-clearing top padding and the big title stay) so the bottom-pinned
-           stats never collide with the copy. */
+           navbar-clearing top padding and the big title stay) so everything still
+           fits the first screen. */
         @media (max-height: 760px) {
           .hero { padding-bottom: clamp(1.5rem, 3vh, 2.25rem); }
           .hero-title { margin: 0.7rem 0 1rem; }
           .h-sub { margin-bottom: 1.4rem; }
-          .h-actions { margin-bottom: 1.4rem; }
         }
         /* Very short viewports only: nudge the title down a touch — still bold. */
         @media (max-height: 680px) {
           .hero-title { font-size: clamp(1.3rem, 3.1vw, 2.6rem); margin: 0.5rem 0 0.8rem; }
           .h-sub { margin-bottom: 1.1rem; }
-          .h-actions { margin-bottom: 1.1rem; }
           .h-credits { margin-top: clamp(0.9rem, 2vh, 1.3rem); }
         }
         /* very large screens: let the background fill a touch more; the content
@@ -334,13 +338,13 @@ export default function Hero({ ready }) {
         }
         @media (max-width: 640px) {
           .hero { padding-top: clamp(5.5rem, 16vw, 7rem); }
-          /* on phones keep the content grouped/centred (not pinned to the bottom)
-             and tighter so it fits the first screen */
+          /* on phones centre the whole group (copy + stats) with a normal gap,
+             rather than splitting the space around the copy */
           .hero-content { justify-content: center; }
+          .h-copy { margin: 0; }
           .h-stats { margin-top: clamp(1.5rem, 5vh, 2.5rem); }
           .hero-title { margin: 0.6rem 0 0.9rem; }
           .h-sub { margin-bottom: 1.3rem; }
-          .h-actions { margin-bottom: 1.5rem; }
           .h-credits {
             grid-template-columns: repeat(2, 1fr);
             gap: 1.1rem 0;
