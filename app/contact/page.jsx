@@ -24,28 +24,23 @@ export default function ContactPage() {
     }
     setStatus("submitting");
     try {
-      // Post straight to FormSubmit from the browser so a real Referer is
-      // present — server-side fetch (Vercel/undici) strips it and FormSubmit
-      // then rejects the request.
-      const res = await fetch(`https://formsubmit.co/ajax/${formEmail}`, {
+      // Send through our own server route, which emails a Powerline-branded
+      // message via Resend (the API key stays server-side).
+      const res = await fetch("/api/quote", {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          _subject: `New quotation request — ${data.name}`,
-          _template: "table",
-          Name: data.name,
-          Company: data.company || "-",
-          Email: data.email,
-          Phone: data.phone || "-",
-          "Area of interest": data.interest || "-",
-          Message: data.message,
+          name: data.name,
+          company: data.company,
+          email: data.email,
+          phone: data.phone,
+          interest: data.interest,
+          message: data.message,
+          website: data.website, // honeypot
         }),
       });
       const out = await res.json().catch(() => ({}));
-      // NOTE: FormSubmit returns success:"false" until the recipient inbox
-      // (formEmail) has clicked the one-time "Activate Form" link it emails on
-      // the first submission. Once activated this resolves to "true".
-      setStatus(out.success === "true" || out.success === true ? "sent" : "failed");
+      setStatus(out.ok ? "sent" : "failed");
     } catch {
       setStatus("failed");
     }
@@ -76,6 +71,9 @@ export default function ContactPage() {
               </div>
             ) : (
               <form onSubmit={onSubmit} noValidate>
+                <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", height: 0, overflow: "hidden" }}>
+                  <label>Leave this field empty<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
+                </div>
                 <div className="row2">
                   <Field name="name" label="Full name *" error={errors.name} />
                   <Field name="company" label="Company" />
