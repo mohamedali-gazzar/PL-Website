@@ -26,7 +26,6 @@ export default function CareersPage() {
     if (!isValidEmail(data.get("email"))) err.email = "Enter a valid email";
     const cv = data.get("cv");
     if (!cv || !cv.name) err.cv = "Please attach your CV";
-    else if (cv.size > 4 * 1024 * 1024) err.cv = "CV is too large (max 4MB). Please compress it.";
     setErrors(err);
     if (Object.keys(err).length) {
       setStatus("invalid");
@@ -34,11 +33,21 @@ export default function CareersPage() {
     }
     setStatus("submitting");
     try {
-      // Multipart POST to our own server route, which emails a Powerline-branded
-      // message via Resend with the CV attached (the API key stays server-side).
-      const res = await fetch("/api/apply", { method: "POST", body: data });
-      const out = await res.json().catch(() => ({}));
-      setStatus(out.ok ? "sent" : "failed");
+      // FormSubmit's AJAX endpoint can't carry file attachments, so we post the
+      // multipart form to the standard endpoint straight from the browser (a
+      // real Referer is required — server-side fetch strips it). The response is
+      // opaque under no-cors, so we can't read it — a completed request is
+      // treated as success. (Delivery still requires the one-time FormSubmit
+      // activation link sent to formEmail on the first submission.)
+      data.append("_subject", `New job application — ${data.get("name")}`);
+      data.append("_template", "table");
+      data.append("_captcha", "false");
+      await fetch(`https://formsubmit.co/${formEmail}`, {
+        method: "POST",
+        mode: "no-cors",
+        body: data,
+      });
+      setStatus("sent");
     } catch {
       setStatus("failed");
     }
@@ -96,9 +105,6 @@ export default function CareersPage() {
                 </div>
               ) : (
                 <form onSubmit={onSubmit} noValidate>
-                  <div aria-hidden="true" style={{ position: "absolute", left: "-9999px", height: 0, overflow: "hidden" }}>
-                    <label>Leave this field empty<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label>
-                  </div>
                   <div className="row2">
                     <Field name="name" label="Full name *" error={errors.name} />
                     <Field name="email" label="Email *" type="email" error={errors.email} />
