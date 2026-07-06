@@ -22,7 +22,7 @@ export const metadata = {
   title: "Powerline — Built where it counts, partnered for the rest",
   description:
     "Powerline is a leading provider of low and medium voltage electrical panels serving industries and infrastructure projects across Egypt and the region since 2012.",
-  metadataBase: new URL("https://powerlinei.com"),
+  metadataBase: new URL("https://www.powerlinei.com"),
   openGraph: {
     title: "Powerline — Built where it counts, partnered for the rest",
     description:
