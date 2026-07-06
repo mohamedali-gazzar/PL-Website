@@ -69,9 +69,9 @@ export default function Nav() {
           </nav>
 
           <div className="actions">
-            <a href={`tel:${brand.phone}`} className="btn btn-ghost call hide-mobile" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>
-              Call Us
-            </a>
+            <Link href="/supplier-offerings" className="btn btn-ghost call hide-mobile">
+              Become a Supplier
+            </Link>
             <Link href="/contact" className="btn btn-primary cta hide-mobile">
               Sales Request
             </Link>
@@ -161,9 +161,9 @@ export default function Nav() {
           </nav>
 
           <div className="dr-foot">
-            <a href={`tel:${brand.phone}`} className="btn btn-ghost dr-cta" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>
-              Call Us
-            </a>
+            <Link href="/supplier-offerings" className="btn btn-ghost dr-cta" onClick={() => setOpen(false)}>
+              Become a Supplier
+            </Link>
             <Link href="/contact" className="btn btn-primary dr-cta" onClick={() => setOpen(false)}>
               Sales Request
             </Link>
@@ -307,13 +307,15 @@ export default function Nav() {
           align-items: center;
           gap: 1.1rem;
         }
-        .call {
+        :global(.call) {
           padding: 0.7rem 1.2rem;
           font-size: 0.82rem;
+          white-space: nowrap;
         }
-        .cta {
+        :global(.cta) {
           padding: 0.7rem 1.3rem;
           font-size: 0.82rem;
+          white-space: nowrap;
         }
         .burger {
           display: none;
