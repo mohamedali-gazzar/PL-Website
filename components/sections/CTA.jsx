@@ -15,10 +15,10 @@ export default function CTA() {
           </h2>
           <p>
             Tell us what you&apos;re building. Our engineers will scope the right
-            low or medium voltage solution and send a tailored quotation.
+            low or medium voltage solution and prepare a tailored quote.
           </p>
           <div className="actions">
-            <Link href="/contact" className="btn btn-primary">Request a Quotation</Link>
+            <Link href="/contact" className="btn btn-primary">Sales Request</Link>
             <Link href="/locations" className="btn btn-ghost">Visit Our Facilities</Link>
           </div>
         </Reveal>

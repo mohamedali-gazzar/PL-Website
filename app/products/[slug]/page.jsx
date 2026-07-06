@@ -169,7 +169,7 @@ export default function ProductPage({ params }) {
               )}
 
               <div className="actions">
-                <Link href="/contact" className="btn btn-primary">Request Quotation</Link>
+                <Link href="/contact" className="btn btn-primary">Sales Request</Link>
                 <a href={`tel:${brand.phone}`} className="btn btn-ghost" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>Call Us</a>
               </div>
             </Reveal>

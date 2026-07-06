@@ -37,7 +37,7 @@ export default function Footer() {
           <div className="col">
             <h4>Contact</h4>
             <a href={`tel:${brand.phone}`}>{brand.phoneDisplay}</a>
-            <Link href="/contact" className="btn btn-primary fcta">Request Quotation</Link>
+            <Link href="/contact" className="btn btn-primary fcta">Sales Request</Link>
           </div>
         </div>
 

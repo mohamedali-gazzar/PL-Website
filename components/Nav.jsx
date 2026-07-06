@@ -73,7 +73,7 @@ export default function Nav() {
               Call Us
             </a>
             <Link href="/contact" className="btn btn-primary cta hide-mobile">
-              Request Quotation
+              Sales Request
             </Link>
             <button
               className={`burger ${open ? "open" : ""}`}
@@ -165,7 +165,7 @@ export default function Nav() {
               Call Us
             </a>
             <Link href="/contact" className="btn btn-primary dr-cta" onClick={() => setOpen(false)}>
-              Request Quotation
+              Sales Request
             </Link>
             <div className="dr-social">
               <a href={brand.facebook} target="_blank" rel="noreferrer">Facebook</a>

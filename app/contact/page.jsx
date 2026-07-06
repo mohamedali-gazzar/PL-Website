@@ -31,7 +31,7 @@ export default function ContactPage() {
         method: "POST",
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({
-          _subject: `New quotation request — ${data.name}`,
+          _subject: `New sales request — ${data.name}`,
           _template: "table",
           Name: data.name,
           Company: data.company || "-",
@@ -57,7 +57,7 @@ export default function ContactPage() {
         eyebrow="Contact"
         title="Let's talk"
         accent="power"
-        lead="Send us your project details and our engineers will scope the right low or medium voltage solution and prepare a tailored quotation."
+        lead="Send us your project details and our engineers will scope the right low or medium voltage solution and prepare a tailored quote."
       />
 
       <section className="contact">
@@ -100,7 +100,7 @@ export default function ContactPage() {
                   {errors.message && <em className="err">{errors.message}</em>}
                 </label>
                 <button type="submit" className="btn btn-primary submit" disabled={status === "submitting"}>
-                  {status === "submitting" ? "Sending…" : "Send Quotation Request"}
+                  {status === "submitting" ? "Sending…" : "Send Sales Request"}
                 </button>
                 {status === "invalid" && (
                   <p className="form-err" role="alert">Please fix the highlighted fields.</p>
