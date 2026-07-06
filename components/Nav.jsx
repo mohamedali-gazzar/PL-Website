@@ -72,6 +72,9 @@ export default function Nav() {
             <Link href="/supplier-offerings" className="btn btn-ghost call hide-mobile">
               Become a Supplier
             </Link>
+            <Link href="/careers" className="btn btn-ghost call hide-mobile">
+              Join Our Team
+            </Link>
             <Link href="/contact" className="btn btn-primary cta hide-mobile">
               Sales Request
             </Link>
@@ -164,6 +167,9 @@ export default function Nav() {
             <Link href="/supplier-offerings" className="btn btn-ghost dr-cta" onClick={() => setOpen(false)}>
               Become a Supplier
             </Link>
+            <Link href="/careers" className="btn btn-ghost dr-cta" onClick={() => setOpen(false)}>
+              Join Our Team
+            </Link>
             <Link href="/contact" className="btn btn-primary dr-cta" onClick={() => setOpen(false)}>
               Sales Request
             </Link>
@@ -207,7 +213,7 @@ export default function Nav() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 1.5rem;
+          gap: 1rem;
         }
         .brand img {
           height: 34px;
@@ -220,7 +226,7 @@ export default function Nav() {
         .links {
           display: flex;
           align-items: center;
-          gap: clamp(0.6rem, 1.4vw, 1.8rem);
+          gap: clamp(0.35rem, 1.1vw, 1.35rem);
         }
         .link-wrap {
           position: relative;
@@ -305,7 +311,7 @@ export default function Nav() {
         .actions {
           display: flex;
           align-items: center;
-          gap: 1.1rem;
+          gap: 0.7rem;
         }
         :global(.call) {
           padding: 0.7rem 1.2rem;
