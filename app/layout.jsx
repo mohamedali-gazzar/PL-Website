@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Poppins, Montserrat } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import StyledJsxRegistry from "./registry";
 import ChunkReload from "@/components/ChunkReload";
 
@@ -64,6 +65,7 @@ export default function RootLayout({ children }) {
       <body>
         <ChunkReload />
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
+        <Analytics />
       </body>
     </html>
   );
