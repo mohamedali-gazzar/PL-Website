@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Poppins, Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import StyledJsxRegistry from "./registry";
 import ChunkReload from "@/components/ChunkReload";
 
@@ -66,6 +67,7 @@ export default function RootLayout({ children }) {
         <ChunkReload />
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
         <Analytics />
+        <GoogleAnalytics gaId="G-MMBK1FRQLY" />
       </body>
     </html>
   );
