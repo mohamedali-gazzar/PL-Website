@@ -327,8 +327,10 @@ button {
   transform: none;
 }
 
-/* Reliable responsive utility (independent of styled-jsx scoping) */
-@media (max-width: 1024px) {
+/* Reliable responsive utility (independent of styled-jsx scoping).
+   1300px so the loaded header (6 links + 3 CTA buttons) collapses to the
+   hamburger menu on small/scaled laptops instead of cramming/wrapping. */
+@media (max-width: 1300px) {
   .hide-mobile {
     display: none !important;
   }

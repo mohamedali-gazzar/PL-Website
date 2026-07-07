@@ -550,7 +550,7 @@ export default function Nav() {
           color: var(--orange);
         }
 
-        @media (max-width: 1024px) {
+        @media (max-width: 1300px) {
           .links,
           .call,
           .cta {
