@@ -550,7 +550,7 @@ export default function Nav() {
           color: var(--orange);
         }
 
-        @media (max-width: 1300px) {
+        @media (max-width: 1024px) {
           .links,
           .call,
           .cta {
@@ -559,6 +559,27 @@ export default function Nav() {
           .burger {
             display: flex;
           }
+        }
+        /* Tight desktop widths (small / display-scaled laptops, ~14"): keep the
+           FULL nav visible but progressively shrink links, CTA buttons, gaps and
+           the logo so 6 links + 3 CTAs stay on one line instead of wrapping.
+           (.link/.call/.cta are on <Link> elements, so they must be :global.) */
+        @media (min-width: 1025px) and (max-width: 1440px) {
+          .nav-inner { gap: 0.6rem; }
+          .links { gap: clamp(0.15rem, 0.5vw, 0.6rem); }
+          .actions { gap: 0.45rem; }
+          :global(.links .link) { font-size: 0.82rem; padding: 0.5rem 0.3rem; }
+          :global(.call),
+          :global(.cta) { font-size: 0.72rem; padding: 0.55rem 0.85rem; }
+          :global(.brand-logo) { height: 4.6rem; }
+          .nav.is-scrolled :global(.brand-logo) { height: 3.9rem; }
+        }
+        @media (min-width: 1025px) and (max-width: 1200px) {
+          .links { gap: clamp(0.1rem, 0.35vw, 0.4rem); }
+          :global(.links .link) { font-size: 0.78rem; padding: 0.5rem 0.25rem; }
+          :global(.call),
+          :global(.cta) { font-size: 0.66rem; padding: 0.5rem 0.7rem; }
+          :global(.brand-logo) { height: 4rem; }
         }
       `}</style>
     </>
