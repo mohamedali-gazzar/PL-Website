@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+  // The GA4 Data API client (gRPC) must stay a Node external, not be bundled.
+  experimental: {
+    serverComponentsExternalPackages: ["@google-analytics/data"],
+  },
   // Lets a verification/preview process use an isolated build dir
   // (NEXT_DIST_DIR=.next-preview) so it never clobbers the user's `.next`.
   distDir: process.env.NEXT_DIST_DIR || ".next",
