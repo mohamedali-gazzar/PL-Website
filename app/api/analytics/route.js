@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getAnalytics, getRealtime } from "@/lib/ga4";
+import { getVercelAnalytics } from "@/lib/vercelAnalytics";
 import { isAuthed, ADMIN_COOKIE } from "@/lib/adminAuth";
 
 // Node runtime (the GA4 client needs Node, not Edge) and never cached — always
@@ -18,14 +19,15 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     // Realtime is independent of the reporting range and must not fail the whole
     // response if it errors — fetch it best-effort.
-    const [data, realtime] = await Promise.all([
+    const [data, realtime, vercel] = await Promise.all([
       getAnalytics({
         startDate: searchParams.get("start") || undefined,
         endDate: searchParams.get("end") || undefined,
       }),
       getRealtime().catch(() => null),
+      getVercelAnalytics().catch(() => ({ configured: true, diagnostics: ["request failed"] })),
     ]);
-    return NextResponse.json({ ok: true, ...data, realtime });
+    return NextResponse.json({ ok: true, ...data, realtime, vercel });
   } catch (e) {
     const status = e?.code === "MISSING_CREDENTIALS" ? 501 : 502;
     return NextResponse.json(

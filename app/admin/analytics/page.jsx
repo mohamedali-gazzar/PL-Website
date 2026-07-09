@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { getAnalytics, getRealtime } from "@/lib/ga4";
+import { getVercelAnalytics } from "@/lib/vercelAnalytics";
 import { isAuthed, isConfigured, ADMIN_COOKIE } from "@/lib/adminAuth";
 
 // Live data, Node runtime, never statically cached; keep it out of search engines.
@@ -59,8 +60,17 @@ const CSS = `
 .gax .hrow .val{font-weight:700;font-variant-numeric:tabular-nums;color:#1b1712}
 .gax .track{height:8px;background:#f0eae0;border-radius:999px;overflow:hidden}
 .gax .fill{height:100%;background:#e8722a;border-radius:999px}
-.gax .fill.g{background:#2e7d46}.gax .fill.b{background:#2b6c86}
+.gax .fill.g{background:#2e7d46}.gax .fill.b{background:#2b6c86}.gax .fill.v{background:#111}
 .gax .empty{color:#9a9084;font-size:.9rem;padding:.5rem 0}
+.gax .empty.na{font-style:italic;color:#b0a698}
+.gax .na-sm{font-size:.95rem;font-weight:600;color:#b0a698;font-style:italic}
+/* source divider (Vercel section) */
+.gax .src{margin-top:2.8rem;border-top:2px solid #e4ddd0;padding-top:1.7rem}
+.gax .src-head{display:flex;align-items:baseline;gap:.7rem;flex-wrap:wrap;margin-bottom:1.2rem}
+.gax .src-head h2{font-size:1.45rem;letter-spacing:-.01em}
+.gax .src-head .tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#111;
+  border:1px solid #d9d0c2;border-radius:999px;padding:.25rem .6rem}
+.gax .src-head p{width:100%;font-size:.82rem;color:#8a8072}
 .gax .note{margin-top:2.4rem;padding:1rem 1.2rem;background:#f4f0e9;border:1px solid #eae3d8;border-radius:12px;color:#6f665a;font-size:.84rem}
 .gax .err{background:#fff;border:1px solid #f2c9c1;border-left:4px solid #bb3a2c;border-radius:14px;padding:1.4rem 1.5rem;margin-top:2rem}
 .gax .err h2{font-size:1.15rem;color:#bb3a2c;margin-bottom:.6rem}
@@ -146,6 +156,18 @@ function HBars({ items, labelKey, valueKey, max, fmt = (n) => nf.format(n), vari
   );
 }
 
+// A Vercel metric is one of: array (available — maybe empty), or null (the API
+// or plan didn't provide it → show a clear "not available" note, never fake it).
+function VercelList({ items }) {
+  if (items === null || items === undefined) return <p className="empty na">Not available from Vercel API</p>;
+  if (items.length === 0) return <p className="empty">No data in this range yet.</p>;
+  return <HBars items={items} labelKey="label" valueKey="value" variant="v" />;
+}
+function vkpi(v) {
+  if (v === null || v === undefined) return <span className="na-sm">Not available from Vercel API</span>;
+  return nf.format(v);
+}
+
 export default async function AnalyticsAdminPage({ searchParams }) {
   // Gate the dashboard behind the admin password (HttpOnly cookie session).
   if (!isAuthed(cookies().get(ADMIN_COOKIE)?.value)) {
@@ -154,10 +176,15 @@ export default async function AnalyticsAdminPage({ searchParams }) {
 
   let data = null;
   let realtime = null;
+  let vercel = null;
   let error = null;
   try {
-    // Realtime is best-effort — a realtime hiccup shouldn't blank the whole page.
-    [data, realtime] = await Promise.all([getAnalytics(), getRealtime().catch(() => null)]);
+    // Realtime + Vercel are best-effort — a hiccup in either shouldn't blank the page.
+    [data, realtime, vercel] = await Promise.all([
+      getAnalytics(),
+      getRealtime().catch(() => null),
+      getVercelAnalytics().catch(() => ({ configured: true, diagnostics: ["request failed"] })),
+    ]);
   } catch (e) {
     error = e?.message || "Could not load Google Analytics data.";
   }
@@ -322,6 +349,54 @@ export default async function AnalyticsAdminPage({ searchParams }) {
           the browser). Data collection began 06–07 Jul 2026 — traffic before that date was not recorded. This page
           is <b>noindex</b> and refreshes on every load.
         </p>
+
+        {/* ───────────────────────── Vercel Analytics (separate source) ───────────────────────── */}
+        <section className="src">
+          <div className="src-head">
+            <h2>Vercel Analytics</h2>
+            <span className="tag">▲ Vercel</span>
+            <p>
+              Source: Vercel Web Analytics API (fetched server-side; token never reaches the browser)
+              {vercel?.range ? ` · ${vercel.range.from} → ${vercel.range.to}` : ""}
+            </p>
+          </div>
+
+          {!vercel?.configured ? (
+            <div className="note">
+              Vercel Analytics isn’t configured — set <b>VERCEL_API_TOKEN</b> and <b>VERCEL_PROJECT_ID</b>
+              &nbsp;(server-side, not <code>NEXT_PUBLIC_</code>) in Vercel, then redeploy.
+            </div>
+          ) : (
+            <>
+              <div className="cards" style={{ marginBottom: "1.1rem" }}>
+                <div className="kpi"><div className="k">Visitors</div><div className="v">{vkpi(vercel.visitors)}</div></div>
+                <div className="kpi"><div className="k">Page views</div><div className="v">{vkpi(vercel.pageViews)}</div></div>
+              </div>
+
+              <div className="grid2">
+                <div className="panel"><h3>Top pages</h3><VercelList items={vercel.topPages} /></div>
+                <div className="panel"><h3>Referrers</h3><VercelList items={vercel.referrers} /></div>
+              </div>
+              <div className="grid2" style={{ marginTop: "1rem" }}>
+                <div className="panel"><h3>Countries</h3><VercelList items={vercel.countries} /></div>
+                <div className="panel"><h3>Devices</h3><VercelList items={vercel.devices} /></div>
+              </div>
+              <div className="grid2" style={{ marginTop: "1rem" }}>
+                <div className="panel"><h3>Browsers</h3><VercelList items={vercel.browsers} /></div>
+                <div className="panel"><h3>Operating systems</h3><VercelList items={vercel.os} /></div>
+              </div>
+
+              {vercel.diagnostics?.length ? (
+                <div className="note">
+                  The Vercel API returned no data for any metric, so everything above shows
+                  <b> “Not available from Vercel API.”</b> Common causes: the project is team-scoped
+                  (add <b>VERCEL_TEAM_ID</b>), the token lacks analytics access, or the plan/endpoint doesn’t
+                  expose this data. Detail: <code>{vercel.diagnostics.join(" · ")}</code>
+                </div>
+              ) : null}
+            </>
+          )}
+        </section>
       </div>
     </div>
   );
