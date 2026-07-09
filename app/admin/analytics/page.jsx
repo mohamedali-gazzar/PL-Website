@@ -70,6 +70,9 @@ const CSS = `
 .gax .src-head h2{font-size:1.45rem;letter-spacing:-.01em}
 .gax .src-head .tag{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#111;
   border:1px solid #d9d0c2;border-radius:999px;padding:.25rem .6rem}
+.gax .src-head .src-link{font-size:.78rem;font-weight:700;color:#fff;background:#111;border-radius:8px;
+  padding:.35rem .7rem;text-decoration:none}
+.gax .src-head .src-link:hover{background:#333}
 .gax .src-head p{width:100%;font-size:.82rem;color:#8a8072}
 .gax .note{margin-top:2.4rem;padding:1rem 1.2rem;background:#f4f0e9;border:1px solid #eae3d8;border-radius:12px;color:#6f665a;font-size:.84rem}
 .gax .note a{color:#bb5a1f;text-decoration:underline;font-weight:600}
@@ -356,9 +359,12 @@ export default async function AnalyticsAdminPage({ searchParams }) {
           <div className="src-head">
             <h2>Vercel Analytics</h2>
             <span className="tag">▲ Vercel</span>
+            <a className="src-link" href="https://vercel.com/nadag1885s-projects/pl-website/analytics" target="_blank" rel="noreferrer">
+              Open in Vercel ↗
+            </a>
             <p>
-              Source: Vercel Web Analytics API (fetched server-side; token never reaches the browser)
-              {vercel?.range ? ` · ${vercel.range.from} → ${vercel.range.to}` : ""}
+              Source: official Vercel Web Analytics API (<code>/v1/query/web-analytics</code>), fetched server-side —
+              the token never reaches the browser{vercel?.range ? ` · ${vercel.range.from} → ${vercel.range.to}` : ""}
             </p>
           </div>
 
@@ -389,15 +395,8 @@ export default async function AnalyticsAdminPage({ searchParams }) {
 
               {vercel.diagnostics?.length ? (
                 <div className="note">
-                  <b>Vercel has no public API for Web Analytics.</b> The <code>overview</code> and
-                  <code> timeseries</code> endpoints only answer the Vercel dashboard’s own browser session and
-                  return <b>404</b> to API tokens (verified: they 404 even with no auth header at all), so these
-                  figures can’t be fetched server-side — hence “Not available from Vercel API” above. See them in
-                  the{" "}
-                  <a href="https://vercel.com/nadag1885s-projects/pl-website/analytics" target="_blank" rel="noreferrer">
-                    Vercel dashboard
-                  </a>
-                  , or use the Google Analytics 4 data above — it already tracks all of these same metrics.
+                  Some Vercel metrics couldn’t be loaded this time, so they show “Not available from Vercel API.”
+                  This is usually transient — reload to retry.
                   <br />
                   <span className="mono" style={{ fontSize: ".78rem", opacity: 0.7 }}>Detail: {vercel.diagnostics.join(" · ")}</span>
                 </div>
