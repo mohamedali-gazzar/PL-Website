@@ -72,6 +72,7 @@ const CSS = `
   border:1px solid #d9d0c2;border-radius:999px;padding:.25rem .6rem}
 .gax .src-head p{width:100%;font-size:.82rem;color:#8a8072}
 .gax .note{margin-top:2.4rem;padding:1rem 1.2rem;background:#f4f0e9;border:1px solid #eae3d8;border-radius:12px;color:#6f665a;font-size:.84rem}
+.gax .note a{color:#bb5a1f;text-decoration:underline;font-weight:600}
 .gax .err{background:#fff;border:1px solid #f2c9c1;border-left:4px solid #bb3a2c;border-radius:14px;padding:1.4rem 1.5rem;margin-top:2rem}
 .gax .err h2{font-size:1.15rem;color:#bb3a2c;margin-bottom:.6rem}
 .gax .err p{color:#5c5348;font-size:.92rem;margin-bottom:.5rem}
@@ -388,10 +389,17 @@ export default async function AnalyticsAdminPage({ searchParams }) {
 
               {vercel.diagnostics?.length ? (
                 <div className="note">
-                  The Vercel API returned no data for any metric, so everything above shows
-                  <b> “Not available from Vercel API.”</b> Common causes: the project is team-scoped
-                  (add <b>VERCEL_TEAM_ID</b>), the token lacks analytics access, or the plan/endpoint doesn’t
-                  expose this data. Detail: <code>{vercel.diagnostics.join(" · ")}</code>
+                  <b>Vercel has no public API for Web Analytics.</b> The <code>overview</code> and
+                  <code> timeseries</code> endpoints only answer the Vercel dashboard’s own browser session and
+                  return <b>404</b> to API tokens (verified: they 404 even with no auth header at all), so these
+                  figures can’t be fetched server-side — hence “Not available from Vercel API” above. See them in
+                  the{" "}
+                  <a href="https://vercel.com/nadag1885s-projects/pl-website/analytics" target="_blank" rel="noreferrer">
+                    Vercel dashboard
+                  </a>
+                  , or use the Google Analytics 4 data above — it already tracks all of these same metrics.
+                  <br />
+                  <span className="mono" style={{ fontSize: ".78rem", opacity: 0.7 }}>Detail: {vercel.diagnostics.join(" · ")}</span>
                 </div>
               ) : null}
             </>
