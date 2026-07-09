@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { getAnalytics } from "@/lib/ga4";
+import { getAnalytics, getRealtime } from "@/lib/ga4";
 import { isAuthed, isConfigured, ADMIN_COOKIE } from "@/lib/adminAuth";
 
 // Live data, Node runtime, never statically cached; keep it out of search engines.
@@ -66,6 +66,17 @@ const CSS = `
 .gax .err h2{font-size:1.15rem;color:#bb3a2c;margin-bottom:.6rem}
 .gax .err p{color:#5c5348;font-size:.92rem;margin-bottom:.5rem}
 .gax .err code{font-family:ui-monospace,Consolas,monospace;font-size:.82rem;background:#faf0ed;padding:.1rem .35rem;border-radius:5px;color:#8a2f22}
+/* realtime */
+.gax .rt{display:grid;grid-template-columns:minmax(180px,240px) 1fr;gap:1rem}
+.gax .rt-main{background:#211d16;color:#fff;border-radius:16px;padding:1.3rem 1.4rem;display:flex;align-items:center;gap:1rem}
+.gax .rt-dot{width:.7rem;height:.7rem;border-radius:50%;background:#3fbf6a;box-shadow:0 0 0 0 rgba(63,191,106,.6);animation:rtpulse 1.8s infinite}
+@keyframes rtpulse{0%{box-shadow:0 0 0 0 rgba(63,191,106,.55)}70%{box-shadow:0 0 0 12px rgba(63,191,106,0)}100%{box-shadow:0 0 0 0 rgba(63,191,106,0)}}
+@media (prefers-reduced-motion:reduce){.gax .rt-dot{animation:none}}
+.gax .rt-num{font-size:2.6rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.gax .rt-lab{font-size:.8rem;color:#c9bdae;margin-top:.3rem;text-transform:uppercase;letter-spacing:.05em}
+.gax .rt-side{background:#fff;border:1px solid #eae3d8;border-radius:16px;padding:1.1rem 1.3rem;display:flex;align-items:center}
+.gax .rt-side>*{width:100%}
+@media (max-width:640px){.gax .rt{grid-template-columns:1fr}}
 /* login */
 .gax .login{max-width:420px;margin:3rem auto 0;background:#fff;border:1px solid #eae3d8;border-radius:16px;padding:1.9rem 1.8rem}
 .gax .login h2{font-size:1.35rem;margin-bottom:.4rem}
@@ -142,9 +153,11 @@ export default async function AnalyticsAdminPage({ searchParams }) {
   }
 
   let data = null;
+  let realtime = null;
   let error = null;
   try {
-    data = await getAnalytics();
+    // Realtime is best-effort — a realtime hiccup shouldn't blank the whole page.
+    [data, realtime] = await Promise.all([getAnalytics(), getRealtime().catch(() => null)]);
   } catch (e) {
     error = e?.message || "Could not load Google Analytics data.";
   }
@@ -176,7 +189,7 @@ export default async function AnalyticsAdminPage({ searchParams }) {
     );
   }
 
-  const { totals, daily, topPages, sources, countries, cities, devices, browsers, range } = data;
+  const { totals, daily, topPages, sources, countries, cities, devices, browsers, range, propertyId } = data;
   const days = daily.slice(-30);
   const maxUsers = Math.max(1, ...days.map((d) => d.users));
   const hasData = totals.sessions > 0 || totals.totalUsers > 0;
@@ -189,17 +202,42 @@ export default async function AnalyticsAdminPage({ searchParams }) {
         <div className="wrap">
           <p className="eyebrow">Powerline · Admin</p>
           <h1>Analytics</h1>
-          <p className="sub">Live Google Analytics 4 · {range.startDate} → {range.endDate}</p>
+          <p className="sub">Live Google Analytics 4 · property {propertyId} · {range.startDate} → {range.endDate}</p>
           <span className="badge"><span className="d" /> Connected to GA4 — real data</span>
           <div><a className="signout" href="/api/admin/login">Sign out</a></div>
         </div>
       </header>
 
       <div className="wrap">
+        {/* Realtime — no processing lag, so this fills in the moment someone is on the site */}
+        <section>
+          <p className="sec-h">Right now · last 30 minutes</p>
+          <div className="rt">
+            <div className="rt-main">
+              <span className="rt-dot" />
+              <div>
+                <div className="rt-num">{realtime ? nf.format(realtime.activeUsers) : "—"}</div>
+                <div className="rt-lab">active users</div>
+              </div>
+            </div>
+            <div className="rt-side">
+              {realtime && realtime.byCountry?.length ? (
+                <HBars items={realtime.byCountry.slice(0, 5)} labelKey="country" valueKey="users" variant="g" />
+              ) : (
+                <p className="empty">
+                  {realtime ? "No one on the site this minute — open the site to see this update live." : "Realtime unavailable right now."}
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+
         {!hasData && (
-          <div className="note" style={{ marginTop: "1.8rem" }}>
-            No sessions have been recorded in this date range yet. Analytics began collecting on 06–07 Jul 2026,
-            so figures will fill in as visitors arrive. Everything below is live and will populate automatically.
+          <div className="note" style={{ marginTop: "1.4rem" }}>
+            <b>Standard reports below read 0 so far — that’s expected.</b> Google Analytics processes standard
+            reports with a delay (often a few hours, up to 24–48h), and the Data API these cards use does
+            <b> not</b> include realtime. So live visitors show in <b>“Right now”</b> above immediately, but the
+            Overview / charts fill in once GA finishes processing. Reading GA4 property <b>{propertyId}</b>.
           </div>
         )}
 
