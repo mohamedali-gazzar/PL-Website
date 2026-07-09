@@ -67,7 +67,7 @@ export default function RootLayout({ children }) {
         <ChunkReload />
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
         <Analytics />
-        <GoogleAnalytics gaId="G-MMBK1FRQLY" />
+        <GoogleAnalytics gaId="G-3MVW1FNPDC" />
       </body>
     </html>
   );
