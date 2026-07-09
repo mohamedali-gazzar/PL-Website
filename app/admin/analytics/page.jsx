@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import { getAnalytics } from "@/lib/ga4";
+import { isAuthed, isConfigured, ADMIN_COOKIE } from "@/lib/adminAuth";
 
 // Live data, Node runtime, never statically cached; keep it out of search engines.
 export const runtime = "nodejs";
@@ -64,8 +66,54 @@ const CSS = `
 .gax .err h2{font-size:1.15rem;color:#bb3a2c;margin-bottom:.6rem}
 .gax .err p{color:#5c5348;font-size:.92rem;margin-bottom:.5rem}
 .gax .err code{font-family:ui-monospace,Consolas,monospace;font-size:.82rem;background:#faf0ed;padding:.1rem .35rem;border-radius:5px;color:#8a2f22}
+/* login */
+.gax .login{max-width:420px;margin:3rem auto 0;background:#fff;border:1px solid #eae3d8;border-radius:16px;padding:1.9rem 1.8rem}
+.gax .login h2{font-size:1.35rem;margin-bottom:.4rem}
+.gax .login .lg-sub{color:#6f665a;font-size:.9rem;margin-bottom:1.3rem}
+.gax .login .lg-err{background:#faf0ed;border:1px solid #f2c9c1;color:#a3352a;font-size:.85rem;padding:.6rem .8rem;border-radius:8px;margin-bottom:1rem}
+.gax .login .lg-warn{background:#fbf6ea;border:1px solid #ecd9a8;color:#8a6d1f;font-size:.83rem;padding:.6rem .8rem;border-radius:8px;margin-bottom:1rem}
+.gax .lg-field{display:block;margin-bottom:1.2rem}
+.gax .lg-field span{display:block;font-size:.78rem;font-weight:600;color:#3f382f;margin-bottom:.4rem}
+.gax .lg-field input{width:100%;padding:.72rem .85rem;border:1px solid #d9d0c2;border-radius:9px;font-size:1rem;background:#fbfaf7;color:#1b1712}
+.gax .lg-field input:focus{outline:2px solid #e8722a;outline-offset:1px;border-color:#e8722a}
+.gax .login button{width:100%;padding:.78rem;background:#e8722a;color:#fff;font-weight:700;font-size:.95rem;border:none;border-radius:9px;cursor:pointer}
+.gax .login button:hover{background:#d5641f}
+.gax .signout{display:inline-block;margin-top:1rem;color:#c9bdae;font-size:.8rem;text-decoration:underline}
 @media (max-width:720px){.gax .grid2{grid-template-columns:1fr}}
 `;
+
+function LoginScreen({ error, configured }) {
+  return (
+    <div className="gax">
+      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+      <header className="band">
+        <div className="wrap">
+          <p className="eyebrow">Powerline · Admin</p>
+          <h1>Analytics</h1>
+          <p className="sub">Restricted area — sign in to continue</p>
+        </div>
+      </header>
+      <div className="wrap">
+        <form className="login" method="POST" action="/api/admin/login">
+          <h2>Sign in</h2>
+          <p className="lg-sub">Enter the admin password to view the analytics dashboard.</p>
+          {error ? <p className="lg-err">Incorrect password. Please try again.</p> : null}
+          {!configured ? (
+            <p className="lg-warn">
+              The <b>ANALYTICS_DASHBOARD_PASSWORD</b> environment variable isn’t set on the server, so sign-in
+              is disabled. Add it in Vercel → Settings → Environment Variables, then redeploy.
+            </p>
+          ) : null}
+          <label className="lg-field">
+            <span>Password</span>
+            <input type="password" name="password" autoComplete="current-password" required autoFocus />
+          </label>
+          <button type="submit" disabled={!configured}>Unlock dashboard</button>
+        </form>
+      </div>
+    </div>
+  );
+}
 
 function HBars({ items, labelKey, valueKey, max, fmt = (n) => nf.format(n), variant = "" }) {
   if (!items || items.length === 0) return <p className="empty">No data recorded in this range yet.</p>;
@@ -87,7 +135,12 @@ function HBars({ items, labelKey, valueKey, max, fmt = (n) => nf.format(n), vari
   );
 }
 
-export default async function AnalyticsAdminPage() {
+export default async function AnalyticsAdminPage({ searchParams }) {
+  // Gate the dashboard behind the admin password (HttpOnly cookie session).
+  if (!isAuthed(cookies().get(ADMIN_COOKIE)?.value)) {
+    return <LoginScreen error={searchParams?.error} configured={isConfigured()} />;
+  }
+
   let data = null;
   let error = null;
   try {
@@ -138,6 +191,7 @@ export default async function AnalyticsAdminPage() {
           <h1>Analytics</h1>
           <p className="sub">Live Google Analytics 4 · {range.startDate} → {range.endDate}</p>
           <span className="badge"><span className="d" /> Connected to GA4 — real data</span>
+          <div><a className="signout" href="/api/admin/login">Sign out</a></div>
         </div>
       </header>
 
