@@ -74,6 +74,22 @@ const CSS = `
   padding:.35rem .7rem;text-decoration:none}
 .gax .src-head .src-link:hover{background:#333}
 .gax .src-head p{width:100%;font-size:.82rem;color:#8a8072}
+.gax .src.bare{margin-top:0;border-top:none;padding-top:0}
+/* tabs (CSS-only, radio-driven) */
+.gax .tabs{margin-top:2.2rem;position:relative}
+.gax .tabin{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.gax .tablabels{display:flex;gap:.3rem;border-bottom:2px solid #e4ddd0;flex-wrap:wrap}
+.gax .tablabel{padding:.7rem 1.25rem;cursor:pointer;font-weight:700;font-size:.98rem;color:#8a8072;
+  border-bottom:2px solid transparent;margin-bottom:-2px;user-select:none;display:inline-flex;align-items:center;gap:.45rem;
+  border-radius:8px 8px 0 0}
+.gax .tablabel:hover{color:#4a4238;background:#f1ece3}
+.gax .tabpanel{display:none;padding-top:1.7rem}
+.gax .tabpanel>section:first-child,.gax .tabpanel>.note:first-child{margin-top:0}
+#tab-ga:checked~.tablabels label[for="tab-ga"],
+#tab-vc:checked~.tablabels label[for="tab-vc"]{color:#111;border-bottom-color:#e8722a}
+#tab-ga:checked~.panel-ga,#tab-vc:checked~.panel-vc{display:block}
+#tab-ga:focus-visible~.tablabels label[for="tab-ga"],
+#tab-vc:focus-visible~.tablabels label[for="tab-vc"]{outline:2px solid #e8722a;outline-offset:3px}
 .gax .note{margin-top:2.4rem;padding:1rem 1.2rem;background:#f4f0e9;border:1px solid #eae3d8;border-radius:12px;color:#6f665a;font-size:.84rem}
 .gax .note a{color:#bb5a1f;text-decoration:underline;font-weight:600}
 .gax .err{background:#fff;border:1px solid #f2c9c1;border-left:4px solid #bb3a2c;border-radius:14px;padding:1.4rem 1.5rem;margin-top:2rem}
@@ -263,6 +279,17 @@ export default async function AnalyticsAdminPage({ searchParams }) {
           </div>
         </section>
 
+        {/* Tabbed sources: Google Analytics | Vercel Analytics (realtime above stays visible for both) */}
+        <div className="tabs">
+          <input type="radio" name="anatab" id="tab-ga" className="tabin" defaultChecked />
+          <input type="radio" name="anatab" id="tab-vc" className="tabin" />
+          <div className="tablabels">
+            <label htmlFor="tab-ga" className="tablabel">Google Analytics</label>
+            <label htmlFor="tab-vc" className="tablabel">▲ Vercel Analytics</label>
+          </div>
+
+          {/* ───────────── Google Analytics tab ───────────── */}
+          <div className="tabpanel panel-ga">
         {!hasData && (
           <div className="note" style={{ marginTop: "1.4rem" }}>
             <b>Standard reports below read 0 so far — that’s expected.</b> Google Analytics processes standard
@@ -353,9 +380,11 @@ export default async function AnalyticsAdminPage({ searchParams }) {
           the browser). Data collection began 06–07 Jul 2026 — traffic before that date was not recorded. This page
           is <b>noindex</b> and refreshes on every load.
         </p>
+          </div>
 
-        {/* ───────────────────────── Vercel Analytics (separate source) ───────────────────────── */}
-        <section className="src">
+          {/* ───────────── Vercel Analytics tab ───────────── */}
+          <div className="tabpanel panel-vc">
+            <section className="src bare">
           <div className="src-head">
             <h2>Vercel Analytics</h2>
             <span className="tag">▲ Vercel</span>
@@ -403,7 +432,9 @@ export default async function AnalyticsAdminPage({ searchParams }) {
               ) : null}
             </>
           )}
-        </section>
+            </section>
+          </div>
+        </div>
       </div>
     </div>
   );
