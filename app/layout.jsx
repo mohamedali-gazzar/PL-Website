@@ -1,7 +1,5 @@
 import "./globals.css";
 import { Poppins, Montserrat } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import StyledJsxRegistry from "./registry";
 import ChunkReload from "@/components/ChunkReload";
 
@@ -21,16 +19,9 @@ const montserrat = Montserrat({
 });
 
 export const metadata = {
-  title: "Powerline — Built where it counts, partnered for the rest",
-  description:
-    "Powerline is a leading provider of low and medium voltage electrical panels serving industries and infrastructure projects across Egypt and the region since 2012.",
-  metadataBase: new URL("https://www.powerlinei.com"),
-  openGraph: {
-    title: "Powerline — Built where it counts, partnered for the rest",
-    description:
-      "Low and medium voltage electrical solutions, designed and manufactured to international standards.",
-    type: "website",
-  },
+  title: "Powerline — Analytics Dashboard",
+  description: "Internal analytics dashboard for Powerline.",
+  robots: { index: false, follow: false },
   icons: {
     icon: "/favicon.webp",
     shortcut: "/favicon.webp",
@@ -66,8 +57,6 @@ export default function RootLayout({ children }) {
       <body>
         <ChunkReload />
         <StyledJsxRegistry>{children}</StyledJsxRegistry>
-        <Analytics />
-        <GoogleAnalytics gaId="G-3MVW1FNPDC" />
       </body>
     </html>
   );
