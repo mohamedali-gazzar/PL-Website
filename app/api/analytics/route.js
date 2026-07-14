@@ -17,28 +17,6 @@ export async function GET(request) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const debug = searchParams.get("debug") === "1";
-
-    // ── TEMPORARY DIAGNOSTIC OVERRIDE ───────────────────────────────────────
-    // Admin-only (this route is already cookie-gated above). When ?debug=1, an
-    // optional ?projectId= lets an admin probe a DIFFERENT Vercel project than
-    // VERCEL_PROJECT_ID for the debug fetch only — to find which project holds
-    // the data without redeploying. Value must start with "prj_". Team scope
-    // stays empty unless a valid ?teamId=(team_…) or ?slug= is explicitly given.
-    // The override never touches the normal dashboard queries. REMOVE this block
-    // (and the debug override in lib/vercelAnalytics.js) once the correct
-    // VERCEL_PROJECT_ID is confirmed.
-    let debugScope;
-    if (debug) {
-      const pid = searchParams.get("projectId");
-      if (pid && pid.startsWith("prj_")) {
-        const teamId = searchParams.get("teamId");
-        const slug = searchParams.get("slug");
-        const team = teamId && teamId.startsWith("team_") ? teamId : slug || "";
-        debugScope = { projectId: pid, team };
-      }
-    }
-
     // Realtime is independent of the reporting range and must not fail the whole
     // response if it errors — fetch it best-effort.
     const [data, realtime, vercel] = await Promise.all([
@@ -47,7 +25,7 @@ export async function GET(request) {
         endDate: searchParams.get("end") || undefined,
       }),
       getRealtime().catch(() => null),
-      getVercelAnalytics({ debug, debugScope }).catch(() => ({ configured: true, diagnostics: ["request failed"] })),
+      getVercelAnalytics().catch(() => ({ configured: true, diagnostics: ["request failed"] })),
     ]);
     return NextResponse.json({ ok: true, ...data, realtime, vercel });
   } catch (e) {
