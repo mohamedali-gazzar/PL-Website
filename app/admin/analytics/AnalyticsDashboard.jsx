@@ -349,7 +349,7 @@ export default function AnalyticsDashboard({ data, realtime, vercel }) {
                   <p>
                     {vercel?.configured
                       ? "No data came back from the Vercel Web Analytics API for this range. This is usually transient — reload to retry, or view it directly in the Vercel dashboard. Google Analytics above remains the source of truth."
-                      : "Set VERCEL_API_TOKEN, VERCEL_PROJECT_ID (and VERCEL_TEAM_ID for team projects) server-side, then redeploy."}
+                      : "Set VERCEL_API_TOKEN, ANALYTICS_TARGET_PROJECT_ID (and VERCEL_TEAM_ID for team projects) server-side, then redeploy."}
                   </p>
                   <a className="notice-cta" href="https://vercel.com/nadag1885s-projects/pl-website/analytics" target="_blank" rel="noreferrer">Open Vercel Analytics ↗</a>
                   {vercel?.diagnostics?.length ? <div className="notice-diag mono">Detail: {vercel.diagnostics.join(" · ")}</div> : null}
