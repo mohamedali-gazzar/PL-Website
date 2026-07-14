@@ -17,6 +17,7 @@ export async function GET(request) {
 
   try {
     const { searchParams } = new URL(request.url);
+    const debug = searchParams.get("debug") === "1";
     // Realtime is independent of the reporting range and must not fail the whole
     // response if it errors — fetch it best-effort.
     const [data, realtime, vercel] = await Promise.all([
@@ -25,7 +26,7 @@ export async function GET(request) {
         endDate: searchParams.get("end") || undefined,
       }),
       getRealtime().catch(() => null),
-      getVercelAnalytics().catch(() => ({ configured: true, diagnostics: ["request failed"] })),
+      getVercelAnalytics({ debug }).catch(() => ({ configured: true, diagnostics: ["request failed"] })),
     ]);
     return NextResponse.json({ ok: true, ...data, realtime, vercel });
   } catch (e) {
