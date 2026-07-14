@@ -259,6 +259,7 @@ export default function AnalyticsDashboard({ data, realtime, vercel }) {
             </div>
           </div>
           <div className="hero-right">
+            <a className="signout" href="/admin/crm">CRM →</a>
             <a className="signout" href="/api/admin/login">Sign out</a>
             <span className="hero-note">Live · refreshes on load</span>
           </div>
