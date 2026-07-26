@@ -17,15 +17,15 @@ export async function GET(request) {
 
   try {
     const { searchParams } = new URL(request.url);
+    const start = searchParams.get("start") || undefined;
+    const end = searchParams.get("end") || undefined;
     // Realtime is independent of the reporting range and must not fail the whole
-    // response if it errors — fetch it best-effort.
+    // response if it errors — fetch it best-effort. The date filter drives both
+    // GA4 and Vercel so the whole dashboard reflects the chosen range.
     const [data, realtime, vercel] = await Promise.all([
-      getAnalytics({
-        startDate: searchParams.get("start") || undefined,
-        endDate: searchParams.get("end") || undefined,
-      }),
+      getAnalytics({ startDate: start, endDate: end }),
       getRealtime().catch(() => null),
-      getVercelAnalytics().catch(() => ({ configured: true, diagnostics: ["request failed"] })),
+      getVercelAnalytics({ start, end }).catch(() => ({ configured: true, diagnostics: ["request failed"] })),
     ]);
     return NextResponse.json({ ok: true, ...data, realtime, vercel });
   } catch (e) {

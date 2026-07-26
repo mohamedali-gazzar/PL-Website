@@ -221,10 +221,63 @@ function AreaTrend({ data, keys, id, mounted }) {
 }
 
 /* ── main ───────────────────────────────────────────────────────────────── */
-export default function AnalyticsDashboard({ data, realtime, vercel }) {
+const RANGE_PRESETS = [
+  { key: "7d", label: "7D", days: 7 },
+  { key: "30d", label: "30D", days: 30 },
+  { key: "90d", label: "90D", days: 90 },
+  { key: "365d", label: "12M", days: 365 },
+];
+const isoDay = (d) => d.toISOString().slice(0, 10);
+const daysAgoIso = (n) => isoDay(new Date(Date.now() - n * 86400000));
+const validIso = (s) => (typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) ? s : "");
+
+export default function AnalyticsDashboard({ data: initialData, realtime: initialRealtime, vercel: initialVercel }) {
   const [tab, setTab] = useState("ga");
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+
+  // Live dashboard state — seeded from the server render, then updated in place
+  // when the user changes the date range (client fetch to /api/analytics).
+  const [data, setData] = useState(initialData);
+  const [realtime, setRealtime] = useState(initialRealtime);
+  const [vercel, setVercel] = useState(initialVercel);
+  const [loading, setLoading] = useState(false);
+  const [rangeErr, setRangeErr] = useState(null);
+  const [from, setFrom] = useState(validIso(initialData.range?.startDate));
+  const [to, setTo] = useState(validIso(initialData.range?.endDate));
+  const [maxDate, setMaxDate] = useState("");
+  const [activePreset, setActivePreset] = useState(null);
+
+  // Seed "today"-relative fields after mount so the initial render stays
+  // deterministic (server + client identical → no hydration mismatch).
+  useEffect(() => {
+    setMounted(true);
+    const today = isoDay(new Date());
+    setMaxDate(today);
+    setTo((prev) => prev || today);
+  }, []);
+
+  async function applyRange(start, end, presetKey = null) {
+    if (!start || !end) { setRangeErr("Pick both a start and end date."); return; }
+    if (start > end) { setRangeErr("Start date is after the end date."); return; }
+    setRangeErr(null);
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/analytics?start=${start}&end=${end}`, { cache: "no-store" });
+      const j = await res.json();
+      if (!j.ok) throw new Error(j.error || "Could not load that range.");
+      setData(j);
+      setRealtime(j.realtime);
+      setVercel(j.vercel);
+      setFrom(start);
+      setTo(end);
+      setActivePreset(presetKey);
+    } catch (e) {
+      setRangeErr(e.message || "Could not load that range.");
+    } finally {
+      setLoading(false);
+    }
+  }
+  const applyPreset = (p) => applyRange(daysAgoIso(p.days), isoDay(new Date()), p.key);
 
   const t = data.totals;
   const daily = data.daily || [];
@@ -265,6 +318,39 @@ export default function AnalyticsDashboard({ data, realtime, vercel }) {
           </div>
         </div>
       </header>
+
+      {/* ── date-range filter ── */}
+      <div className="filterbar">
+        <div className="fb-inner">
+          <span className="fb-label">Date range</span>
+          <div className="presets">
+            {RANGE_PRESETS.map((p) => (
+              <button
+                key={p.key}
+                className={`preset ${activePreset === p.key ? "on" : ""}`}
+                onClick={() => applyPreset(p)}
+                disabled={loading}
+              >{p.label}</button>
+            ))}
+          </div>
+          <div className="custom">
+            <input
+              type="date" value={from} max={to || maxDate}
+              onChange={(e) => { setFrom(e.target.value); setActivePreset(null); }}
+              disabled={loading} aria-label="Start date"
+            />
+            <span className="arrow">→</span>
+            <input
+              type="date" value={to} min={from} max={maxDate}
+              onChange={(e) => { setTo(e.target.value); setActivePreset(null); }}
+              disabled={loading} aria-label="End date"
+            />
+            <button className="apply" onClick={() => applyRange(from, to)} disabled={loading}>Apply</button>
+          </div>
+          {loading ? <span className="fb-status">Loading…</span>
+            : rangeErr ? <span className="fb-status err">{rangeErr}</span> : null}
+        </div>
+      </div>
 
       <div className="wrap">
         {/* ── realtime ── */}
@@ -423,6 +509,23 @@ const CSS = `
 .pldash .signout{font-size:.78rem;color:var(--dim);text-decoration:none;border:1px solid var(--line);padding:.45rem .9rem;border-radius:9px}
 .pldash .signout:hover{color:#fff;border-color:var(--line2);background:rgba(255,255,255,.04)}
 .pldash .hero-note{font-size:.72rem;color:var(--faint)}
+.pldash .filterbar{border-bottom:1px solid var(--line);background:rgba(255,255,255,.015)}
+.pldash .fb-inner{max-width:1240px;margin-inline:auto;padding:.8rem clamp(1rem,4vw,2.4rem);display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.pldash .fb-label{font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.pldash .presets{display:inline-flex;gap:.25rem;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:.25rem}
+.pldash .preset{border:none;background:transparent;color:var(--dim);font-size:.8rem;font-weight:700;padding:.35rem .75rem;border-radius:7px;cursor:pointer}
+.pldash .preset:hover:not(:disabled){color:#fff}
+.pldash .preset.on{background:linear-gradient(180deg,var(--accent2),var(--accent));color:#160c04}
+.pldash .preset:disabled{opacity:.55;cursor:not-allowed}
+.pldash .custom{display:inline-flex;align-items:center;gap:.5rem}
+.pldash .custom input[type=date]{background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:.4rem .55rem;font-size:.82rem;font-family:inherit;color-scheme:dark}
+.pldash .custom input[type=date]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.pldash .custom .arrow{color:var(--faint)}
+.pldash .apply{border:1px solid var(--line2);background:rgba(255,255,255,.04);color:#e7e2dc;font-weight:700;font-size:.8rem;padding:.44rem .95rem;border-radius:8px;cursor:pointer}
+.pldash .apply:hover:not(:disabled){border-color:var(--accent);color:#fff}
+.pldash .apply:disabled{opacity:.55;cursor:not-allowed}
+.pldash .fb-status{font-size:.78rem;color:var(--dim)}
+.pldash .fb-status.err{color:#f0a89f}
 
 /* realtime */
 .pldash .rt{margin-top:clamp(1.4rem,3vw,2rem);display:grid;grid-template-columns:minmax(300px,.9fr) 1.1fr;gap:1.2rem}
