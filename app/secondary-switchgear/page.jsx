@@ -1,15 +1,15 @@
 import CollectionView from "@/components/CollectionView";
-import { mediumVoltage } from "@/lib/content";
+import { secondarySwitchgear } from "@/lib/content";
 
 export const metadata = {
-  title: "Medium Voltage Assembly — Powerline",
-  description: mediumVoltage.intro,
+  title: "Secondary Switchgear — Powerline",
+  description: secondarySwitchgear.intro,
 };
 
 export default function Page() {
   return (
     <CollectionView
-      data={mediumVoltage}
+      data={secondarySwitchgear}
       eyebrow="Our Products"
       img="/img/line-mv.webp"
     />

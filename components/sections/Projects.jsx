@@ -146,11 +146,12 @@ export default function Projects() {
                     alt={p.name}
                     loading="lazy"
                     draggable="false"
+                    onError={(e) => { e.currentTarget.style.display = "none"; }}
                   />
                   <span className="pj-card-veil" />
                   <span className="pj-dot" />
                   <span className="pj-type">{p.type}</span>
-                  <h3 className="pj-name">{p.name}</h3>
+                  <h3 className="pj-name" dir="auto">{p.name}</h3>
                 </article>
               ))}
             </div>

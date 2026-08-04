@@ -4,7 +4,11 @@ import Link from "next/link";
 import { productLines } from "@/lib/content";
 import { Reveal, CountUp } from "@/components/Primitives";
 
-const OFFSETS = ["0rem", "0rem", "0rem", "0rem"]; // aligned on one line
+const OFFSETS = ["0rem", "0rem", "0rem", "0rem", "0rem"]; // aligned on one line
+
+// All five lines: Low Voltage · Primary Switchgear · Secondary Switchgear ·
+// Dry Transformers · Supplies.
+const lines = productLines;
 
 export default function ProductLines() {
   return (
@@ -14,7 +18,7 @@ export default function ProductLines() {
           <div className="head sec-head">
             <span className="eyebrow">Product Lines</span>
             <h2 className="section-title">
-              Four lines.
+              Five lines.
               <br />
               <span>One flow of power.</span>
             </h2>
@@ -27,7 +31,7 @@ export default function ProductLines() {
             <span className="flow-pulse" />
           </span>
 
-          {productLines.map((l, i) => (
+          {lines.map((l, i) => (
             <Reveal key={l.key} delay={i * 140}>
               <article className="fcard" style={{ marginTop: OFFSETS[i] }}>
                 <Link href={l.href} className="fcard-link" aria-label={l.title}>
@@ -75,8 +79,8 @@ export default function ProductLines() {
         .flow {
           position: relative;
           display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: clamp(1rem, 1.5vw, 1.6rem);
+          grid-template-columns: repeat(5, 1fr);
+          gap: clamp(0.8rem, 1.3vw, 1.4rem);
           align-items: stretch;
         }
         /* each card is wrapped in a .reveal grid item — let the card fill it so

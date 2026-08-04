@@ -12,7 +12,8 @@ import { trProjects } from "@/lib/trProjects";
 import {
   products,
   lowVoltage,
-  mediumVoltage,
+  primarySwitchgear,
+  secondarySwitchgear,
   supplies,
   brand,
 } from "@/lib/content";
@@ -75,21 +76,24 @@ scaleSections["dry-type-transformers"] = {
 
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",
-  "Medium Voltage": "/img/line-mv.webp",
+  "Primary Switchgear": "/img/prod-mcset.webp",
+  "Secondary Switchgear": "/img/line-mv.webp",
   "Dry Transformers": "/img/prod-dry.webp",
   Supplies: "/img/line-supplies.webp",
 };
 const lineHref = {
   "Low Voltage": "/low-voltage",
-  "Medium Voltage": "/medium-voltage",
+  "Primary Switchgear": "/primary-switchgear",
+  "Secondary Switchgear": "/secondary-switchgear",
   "Dry Transformers": "/our-products",
   Supplies: "/supplies",
 };
 
-// Build a lookup of every product across the three collections.
+// Build a lookup of every product across the collections.
 const collections = [
   { line: "Low Voltage", set: lowVoltage },
-  { line: "Medium Voltage", set: mediumVoltage },
+  { line: "Primary Switchgear", set: primarySwitchgear },
+  { line: "Secondary Switchgear", set: secondarySwitchgear },
   { line: "Supplies", set: supplies },
 ];
 

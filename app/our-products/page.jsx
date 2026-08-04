@@ -3,7 +3,7 @@ import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 import ProductGrid from "@/components/ProductGrid";
 import { Reveal } from "@/components/Primitives";
-import { lowVoltage, mediumVoltage, dryTransformers } from "@/lib/content";
+import { lowVoltage, primarySwitchgear, secondarySwitchgear, dryTransformers } from "@/lib/content";
 
 export const metadata = {
   title: "Our Products — Powerline",
@@ -13,7 +13,8 @@ export const metadata = {
 
 const groups = [
   { data: lowVoltage, href: "/low-voltage", img: "/img/line-lv.webp" },
-  { data: mediumVoltage, href: "/medium-voltage", img: "/img/line-mv.webp" },
+  { data: primarySwitchgear, href: "/primary-switchgear", img: "/img/prod-mcset.webp" },
+  { data: secondarySwitchgear, href: "/secondary-switchgear", img: "/img/line-mv.webp" },
   { data: dryTransformers, href: "/products/dry-type-transformers", img: "/img/prod-dry.webp" },
 ];
 
