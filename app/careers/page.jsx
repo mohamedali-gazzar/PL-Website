@@ -32,6 +32,22 @@ export default function CareersPage() {
       return;
     }
     setStatus("submitting");
+
+    // Best-effort CRM lead capture — fire-and-forget (no CV; just the applicant
+    // as a lead). Never blocks or breaks the email path.
+    fetch("/api/crm-capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: "careers",
+        name: data.get("name"),
+        email: data.get("email"),
+        phone: data.get("phone"),
+        message: [data.get("position") ? `Position: ${data.get("position")}` : null, data.get("message")]
+          .filter(Boolean).join("\n\n"),
+      }),
+    }).catch(() => {});
+
     try {
       // FormSubmit's AJAX endpoint can't carry file attachments, so we post the
       // multipart form to the standard endpoint straight from the browser (a

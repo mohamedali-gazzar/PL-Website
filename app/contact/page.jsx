@@ -23,6 +23,23 @@ export default function ContactPage() {
       return;
     }
     setStatus("submitting");
+
+    // Best-effort CRM lead capture — fire-and-forget so it never blocks or
+    // breaks the email path. The secret lives server-side in /api/crm-capture.
+    fetch("/api/crm-capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        source: "contact",
+        name: data.name,
+        company: data.company,
+        email: data.email,
+        phone: data.phone,
+        message: [data.interest ? `Area of interest: ${data.interest}` : null, data.message]
+          .filter(Boolean).join("\n\n"),
+      }),
+    }).catch(() => {});
+
     try {
       // Post straight to FormSubmit from the browser so a real Referer is
       // present — server-side fetch (Vercel/undici) strips it and FormSubmit
