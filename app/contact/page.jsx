@@ -33,6 +33,8 @@ export default function ContactPage() {
         body: JSON.stringify({
           _subject: `New sales request — ${data.name}`,
           _template: "table",
+          // Deliver to info@ (URL) and also CC the sales lead.
+          _cc: "mohamed.yahia@powerline.com.eg",
           Name: data.name,
           Company: data.company || "-",
           Email: data.email,
