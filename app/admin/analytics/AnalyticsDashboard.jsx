@@ -406,6 +406,48 @@ export default function AnalyticsDashboard({ data: initialData, realtime: initia
               ]} />
             </ChartCard>
 
+            {data.acquisition && data.acquisition.bySource?.length ? (
+              <ChartCard span title="Session acquisition sources"
+                sub={`GA4 · Traffic acquisition — real sessions by source / medium · ${nf.format(data.acquisition.total)} total`}
+                icon={Ic.link}>
+                <div className="acq">
+                  <div className="acq-col">
+                    <div className="acq-col-h">Sessions by source</div>
+                    <div className="acq-list">
+                      {data.acquisition.bySource.map((s, i) => (
+                        <div className="acq-row" key={s.source}>
+                          <span className="acq-name">{s.source}</span>
+                          <span className="acq-bar">
+                            <span className="acq-fill" style={{ width: `${Math.max(1.5, s.pct)}%`, background: SERIES[i % SERIES.length] }} />
+                          </span>
+                          <span className="acq-val">{nf.format(s.sessions)}</span>
+                          <span className="acq-pct">{s.pct.toFixed(1)}%</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="acq-col">
+                    <div className="acq-col-h">Source / medium drill-down</div>
+                    <div className="acq-tbl-wrap">
+                      <table className="acq-tbl">
+                        <thead><tr><th>Source</th><th>Medium</th><th className="ra">Sessions</th><th className="ra">%</th></tr></thead>
+                        <tbody>
+                          {data.acquisition.drill.map((d, i) => (
+                            <tr key={i}>
+                              <td className="acq-s">{d.source}</td>
+                              <td><span className="acq-med">{d.medium}</span></td>
+                              <td className="ra">{nf.format(d.sessions)}</td>
+                              <td className="ra acq-dim">{d.pct.toFixed(1)}%</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </ChartCard>
+            ) : null}
+
             <div className="grid">
               <ChartCard title="Top pages" sub="By page views" icon={Ic.page}><RankBars data={gaTop} color={ACCENT} labelW={132} mounted={mounted} /></ChartCard>
               <ChartCard title="Traffic sources" sub="Sessions by channel" icon={Ic.link}><ColBars data={gaSrc} mounted={mounted} /></ChartCard>
@@ -582,6 +624,25 @@ const CSS = `
 .pldash .card-ic{display:grid;place-items:center;width:2.1rem;height:2.1rem;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--accent)}
 .pldash .card-h h3{font-size:1.02rem;font-weight:700;letter-spacing:-.01em}
 .pldash .card-h p{font-size:.76rem;color:var(--faint);margin-top:.1rem}
+.pldash .acq{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem}
+@media(max-width:820px){.pldash .acq{grid-template-columns:1fr;gap:1.3rem}}
+.pldash .acq-col-h{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:.85rem}
+.pldash .acq-list{display:flex;flex-direction:column;gap:.55rem}
+.pldash .acq-row{display:grid;grid-template-columns:6.5rem 1fr 3.4rem 3rem;align-items:center;gap:.6rem}
+.pldash .acq-name{font-size:.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pldash .acq-bar{height:9px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}
+.pldash .acq-fill{display:block;height:100%;border-radius:6px;min-width:3px}
+.pldash .acq-val{font-size:.85rem;font-weight:700;color:#f4f4f5;text-align:right;font-variant-numeric:tabular-nums}
+.pldash .acq-pct{font-size:.78rem;color:var(--dim);text-align:right;font-variant-numeric:tabular-nums}
+.pldash .acq-tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:11px}
+.pldash .acq-tbl{width:100%;border-collapse:collapse;min-width:340px}
+.pldash .acq-tbl th{text-align:left;font-size:.66rem;text-transform:uppercase;letter-spacing:.09em;color:var(--faint);font-weight:700;padding:.55rem .8rem;border-bottom:1px solid var(--line)}
+.pldash .acq-tbl td{padding:.5rem .8rem;border-bottom:1px solid rgba(255,255,255,.05);font-size:.84rem}
+.pldash .acq-tbl tbody tr:last-child td{border-bottom:none}
+.pldash .acq-tbl .ra{text-align:right;font-variant-numeric:tabular-nums}
+.pldash .acq-s{font-weight:600;color:var(--text)}
+.pldash .acq-dim{color:var(--dim)}
+.pldash .acq-med{font-size:.72rem;color:#cbd5e1;background:rgba(91,157,255,.12);border:1px solid rgba(91,157,255,.28);padding:.1rem .5rem;border-radius:20px;white-space:nowrap}
 .pldash .card-b{min-height:40px}
 .pldash .skel{width:100%;border-radius:12px;background:linear-gradient(100deg,rgba(255,255,255,.04),rgba(255,255,255,.08),rgba(255,255,255,.04));background-size:200% 100%;animation:sh 1.3s infinite}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
