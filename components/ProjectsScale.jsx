@@ -188,14 +188,21 @@ export default function ProjectsScale({
 
         @media (prefers-reduced-motion: reduce) {
           .sc-sec.in .sc-head, .sc-sec.in .sc-rows { transition: none; }
-          .sc-rows {
-            -webkit-mask-image: none; mask-image: none;
-            max-width: var(--maxw, 75rem); padding: 0 clamp(1.2rem, 5vw, 2rem);
-            margin-left: auto; margin-right: auto;
+          .sc-rows { -webkit-mask-image: none; mask-image: none; }
+          /* Reduced motion: stop the auto-scroll, but keep each row a static,
+             swipeable horizontal strip — never wrap into a tall vertical stack
+             (which piled every chip onto its own line on phones with
+             "reduce motion" enabled). */
+          .sc-row {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
           }
-          .sc-row { overflow: visible; }
-          .sc-track { animation: none; flex-wrap: wrap; width: auto; justify-content: center; }
+          .sc-row::-webkit-scrollbar { display: none; }
+          .sc-track { animation: none; }
           .sc-chip[data-dup="1"] { display: none; }
+          .sc-foot { display: none; }
         }
       `}</style>
     </section>

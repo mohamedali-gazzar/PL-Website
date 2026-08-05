@@ -40,6 +40,10 @@ export const metadata = {
 
 export const viewport = {
   themeColor: "#050506",
+  // Declare the site as dark so browsers (esp. Chrome/Android "force dark
+  // mode") don't auto-invert an already-dark theme and wash out light-grey
+  // text — emits <meta name="color-scheme" content="dark">.
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
@@ -47,7 +51,7 @@ export const viewport = {
 // Critical, first-paint CSS — inlined in the initial HTML so the page never
 // flashes unstyled/white before the main stylesheet applies.
 const CRITICAL_CSS = `
-  html { background: #050506; }
+  html { background: #050506; color-scheme: dark; }
   body {
     margin: 0;
     background: #050506;

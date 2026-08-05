@@ -31,6 +31,10 @@
 }
 
 :root {
+  /* Site is dark by design — opt out of browser/OS auto-dark inversion so
+     light-grey text isn't washed out on phones with "force dark mode" on. */
+  color-scheme: dark;
+
   --orange: #e8722a;
   --orange-bright: #ff8a4c;
   --orange-deep: #c8501a;
