@@ -8,12 +8,12 @@ import { pcssProjects } from "@/lib/pcssProjects";
 import { pralProjects } from "@/lib/pralProjects";
 import { psecProjects } from "@/lib/psecProjects";
 import { lvProjects } from "@/lib/lvProjects";
-import { trProjects } from "@/lib/trProjects";
 import {
   products,
   lowVoltage,
   primarySwitchgear,
   secondarySwitchgear,
+  compactSubstation,
   supplies,
   brand,
 } from "@/lib/content";
@@ -64,20 +64,13 @@ const lvSection = {
   scaleSections[slug] = lvSection;
 });
 
-scaleSections["dry-type-transformers"] = {
-  projects: trProjects,
-  title: "Dry-type transformers delivered",
-  ariaLabel: "The scale of Powerline's dry-type transformer portfolio",
-  lead:
-    "Air-cooled dry-type distribution transformers supplied and commissioned by " +
-    "Powerline for clients across Egypt — a portfolio that keeps growing. " +
-    "Below is a selection of delivered reference projects.",
-};
+// Dry-type transformers intentionally have no "track record" section for now.
 
 const lineImg = {
   "Low Voltage": "/img/line-lv.webp",
   "Primary Switchgear": "/img/prod-mcset.webp",
   "Secondary Switchgear": "/img/line-mv.webp",
+  "Compact Substation PCSS": "/img/prod-pcss.webp",
   "Dry Transformers": "/img/prod-dry.webp",
   Supplies: "/img/line-supplies.webp",
 };
@@ -85,6 +78,7 @@ const lineHref = {
   "Low Voltage": "/low-voltage",
   "Primary Switchgear": "/primary-switchgear",
   "Secondary Switchgear": "/secondary-switchgear",
+  "Compact Substation PCSS": "/compact-substation",
   "Dry Transformers": "/our-products",
   Supplies: "/supplies",
 };
@@ -94,6 +88,7 @@ const collections = [
   { line: "Low Voltage", set: lowVoltage },
   { line: "Primary Switchgear", set: primarySwitchgear },
   { line: "Secondary Switchgear", set: secondarySwitchgear },
+  { line: "Compact Substation PCSS", set: compactSubstation },
   { line: "Supplies", set: supplies },
 ];
 

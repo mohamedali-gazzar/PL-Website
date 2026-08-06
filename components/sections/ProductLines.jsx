@@ -4,63 +4,61 @@ import Link from "next/link";
 import { productLines } from "@/lib/content";
 import { Reveal, CountUp } from "@/components/Primitives";
 
-const OFFSETS = ["0rem", "0rem", "0rem", "0rem", "0rem"]; // aligned on one line
-
-// All five lines: Low Voltage · Primary Switchgear · Secondary Switchgear ·
-// Dry Transformers · Supplies.
-const lines = productLines;
-
+// Premium "Feature-Rich Showcase" of the product lines: a glass-card grid where
+// each line leads with its baked-title cover, its two headline specs (count-up),
+// a short blurb and a CTA. A glowing orange "current" edge ties into the
+// "one flow of power" idea and lights up on hover.
 export default function ProductLines() {
   return (
     <section className="lines" id="solutions">
+      <span className="glow" aria-hidden="true" />
       <div className="container">
         <Reveal>
           <div className="head sec-head">
             <span className="eyebrow">Product Lines</span>
             <h2 className="section-title">
-              Five lines.
+              Six lines.
               <br />
               <span>One flow of power.</span>
             </h2>
+            <p className="head-sub">
+              From low-voltage distribution to medium-voltage switchgear and compact
+              substations — every line engineered, type-tested and assembled in-house.
+            </p>
           </div>
         </Reveal>
 
-        <div className="flow">
-          {/* energy line flowing through the cards */}
-          <span className="flow-line">
-            <span className="flow-pulse" />
-          </span>
-
-          {lines.map((l, i) => (
-            <Reveal key={l.key} delay={i * 140}>
-              <article className="fcard" style={{ marginTop: OFFSETS[i] }}>
+        <div className="grid">
+          {productLines.map((l, i) => (
+            <Reveal key={l.key} delay={i * 80}>
+              <article className="fcard">
                 <Link href={l.href} className="fcard-link" aria-label={l.title}>
-                  <div className="fcard-media">
+                  <span className="edge" aria-hidden="true" />
+                  <div className="media">
                     <img src={l.img} alt={l.title} loading="lazy" />
-                    <span className="fcard-veil" />
-                    <span className="fcard-idx">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="fcard-node" />
+                    <span className="veil" aria-hidden="true" />
+                    <span className="idx">{String(i + 1).padStart(2, "0")}</span>
+                    <span className="tint" aria-hidden="true" />
                   </div>
 
-                  <div className="fcard-body">
-                    <h3>{l.title}</h3>
-                    <p>{l.blurb}</p>
+                  <div className="body">
+                    <h3 className="sr-only">{l.title}</h3>
 
-                    <div className="fspecs">
+                    <div className="specs">
                       {l.specs.map((s) => (
-                        <div className="fspec" key={s.label}>
-                          <span className="fv">
+                        <div className="spec" key={s.label}>
+                          <span className="v">
                             <CountUp value={s.value} suffix={s.suffix} />
                           </span>
-                          <span className="fl">{s.label}</span>
+                          <span className="l">{s.label}</span>
                         </div>
                       ))}
                     </div>
 
+                    <p className="blurb">{l.blurb}</p>
+
                     <span className="more">
-                      Explore line <i>→</i>
+                      Explore line <i aria-hidden="true">→</i>
                     </span>
                   </div>
                 </Link>
@@ -74,205 +72,303 @@ export default function ProductLines() {
         .lines {
           position: relative;
           padding: clamp(5rem, 12vh, 9rem) 0;
-          background: transparent;
-        }
-        .flow {
-          position: relative;
-          display: grid;
-          grid-template-columns: repeat(5, 1fr);
-          gap: clamp(0.8rem, 1.3vw, 1.4rem);
-          align-items: stretch;
-        }
-        /* each card is wrapped in a .reveal grid item — let the card fill it so
-           all cards in a row share the tallest card's height */
-        .flow > :global(.reveal) { display: flex; min-width: 0; }
-        /* flowing energy line behind the cards */
-        .flow-line {
-          position: absolute;
-          left: 4%;
-          right: 4%;
-          top: 38%;
-          height: 2px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(232, 114, 42, 0.25),
-            transparent
-          );
           overflow: hidden;
+        }
+        /* ambient orange glow behind the grid */
+        .glow {
+          position: absolute;
+          top: 8%;
+          left: 50%;
+          width: min(1100px, 90vw);
+          height: 520px;
+          transform: translateX(-50%);
+          background: radial-gradient(
+            60% 60% at 50% 40%,
+            rgba(232, 114, 42, 0.16),
+            transparent 70%
+          );
+          filter: blur(20px);
+          pointer-events: none;
           z-index: 0;
         }
-        .flow-pulse {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          width: 16%;
-          background: linear-gradient(90deg, transparent, var(--orange), transparent);
-          box-shadow: 0 0 18px var(--orange);
-          animation: flowmove 3.6s linear infinite;
-        }
-        @keyframes flowmove {
-          from {
-            transform: translateX(-120%);
-          }
-          to {
-            transform: translateX(700%);
-          }
-        }
-
-        .fcard {
+        .container {
           position: relative;
           z-index: 1;
+        }
+
+        .head {
+          text-align: center;
+          max-width: 60ch;
+          margin-inline: auto;
+        }
+        .head :global(.eyebrow) {
+          justify-content: center;
+        }
+        .section-title {
+          margin: 1rem 0 0;
+          color: #fff;
+        }
+        .section-title span {
+          color: var(--orange);
+          text-shadow: 0 0 34px rgba(232, 114, 42, 0.45);
+        }
+        .head-sub {
+          margin: 1.2rem auto 0;
+          max-width: 56ch;
+          color: var(--text-dim);
+          font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+          line-height: 1.6;
+        }
+
+        .grid {
+          margin-top: clamp(2.4rem, 5vw, 3.6rem);
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: clamp(1rem, 1.6vw, 1.5rem);
+        }
+        .grid :global(.reveal) {
+          display: flex;
+        }
+
+        /* ── glass card ── */
+        .fcard {
+          position: relative;
           flex: 1;
           border: 1px solid var(--line);
           border-radius: 20px;
           overflow: hidden;
-          background: rgba(12, 12, 14, 0.6);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          transition: transform 0.45s var(--ease), border-color 0.45s,
-            box-shadow 0.45s;
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.045),
+            rgba(255, 255, 255, 0.012)
+          );
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: transform 0.45s var(--ease), border-color 0.45s ease,
+            box-shadow 0.45s ease;
+        }
+        .fcard::before {
+          /* soft top highlight, glass edge */
+          content: "";
+          position: absolute;
+          inset: 0 0 auto 0;
+          height: 1px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.25),
+            transparent
+          );
+          opacity: 0.6;
+          z-index: 3;
         }
         .fcard:hover {
           transform: translateY(-10px);
           border-color: rgba(232, 114, 42, 0.55);
-          box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6),
-            0 0 40px rgba(232, 114, 42, 0.15);
+          box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.85),
+            0 0 50px -12px rgba(232, 114, 42, 0.4);
         }
         .fcard-link {
           display: flex;
           flex-direction: column;
           height: 100%;
         }
-        .fcard-media {
+        /* the orange "current" edge — a hairline that runs across the top of the
+           image and lights up on hover (the flow of power) */
+        .edge {
+          position: absolute;
+          top: 0;
+          left: 8%;
+          right: 8%;
+          height: 2px;
+          background: linear-gradient(
+            90deg,
+            transparent,
+            var(--orange),
+            var(--orange-bright, #ff8a4c),
+            var(--orange),
+            transparent
+          );
+          opacity: 0;
+          box-shadow: 0 0 16px rgba(232, 114, 42, 0.7);
+          transition: opacity 0.45s ease;
+          z-index: 4;
+        }
+        .fcard:hover .edge {
+          opacity: 1;
+        }
+
+        .media {
           position: relative;
-          aspect-ratio: 5 / 4;
+          aspect-ratio: 4 / 3;
           overflow: hidden;
         }
-        .fcard-media img {
+        .media img {
           width: 100%;
           height: 100%;
           object-fit: cover;
           transition: transform 0.7s var(--ease);
         }
-        .fcard:hover .fcard-media img {
-          transform: scale(1.08);
+        .fcard:hover .media img {
+          transform: scale(1.07);
         }
-        .fcard-veil {
+        .veil {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, transparent 45%, rgba(12, 12, 14, 0.9));
+          background: linear-gradient(
+            180deg,
+            transparent 52%,
+            rgba(10, 10, 12, 0.85) 100%
+          );
         }
-        .fcard-idx {
+        /* subtle orange wash that fades in on hover */
+        .tint {
           position: absolute;
-          top: 1.1rem;
-          left: 1.1rem;
-          font-family: var(--font-head);
-          font-weight: 800;
-          font-size: 0.85rem;
-          color: #fff;
-          background: rgba(232, 114, 42, 0.9);
-          padding: 0.3rem 0.65rem;
-          border-radius: 8px;
-        }
-        .fcard-node {
-          position: absolute;
-          bottom: -6px;
-          left: 50%;
-          width: 12px;
-          height: 12px;
-          margin-left: -6px;
-          border-radius: 50%;
-          background: var(--orange);
-          box-shadow: 0 0 16px var(--orange);
+          inset: 0;
+          background: radial-gradient(
+            120% 90% at 50% 0%,
+            rgba(232, 114, 42, 0.16),
+            transparent 60%
+          );
           opacity: 0;
-          transition: opacity 0.4s;
+          transition: opacity 0.45s ease;
         }
-        .fcard:hover .fcard-node {
+        .fcard:hover .tint {
           opacity: 1;
         }
-        .fcard-body {
-          padding: 1.6rem 1.6rem 1.9rem;
+        .idx {
+          position: absolute;
+          top: 1rem;
+          left: 1rem;
+          font-family: var(--font-head);
+          font-weight: 800;
+          font-size: 0.8rem;
+          letter-spacing: 0.02em;
+          color: #fff;
+          background: rgba(232, 114, 42, 0.92);
+          padding: 0.28rem 0.62rem;
+          border-radius: 8px;
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+          z-index: 3;
+        }
+
+        .body {
+          position: relative;
+          padding: 1.5rem 1.6rem 1.7rem;
           flex: 1;
           display: flex;
           flex-direction: column;
         }
-        .fcard-body h3 {
-          font-size: clamp(1.5rem, 2.2vw, 2rem);
-          text-transform: uppercase;
-        }
-        .fcard-body p {
-          color: var(--text-dim);
-          font-size: 0.92rem;
-          line-height: 1.55;
-          margin: 0.7rem 0 1.3rem;
-          min-height: 6.2em;
-        }
-        .fspecs {
+        /* headline specs — the premium data moment */
+        .specs {
           display: flex;
-          gap: 1.8rem;
-          padding-top: 1.1rem;
-          border-top: 1px solid var(--line);
-          margin-top: auto;
+          gap: 1.4rem;
         }
-        .fv {
+        .spec {
+          position: relative;
+          flex: 1;
+        }
+        .spec + .spec::before {
+          content: "";
+          position: absolute;
+          left: -0.7rem;
+          top: 0.15rem;
+          bottom: 0.15rem;
+          width: 1px;
+          background: var(--line);
+        }
+        .v {
           display: block;
           font-family: var(--font-head);
           font-weight: 800;
-          font-size: 1.5rem;
-          color: var(--orange);
+          font-size: clamp(1.5rem, 2.4vw, 1.9rem);
           line-height: 1;
+          color: var(--orange);
+          font-variant-numeric: tabular-nums;
+          text-shadow: 0 0 22px rgba(232, 114, 42, 0.28);
         }
-        .fl {
-          font-size: 0.7rem;
-          color: var(--text-faint);
+        .l {
+          display: block;
+          margin-top: 0.35rem;
+          font-size: 0.68rem;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          color: var(--text-faint);
+        }
+        .blurb {
+          margin: 1.1rem 0 1.3rem;
+          color: var(--text-dim);
+          font-size: 0.9rem;
+          line-height: 1.55;
+          flex: 1;
         }
         .more {
           display: inline-flex;
           align-items: center;
           gap: 0.5rem;
-          margin-top: 1.2rem;
           font-weight: 600;
           font-size: 0.85rem;
           color: #fff;
+          transition: color 0.3s ease;
         }
         .more i {
+          font-style: normal;
           transition: transform 0.3s var(--ease);
+        }
+        .fcard:hover .more {
+          color: var(--orange);
         }
         .fcard:hover .more i {
           transform: translateX(6px);
-          color: var(--orange);
         }
 
-        @media (max-width: 1200px) {
-          .flow {
+        .fcard-link:focus-visible {
+          outline: 2px solid var(--orange);
+          outline-offset: 3px;
+        }
+
+        .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+
+        @media (max-width: 1024px) {
+          .grid {
             grid-template-columns: repeat(2, 1fr);
-            max-width: 780px;
-            margin: 0 auto;
-            gap: 1.5rem;
-          }
-          .fcard {
-            margin-top: 0 !important;
-          }
-          .flow-line {
-            display: none;
+            max-width: 760px;
+            margin-inline: auto;
           }
         }
-        @media (max-width: 620px) {
-          .flow {
+        @media (max-width: 600px) {
+          .grid {
             grid-template-columns: 1fr;
-            max-width: 460px;
+            max-width: 440px;
           }
-          .fcard-body p {
-            min-height: 0;
+          .blurb {
+            flex: none;
           }
         }
         @media (prefers-reduced-motion: reduce) {
-          .flow-pulse {
-            animation: none;
+          .fcard,
+          .media img,
+          .edge,
+          .tint,
+          .more,
+          .more i {
+            transition: none;
+          }
+          .fcard:hover {
+            transform: none;
+          }
+          .fcard:hover .media img {
+            transform: none;
           }
         }
       `}</style>
