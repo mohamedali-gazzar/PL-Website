@@ -410,15 +410,32 @@ export default function AnalyticsDashboard({ data: initialData, realtime: initia
               <ChartCard span title="Session acquisition sources"
                 sub={`GA4 · Traffic acquisition — real sessions by source / medium · ${nf.format(data.acquisition.total)} total`}
                 icon={Ic.link}>
+                {data.acquisition.warning ? (
+                  <div className="acq-warn">
+                    <span className="acq-warn-ic">⚠</span>
+                    <div>
+                      <b>Internal / private-IP referral detected — {data.acquisition.warning.host}</b>
+                      <p>
+                        {nf.format(data.acquisition.warning.sessions)} sessions
+                        ({data.acquisition.warning.pctOfReferral.toFixed(0)}% of all referral traffic,
+                        {" "}{data.acquisition.warning.pctOfTotal.toFixed(0)}% of total). This is internal
+                        proxy / load-balancer / monitoring / self-referral traffic — <b>not real acquisition</b>.
+                        It's separated into “Internal / excluded” below so the mix isn't misleading. To correct
+                        it at the source, add this host to <b>GA4 → Admin → Data Streams → Configure tag settings
+                        → List unwanted referrals</b>.
+                      </p>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="acq">
                   <div className="acq-col">
                     <div className="acq-col-h">Sessions by source</div>
                     <div className="acq-list">
                       {data.acquisition.bySource.map((s, i) => (
-                        <div className="acq-row" key={s.source}>
-                          <span className="acq-name">{s.source}</span>
+                        <div className={"acq-row" + (s.internal ? " acq-int" : "")} key={s.source}>
+                          <span className="acq-name">{s.internal ? "⚠ " : ""}{s.source}</span>
                           <span className="acq-bar">
-                            <span className="acq-fill" style={{ width: `${Math.max(1.5, s.pct)}%`, background: SERIES[i % SERIES.length] }} />
+                            <span className="acq-fill" style={{ width: `${Math.max(1.5, s.pct)}%`, background: s.internal ? "#e0a03a" : SERIES[i % SERIES.length] }} />
                           </span>
                           <span className="acq-val">{nf.format(s.sessions)}</span>
                           <span className="acq-pct">{s.pct.toFixed(1)}%</span>
@@ -433,9 +450,9 @@ export default function AnalyticsDashboard({ data: initialData, realtime: initia
                         <thead><tr><th>Source</th><th>Medium</th><th className="ra">Sessions</th><th className="ra">%</th></tr></thead>
                         <tbody>
                           {data.acquisition.drill.map((d, i) => (
-                            <tr key={i}>
-                              <td className="acq-s">{d.source}</td>
-                              <td><span className="acq-med">{d.medium}</span></td>
+                            <tr key={i} className={d.internal ? "acq-int" : ""}>
+                              <td className="acq-s">{d.internal ? "⚠ " : ""}{d.source}</td>
+                              <td><span className={"acq-med" + (d.internal ? " acq-med-int" : "")}>{d.internal ? "internal" : d.medium}</span></td>
                               <td className="ra">{nf.format(d.sessions)}</td>
                               <td className="ra acq-dim">{d.pct.toFixed(1)}%</td>
                             </tr>
@@ -643,6 +660,12 @@ const CSS = `
 .pldash .acq-s{font-weight:600;color:var(--text)}
 .pldash .acq-dim{color:var(--dim)}
 .pldash .acq-med{font-size:.72rem;color:#cbd5e1;background:rgba(91,157,255,.12);border:1px solid rgba(91,157,255,.28);padding:.1rem .5rem;border-radius:20px;white-space:nowrap}
+.pldash .acq-med-int{color:#e6c778;background:rgba(224,160,58,.14);border-color:rgba(224,160,58,.4)}
+.pldash .acq-int .acq-name,.pldash .acq-int .acq-s{color:#e6c778}
+.pldash .acq-warn{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1.3rem;padding:.9rem 1.05rem;border:1px solid rgba(224,160,58,.4);border-radius:12px;background:rgba(224,160,58,.09)}
+.pldash .acq-warn-ic{font-size:1.05rem;line-height:1.3;flex:none}
+.pldash .acq-warn b{color:#f0d795}
+.pldash .acq-warn p{font-size:.8rem;color:#c9c2b4;line-height:1.65;margin-top:.3rem}
 .pldash .card-b{min-height:40px}
 .pldash .skel{width:100%;border-radius:12px;background:linear-gradient(100deg,rgba(255,255,255,.04),rgba(255,255,255,.08),rgba(255,255,255,.04));background-size:200% 100%;animation:sh 1.3s infinite}
 @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
