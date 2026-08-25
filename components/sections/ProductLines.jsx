@@ -4,61 +4,64 @@ import Link from "next/link";
 import { productLines } from "@/lib/content";
 import { Reveal, CountUp } from "@/components/Primitives";
 
-// Premium "Feature-Rich Showcase" of the product lines: a glass-card grid where
-// each line leads with its baked-title cover, its two headline specs (count-up),
-// a short blurb and a CTA. A glowing orange "current" edge ties into the
-// "one flow of power" idea and lights up on hover.
+/**
+ * Product Lines — a cinematic full-bleed cover grid. Each line is a dark,
+ * baked-imagery tile with an HTML title (so type stays crisp/responsive), two
+ * count-up "data" chips in frosted glass, and an Explore affordance. Hover
+ * energises the tile: the cover pushes in, an orange "current" edge lights, a
+ * warm tint blooms, the title underline draws, and the arrow advances. Reveal
+ * is staggered on scroll. All transform/opacity; fully reduced-motion-safe.
+ */
 export default function ProductLines() {
   return (
     <section className="lines" id="solutions">
       <span className="glow" aria-hidden="true" />
+      <span className="grid-tex" aria-hidden="true" />
       <div className="container">
         <Reveal>
           <div className="head sec-head">
             <span className="eyebrow">Product Lines</span>
             <h2 className="section-title">
-              Six lines.
+              Eight lines.
               <br />
               <span>One flow of power.</span>
             </h2>
             <p className="head-sub">
-              From low-voltage distribution to medium-voltage switchgear and compact
-              substations — every line engineered, type-tested and assembled in-house.
+              From low-voltage distribution to medium-voltage switchgear, compact
+              substations, transformers and power-factor correction — every line
+              engineered, type-tested and assembled in-house.
             </p>
           </div>
         </Reveal>
 
         <div className="grid">
           {productLines.map((l, i) => (
-            <Reveal key={l.key} delay={i * 80}>
-              <article className="fcard">
-                <Link href={l.href} className="fcard-link" aria-label={l.title}>
+            <Reveal key={l.key} delay={i * 70} className="cell">
+              <article className="tile">
+                <Link href={l.href} className="tile-link" aria-label={`${l.title} — explore line`}>
+                  <img className="cover" src={l.img} alt={l.title} loading="lazy" decoding="async" />
+                  <span className="veil" aria-hidden="true" />
+                  <span className="tint" aria-hidden="true" />
                   <span className="edge" aria-hidden="true" />
-                  <div className="media">
-                    <img src={l.img} alt={l.title} loading="lazy" />
-                    <span className="veil" aria-hidden="true" />
-                    <span className="idx">{String(i + 1).padStart(2, "0")}</span>
-                    <span className="tint" aria-hidden="true" />
-                  </div>
+                  <span className="idx">{String(i + 1).padStart(2, "0")}</span>
 
                   <div className="body">
-                    <h3 className="sr-only">{l.title}</h3>
-
+                    <h3 className="t-title">{l.title}</h3>
                     <div className="specs">
                       {l.specs.map((s) => (
-                        <div className="spec" key={s.label}>
+                        <span className="chip" key={s.label}>
                           <span className="v">
                             <CountUp value={s.value} suffix={s.suffix} />
                           </span>
                           <span className="l">{s.label}</span>
-                        </div>
+                        </span>
                       ))}
                     </div>
-
-                    <p className="blurb">{l.blurb}</p>
-
                     <span className="more">
-                      Explore line <i aria-hidden="true">→</i>
+                      Explore line
+                      <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true">
+                        <path d="M5 12h13M12 6l6 6-6 6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </span>
                   </div>
                 </Link>
@@ -77,17 +80,29 @@ export default function ProductLines() {
         /* ambient orange glow behind the grid */
         .glow {
           position: absolute;
-          top: 8%;
+          top: 4%;
           left: 50%;
-          width: min(1100px, 90vw);
-          height: 520px;
+          width: min(1100px, 92vw);
+          height: 560px;
           transform: translateX(-50%);
           background: radial-gradient(
-            60% 60% at 50% 40%,
-            rgba(232, 114, 42, 0.16),
+            55% 55% at 50% 40%,
+            rgba(232, 114, 42, 0.18),
             transparent 70%
           );
-          filter: blur(20px);
+          filter: blur(30px);
+          pointer-events: none;
+          z-index: 0;
+        }
+        /* faint engineering grid texture, masked to the centre */
+        .grid-tex {
+          position: absolute;
+          inset: 0;
+          background-image: linear-gradient(rgba(232, 114, 42, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(232, 114, 42, 0.05) 1px, transparent 1px);
+          background-size: 60px 60px;
+          -webkit-mask-image: radial-gradient(circle at 50% 34%, #000 0%, transparent 62%);
+          mask-image: radial-gradient(circle at 50% 34%, #000 0%, transparent 62%);
           pointer-events: none;
           z-index: 0;
         }
@@ -98,7 +113,7 @@ export default function ProductLines() {
 
         .head {
           text-align: center;
-          max-width: 60ch;
+          max-width: 62ch;
           margin-inline: auto;
         }
         .head :global(.eyebrow) {
@@ -114,72 +129,106 @@ export default function ProductLines() {
         }
         .head-sub {
           margin: 1.2rem auto 0;
-          max-width: 56ch;
+          max-width: 58ch;
           color: var(--text-dim);
           font-size: clamp(0.95rem, 1.2vw, 1.05rem);
           line-height: 1.6;
         }
 
+        /* ── grid ── */
         .grid {
-          margin-top: clamp(2.4rem, 5vw, 3.6rem);
+          margin-top: clamp(2.6rem, 5vw, 4rem);
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: clamp(1rem, 1.6vw, 1.5rem);
+          grid-template-columns: repeat(4, 1fr);
+          gap: clamp(0.85rem, 1.4vw, 1.35rem);
         }
-        .grid :global(.reveal) {
+        .grid :global(.cell) {
           display: flex;
         }
 
-        /* ── glass card ── */
-        .fcard {
+        /* ── tile ── */
+        .tile {
           position: relative;
           flex: 1;
-          border: 1px solid var(--line);
+          aspect-ratio: 4 / 5;
           border-radius: 20px;
           overflow: hidden;
-          background: linear-gradient(
-            180deg,
-            rgba(255, 255, 255, 0.045),
-            rgba(255, 255, 255, 0.012)
-          );
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          transition: transform 0.45s var(--ease), border-color 0.45s ease,
-            box-shadow 0.45s ease;
+          border: 1px solid var(--line);
+          background: #0b0b0d;
+          /* NB: no transform on the tile — a hover translate/scale moves the
+             clickable area out from under the pointer and makes clicks flaky
+             (you'd have to click several times). All hover feedback below is
+             non-moving (border, shadow, image zoom, edge, tint). */
+          transition: border-color 0.45s ease, box-shadow 0.45s ease;
         }
-        .fcard::before {
-          /* soft top highlight, glass edge */
-          content: "";
+        .tile:hover {
+          border-color: rgba(232, 114, 42, 0.6);
+          box-shadow: 0 30px 80px -34px rgba(0, 0, 0, 0.9),
+            0 0 55px -18px rgba(232, 114, 42, 0.5);
+        }
+        :global(.tile-link) {
           position: absolute;
-          inset: 0 0 auto 0;
-          height: 1px;
-          background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.25),
-            transparent
-          );
-          opacity: 0.6;
-          z-index: 3;
+          inset: 0;
+          display: block;
         }
-        .fcard:hover {
-          transform: translateY(-10px);
-          border-color: rgba(232, 114, 42, 0.55);
-          box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.85),
-            0 0 50px -12px rgba(232, 114, 42, 0.4);
+        :global(.tile-link:focus-visible) {
+          outline: 2px solid var(--orange);
+          outline-offset: 3px;
+          border-radius: 20px;
         }
-        .fcard-link {
-          display: flex;
-          flex-direction: column;
+        .cover {
+          position: absolute;
+          inset: 0;
+          width: 100%;
           height: 100%;
+          object-fit: cover;
+          transform: scale(1.03);
+          transition: transform 0.7s var(--ease), filter 0.6s ease;
+          filter: saturate(1.02);
         }
-        /* the orange "current" edge — a hairline that runs across the top of the
-           image and lights up on hover (the flow of power) */
+        .tile:hover .cover {
+          transform: scale(1.1);
+          filter: saturate(1.12);
+        }
+        /* dark overlay — a moody wash across the whole cover, deepening toward
+           the bottom where the copy sits. Eases back on hover so the product
+           "comes alive". */
+        .veil {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(
+              180deg,
+              rgba(5, 5, 6, 0.58) 0%,
+              rgba(5, 5, 6, 0.46) 32%,
+              rgba(5, 5, 6, 0.74) 66%,
+              rgba(5, 5, 6, 0.96) 100%
+            );
+          transition: opacity 0.55s ease;
+        }
+        .tile:hover .veil {
+          opacity: 0.8;
+        }
+        /* warm orange bloom on hover */
+        .tint {
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(
+            120% 80% at 50% 100%,
+            rgba(232, 114, 42, 0.32),
+            transparent 62%
+          );
+          opacity: 0;
+          transition: opacity 0.5s ease;
+        }
+        .tile:hover .tint {
+          opacity: 1;
+        }
+        /* the orange "current" edge that lights across the top on hover */
         .edge {
           position: absolute;
           top: 0;
-          left: 8%;
-          right: 8%;
+          left: 10%;
+          right: 10%;
           height: 2px;
           background: linear-gradient(
             90deg,
@@ -190,185 +239,158 @@ export default function ProductLines() {
             transparent
           );
           opacity: 0;
-          box-shadow: 0 0 16px rgba(232, 114, 42, 0.7);
-          transition: opacity 0.45s ease;
-          z-index: 4;
+          box-shadow: 0 0 18px rgba(232, 114, 42, 0.8);
+          transition: opacity 0.5s ease;
+          z-index: 3;
         }
-        .fcard:hover .edge {
-          opacity: 1;
-        }
-
-        .media {
-          position: relative;
-          aspect-ratio: 4 / 3;
-          overflow: hidden;
-        }
-        .media img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          transition: transform 0.7s var(--ease);
-        }
-        .fcard:hover .media img {
-          transform: scale(1.07);
-        }
-        .veil {
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(
-            180deg,
-            transparent 52%,
-            rgba(10, 10, 12, 0.85) 100%
-          );
-        }
-        /* subtle orange wash that fades in on hover */
-        .tint {
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(
-            120% 90% at 50% 0%,
-            rgba(232, 114, 42, 0.16),
-            transparent 60%
-          );
-          opacity: 0;
-          transition: opacity 0.45s ease;
-        }
-        .fcard:hover .tint {
+        .tile:hover .edge {
           opacity: 1;
         }
         .idx {
           position: absolute;
-          top: 1rem;
-          left: 1rem;
+          top: 0.9rem;
+          left: 0.9rem;
+          z-index: 3;
           font-family: var(--font-head);
           font-weight: 800;
-          font-size: 0.8rem;
-          letter-spacing: 0.02em;
+          font-size: 0.72rem;
+          letter-spacing: 0.06em;
           color: #fff;
-          background: rgba(232, 114, 42, 0.92);
-          padding: 0.28rem 0.62rem;
+          padding: 0.24rem 0.55rem;
           border-radius: 8px;
-          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
-          z-index: 3;
+          background: rgba(232, 114, 42, 0.9);
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
         }
 
         .body {
-          position: relative;
-          padding: 1.5rem 1.6rem 1.7rem;
-          flex: 1;
+          position: absolute;
+          inset: auto 0 0 0;
+          z-index: 3;
+          padding: clamp(1rem, 1.6vw, 1.5rem);
           display: flex;
           flex-direction: column;
+          gap: 0.7rem;
         }
-        /* headline specs — the premium data moment */
-        .specs {
-          display: flex;
-          gap: 1.4rem;
-        }
-        .spec {
+        .t-title {
           position: relative;
-          flex: 1;
-        }
-        .spec + .spec::before {
-          content: "";
-          position: absolute;
-          left: -0.7rem;
-          top: 0.15rem;
-          bottom: 0.15rem;
-          width: 1px;
-          background: var(--line);
-        }
-        .v {
-          display: block;
+          align-self: flex-start;
           font-family: var(--font-head);
           font-weight: 800;
-          font-size: clamp(1.5rem, 2.4vw, 1.9rem);
+          font-style: italic;
+          font-size: clamp(1.35rem, 1.9vw, 1.9rem);
+          line-height: 1.02;
+          color: #fff;
+          text-shadow: 0 2px 22px rgba(0, 0, 0, 0.7);
+          margin: 0;
+        }
+        .t-title::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: -0.28rem;
+          height: 2px;
+          background: linear-gradient(90deg, var(--orange), transparent);
+          transform: scaleX(0);
+          transform-origin: left;
+          transition: transform 0.5s var(--ease);
+        }
+        .tile:hover .t-title::after {
+          transform: scaleX(1);
+        }
+        /* frosted "data" chips */
+        .specs {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        .chip {
+          display: inline-flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.14rem;
+          padding: 0.44rem 0.72rem;
+          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.07);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+        .chip .v {
+          font-family: var(--font-head);
+          font-weight: 800;
+          font-size: 1.05rem;
           line-height: 1;
           color: var(--orange);
           font-variant-numeric: tabular-nums;
-          text-shadow: 0 0 22px rgba(232, 114, 42, 0.28);
         }
-        .l {
-          display: block;
-          margin-top: 0.35rem;
-          font-size: 0.68rem;
-          letter-spacing: 0.06em;
+        .chip .l {
+          font-size: 0.56rem;
+          letter-spacing: 0.09em;
           text-transform: uppercase;
-          color: var(--text-faint);
-        }
-        .blurb {
-          margin: 1.1rem 0 1.3rem;
-          color: var(--text-dim);
-          font-size: 0.9rem;
-          line-height: 1.55;
-          flex: 1;
+          line-height: 1;
+          color: rgba(255, 255, 255, 0.68);
         }
         .more {
           display: inline-flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 0.45rem;
+          margin-top: 0.15rem;
+          font-family: var(--font-body);
           font-weight: 600;
-          font-size: 0.85rem;
+          font-size: 0.8rem;
+          letter-spacing: 0.02em;
           color: #fff;
           transition: color 0.3s ease;
         }
-        .more i {
-          font-style: normal;
-          transition: transform 0.3s var(--ease);
+        .more svg {
+          transition: transform 0.35s var(--ease);
         }
-        .fcard:hover .more {
+        .tile:hover .more {
           color: var(--orange);
         }
-        .fcard:hover .more i {
-          transform: translateX(6px);
+        .tile:hover .more svg {
+          transform: translateX(5px);
         }
 
-        .fcard-link:focus-visible {
-          outline: 2px solid var(--orange);
-          outline-offset: 3px;
+        /* ── responsive ── */
+        @media (max-width: 1200px) {
+          .grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
-
-        .sr-only {
-          position: absolute;
-          width: 1px;
-          height: 1px;
-          padding: 0;
-          margin: -1px;
-          overflow: hidden;
-          clip: rect(0, 0, 0, 0);
-          white-space: nowrap;
-          border: 0;
-        }
-
-        @media (max-width: 1024px) {
+        @media (max-width: 860px) {
           .grid {
             grid-template-columns: repeat(2, 1fr);
-            max-width: 760px;
-            margin-inline: auto;
           }
         }
-        @media (max-width: 600px) {
+        @media (max-width: 520px) {
           .grid {
             grid-template-columns: 1fr;
-            max-width: 440px;
+            max-width: 24rem;
+            margin-inline: auto;
           }
-          .blurb {
-            flex: none;
+          .tile {
+            aspect-ratio: 16 / 11;
           }
         }
+
         @media (prefers-reduced-motion: reduce) {
-          .fcard,
-          .media img,
-          .edge,
+          .tile,
+          .cover,
+          .veil,
           .tint,
+          .edge,
           .more,
-          .more i {
+          .more svg,
+          .t-title::after {
             transition: none;
           }
-          .fcard:hover {
+          .tile:hover {
             transform: none;
           }
-          .fcard:hover .media img {
-            transform: none;
+          .tile:hover .cover {
+            transform: scale(1.03);
           }
         }
       `}</style>

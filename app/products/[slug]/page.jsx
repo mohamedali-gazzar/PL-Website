@@ -8,6 +8,7 @@ import { pcssProjects } from "@/lib/pcssProjects";
 import { pralProjects } from "@/lib/pralProjects";
 import { psecProjects } from "@/lib/psecProjects";
 import { lvProjects } from "@/lib/lvProjects";
+import { mvswgProjects } from "@/lib/mvswgProjects";
 import {
   products,
   lowVoltage,
@@ -48,6 +49,15 @@ const scaleSections = {
       "distribution networks across Egypt — a portfolio that keeps growing. " +
       "Below is a selection of delivered reference projects.",
   },
+  "switchgear-mcset": {
+    projects: mvswgProjects,
+    title: "MV switchgear boards delivered",
+    ariaLabel: "The scale of Powerline's Schneider MCset portfolio",
+    lead:
+      "Schneider MCset medium-voltage switchgear assembled and commissioned by " +
+      "Powerline for clients across Egypt — a portfolio that keeps growing. " +
+      "Below is a selection of delivered reference projects.",
+  },
 };
 
 // All low-voltage products share the same LV project reference list.
@@ -72,6 +82,8 @@ const lineImg = {
   "Secondary Switchgear": "/img/line-mv.webp",
   "Compact Substation PCSS": "/img/prod-pcss.webp",
   "Dry Transformers": "/img/prod-dry.webp",
+  "Instrument Transformers": "/img/prod-instrument-transformers.webp",
+  Capacitors: "/img/prod-capacitor.webp",
   Supplies: "/img/line-supplies.webp",
 };
 const lineHref = {
@@ -80,6 +92,8 @@ const lineHref = {
   "Secondary Switchgear": "/secondary-switchgear",
   "Compact Substation PCSS": "/compact-substation",
   "Dry Transformers": "/our-products",
+  "Instrument Transformers": "/instrument-transformers",
+  Capacitors: "/capacitors",
   Supplies: "/supplies",
 };
 
