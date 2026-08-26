@@ -28,7 +28,10 @@ export default function CatalogLeadsBoard({ initialLeads, configured, dbError })
     );
   }, [leads, q]);
 
-  const exportHref = "/api/crm/catalog/export" + (q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "");
+  const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
+  const canExport = configured && leads.length > 0;
+  const exportXlsxHref = "/api/crm/catalog/export-xlsx" + qs;
+  const exportCsvHref = "/api/crm/catalog/export" + qs;
 
   return (
     <div className="cat">
@@ -45,11 +48,20 @@ export default function CatalogLeadsBoard({ initialLeads, configured, dbError })
           <a className="ghost" href="/admin/analytics">Analytics ↗</a>
           <a className="ghost" href="/api/admin/login">Sign out</a>
           <a
-            className={"primary" + (configured && leads.length ? "" : " disabled")}
-            href={configured && leads.length ? exportHref : undefined}
-            aria-disabled={!(configured && leads.length)}
+            className={"primary" + (canExport ? "" : " disabled")}
+            href={canExport ? exportXlsxHref : undefined}
+            aria-disabled={!canExport}
+            title="Download as Excel (.xlsx)"
           >
-            ↓ Export CSV
+            ↓ Excel
+          </a>
+          <a
+            className={"ghost" + (canExport ? "" : " disabled")}
+            href={canExport ? exportCsvHref : undefined}
+            aria-disabled={!canExport}
+            title="Download as CSV"
+          >
+            ↓ CSV
           </a>
         </div>
       </header>
@@ -151,6 +163,7 @@ const CSS = `
 .cat .top-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .cat .ghost{font-size:.8rem;color:var(--dim);text-decoration:none;border:1px solid var(--line);padding:.5rem .85rem;border-radius:9px}
 .cat .ghost:hover{color:#fff;border-color:var(--line2);background:rgba(255,255,255,.04)}
+.cat .ghost.disabled{opacity:.45;pointer-events:none;cursor:not-allowed}
 .cat .primary{font-size:.82rem;font-weight:700;color:#160c04;background:linear-gradient(180deg,var(--accent2),var(--accent));border:none;padding:.55rem 1rem;border-radius:9px;text-decoration:none;cursor:pointer}
 .cat .primary:hover{filter:brightness(1.06)}
 .cat .primary.disabled{opacity:.45;pointer-events:none;cursor:not-allowed}
