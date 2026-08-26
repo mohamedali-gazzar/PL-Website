@@ -7,7 +7,7 @@ const STATUS_LABEL = { new: "New", contacted: "Contacted", qualified: "Qualified
 const STATUS_COLOR = {
   new: "#5b9dff", contacted: "#e8b42a", qualified: "#b98cff", won: "#3ecf8e", lost: "#e25442",
 };
-const SOURCE_LABEL = { manual: "Manual", contact: "Contact form", careers: "Careers form", api: "API" };
+const SOURCE_LABEL = { manual: "Manual", contact: "Contact form", careers: "Careers form", api: "API", product_catalog: "Product Catalog" };
 
 const EMPTY_FORM = { name: "", email: "", phone: "", company: "", status: "new", message: "", notes: "" };
 
@@ -148,6 +148,7 @@ export default function CrmBoard({ initialLeads, initialCounts, configured, dbEr
           </div>
         </div>
         <div className="top-actions">
+          <a className="ghost" href="/admin/catalog-leads">Catalogue leads ↗</a>
           <a className="ghost" href="/admin/analytics">Analytics ↗</a>
           <button className="primary" onClick={openAdd} disabled={!configured}>+ Add lead</button>
         </div>
