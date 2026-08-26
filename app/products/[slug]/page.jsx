@@ -4,6 +4,8 @@ import PageShell from "@/components/PageShell";
 import { Reveal } from "@/components/Primitives";
 import ProductGallery from "@/components/ProductGallery";
 import ProjectsScale from "@/components/ProjectsScale";
+import CatalogButton from "@/components/CatalogButton";
+import { getCatalog } from "@/lib/catalogs";
 import { pcssProjects } from "@/lib/pcssProjects";
 import { pralProjects } from "@/lib/pralProjects";
 import { psecProjects } from "@/lib/psecProjects";
@@ -184,6 +186,7 @@ export default function ProductPage({ params }) {
               <div className="actions">
                 <Link href="/contact" className="btn btn-primary">Sales Request</Link>
                 <a href={`tel:${brand.phone}`} className="btn btn-ghost" aria-label={`Call Powerline on ${brand.phoneDisplay}`}>Call Us</a>
+                {getCatalog(params.slug) && <CatalogButton catalog={getCatalog(params.slug)} />}
               </div>
             </Reveal>
           </div>

@@ -15,3 +15,9 @@ scripts/*.html
 
 .vercel
 .next-build
+
+# The served catalogue PDF (private/catalogs/<slug>/<file>.pdf) IS committed so
+# the gated download route can serve it on Vercel — it lives outside /public and
+# is only reachable through the authorized API. Optional working/source files
+# under a per-catalogue source/ folder stay out of git.
+private/catalogs/*/source/

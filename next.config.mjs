@@ -8,6 +8,16 @@ const nextConfig = {
     // Local bundled assets only; allow Shopify CDN as a fallback if ever needed.
     remotePatterns: [{ protocol: "https", hostname: "powerlinei.com" }],
   },
+  experimental: {
+    // The gated catalogue routes read protected files from /private at runtime
+    // via fs. They aren't statically imported, so force-include them in the
+    // serverless function bundles (they'd otherwise be missing on Vercel):
+    // the viewer serves page images, the download serves the full PDF.
+    outputFileTracingIncludes: {
+      "/api/catalog/page/[slug]/[n]": ["./private/catalogs/**/pages/**"],
+      "/api/catalog/download/[slug]": ["./private/catalogs/**/*.pdf"],
+    },
+  },
   // Keep the old slugs working after renaming them to match page/product names.
   async redirects() {
     return [

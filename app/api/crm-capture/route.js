@@ -1,43 +1,29 @@
 import { NextResponse } from "next/server";
+import { forwardLeadToCrm } from "@/lib/crm";
 
-// Server-side proxy that forwards website form submissions to the CRM's ingest
-// endpoint. The shared secret lives ONLY here (server env) — the browser calls
-// this same-origin route, so the secret never reaches the client. Entirely
-// best-effort: any failure returns quietly so the contact/careers email path
-// (the primary channel) is never affected.
+// Same-origin proxy that forwards contact/careers form submissions to the CRM
+// ingest endpoint (the shared secret stays server-side). Best-effort: any
+// failure returns quietly so the email path (the primary channel) is unaffected.
+// The actual CRM call lives in lib/crm.js and is shared with the catalogue
+// unlock route so there is only one CRM integration.
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const INGEST_URL = process.env.CRM_INGEST_URL || "https://pl-website-crm.vercel.app/api/crm/ingest";
-
 export async function POST(request) {
-  const secret = process.env.CRM_INGEST_SECRET;
-  // If the CRM isn't wired up on this environment, no-op silently.
-  if (!secret) return NextResponse.json({ ok: false, skipped: "not_configured" });
-
   let body = {};
-  try { body = await request.json(); } catch { /* empty body */ }
-
-  const source = body.source === "careers" ? "careers" : "contact";
-  const payload = {
-    name: body.name, email: body.email, phone: body.phone,
-    company: body.company, message: body.message, source,
-  };
-
   try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 4000); // don't hang the form
-    const res = await fetch(INGEST_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-crm-ingest-secret": secret },
-      body: JSON.stringify(payload),
-      signal: ctrl.signal,
-      cache: "no-store",
-    });
-    clearTimeout(timer);
-    return NextResponse.json({ ok: res.ok });
+    body = await request.json();
   } catch {
-    // Swallow — CRM capture is secondary to the email and must never surface.
-    return NextResponse.json({ ok: false });
+    /* empty body */
   }
+  const source = body.source === "careers" ? "careers" : "contact";
+  const result = await forwardLeadToCrm({
+    name: body.name,
+    email: body.email,
+    phone: body.phone,
+    company: body.company,
+    message: body.message,
+    source,
+  });
+  return NextResponse.json(result);
 }
