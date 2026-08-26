@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
-import { getCatalog } from "@/lib/catalogs";
+import { getCatalog, catalogKey } from "@/lib/catalogs";
 import { verifyAccessToken, cookieName } from "@/lib/catalogAccess";
 
 // Delivers the protected catalogue PDF — only to a visitor holding a valid
@@ -15,12 +15,13 @@ export async function GET(request, { params }) {
   const cat = getCatalog(params.slug);
   if (!cat) return new NextResponse("Not found", { status: 404 });
 
-  const token = request.cookies.get(cookieName(cat.slug))?.value;
-  if (!verifyAccessToken(token, cat.slug)) {
+  const key = catalogKey(cat);
+  const token = request.cookies.get(cookieName(key))?.value;
+  if (!verifyAccessToken(token, key)) {
     return new NextResponse("Access denied", { status: 403 });
   }
 
-  const file = path.join(process.cwd(), "private", "catalogs", cat.slug, cat.file);
+  const file = path.join(process.cwd(), "private", "catalogs", key, cat.file);
   let buf;
   try {
     buf = fs.readFileSync(file);

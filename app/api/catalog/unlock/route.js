@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { forwardCatalogLeadToCrm } from "@/lib/crm";
-import { getCatalog } from "@/lib/catalogs";
+import { getCatalog, catalogKey } from "@/lib/catalogs";
 import { isValidEmail } from "@/lib/content";
 import {
   createAccessToken,
@@ -19,8 +19,9 @@ export async function GET(request) {
   const slug = new URL(request.url).searchParams.get("slug") || "";
   const cat = getCatalog(slug);
   if (!cat) return NextResponse.json({ unlocked: false });
-  const token = request.cookies.get(cookieName(slug))?.value;
-  return NextResponse.json({ unlocked: verifyAccessToken(token, slug) });
+  const key = catalogKey(cat);
+  const token = request.cookies.get(cookieName(key))?.value;
+  return NextResponse.json({ unlocked: verifyAccessToken(token, key) });
 }
 
 // POST /api/catalog/unlock  → validate + save lead + grant access cookie
@@ -94,7 +95,8 @@ export async function POST(request) {
     ok: true,
     crm: crm.ok ? "saved" : crm.skipped || "unsaved",
   });
-  res.cookies.set(cookieName(cat.slug), createAccessToken(cat.slug), {
+  const key = catalogKey(cat);
+  res.cookies.set(cookieName(key), createAccessToken(key), {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

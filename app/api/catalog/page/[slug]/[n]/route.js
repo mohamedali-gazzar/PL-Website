@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
-import { getCatalog } from "@/lib/catalogs";
+import { getCatalog, catalogKey } from "@/lib/catalogs";
 import { verifyAccessToken, cookieName } from "@/lib/catalogAccess";
 
 // Serves ONE catalogue page as an image for the in-site viewer. EVERY page
@@ -19,8 +19,9 @@ export async function GET(request, { params }) {
     return new NextResponse("Not found", { status: 404 });
   }
 
-  const token = request.cookies.get(cookieName(cat.slug))?.value;
-  if (!verifyAccessToken(token, cat.slug)) {
+  const key = catalogKey(cat);
+  const token = request.cookies.get(cookieName(key))?.value;
+  if (!verifyAccessToken(token, key)) {
     return new NextResponse("Access denied", { status: 403 });
   }
 
@@ -28,7 +29,7 @@ export async function GET(request, { params }) {
     process.cwd(),
     "private",
     "catalogs",
-    cat.slug,
+    key,
     "pages",
     `${cat.pagePrefix}-${String(n).padStart(3, "0")}.webp`
   );
