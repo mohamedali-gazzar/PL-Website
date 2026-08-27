@@ -31,7 +31,6 @@ export default function CatalogLeadsBoard({ initialLeads, configured, dbError })
   const qs = q.trim() ? `?q=${encodeURIComponent(q.trim())}` : "";
   const canExport = configured && leads.length > 0;
   const exportXlsxHref = "/api/crm/catalog/export-xlsx" + qs;
-  const exportCsvHref = "/api/crm/catalog/export" + qs;
 
   return (
     <div className="cat">
@@ -53,15 +52,7 @@ export default function CatalogLeadsBoard({ initialLeads, configured, dbError })
             aria-disabled={!canExport}
             title="Download as Excel (.xlsx)"
           >
-            ↓ Excel
-          </a>
-          <a
-            className={"ghost" + (canExport ? "" : " disabled")}
-            href={canExport ? exportCsvHref : undefined}
-            aria-disabled={!canExport}
-            title="Download as CSV"
-          >
-            ↓ CSV
+            ↓ Export Excel
           </a>
         </div>
       </header>
