@@ -153,8 +153,8 @@ export default function CatalogModal({ open, onClose, onSuccess, catalog }) {
           <Field name="country" label="Country *" autoComplete="country-name" error={errors.country} />
 
           <label className="check">
-            <input type="checkbox" name="engineer" />
-            <span>I&rsquo;d like a Powerline engineer to contact me about this product.</span>
+            <input type="checkbox" name="engineer" defaultChecked />
+            <span>I consent to receive offers and updates on products, service and events from Powerline.</span>
           </label>
 
           <button type="submit" className="btn btn-primary submit" disabled={status === "submitting"}>
