@@ -45,6 +45,8 @@ export default function SupplierOfferingsPage() {
         body: JSON.stringify({
           _subject: `New supplier offering — ${data.company}`,
           _template: "table",
+          // Deliver to info@ (URL) and also CC the procurement lead.
+          _cc: "mohamed.abdelbaset@powerline.com.eg",
           Name: data.name,
           Email: data.email,
           Phone: data.phone || "-",

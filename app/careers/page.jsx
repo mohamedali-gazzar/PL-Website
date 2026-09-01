@@ -58,6 +58,8 @@ export default function CareersPage() {
       data.append("_subject", `New job application — ${data.get("name")}`);
       data.append("_template", "table");
       data.append("_captcha", "false");
+      // Deliver to info@ (URL) and also CC the careers lead.
+      data.append("_cc", "omar.hazem@powerline.com.eg");
       await fetch(`https://formsubmit.co/${formEmail}`, {
         method: "POST",
         mode: "no-cors",
