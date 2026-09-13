@@ -1,4 +1,4 @@
-name: Sync Fork
+name: Sync All Branches
 
 on:
   schedule:
@@ -18,10 +18,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Sync with original repository
+      - name: Add upstream
         run: |
           git remote add upstream https://github.com/mohamedali-gazzar/PL-Website.git
-          git fetch upstream
-          git checkout main
-          git reset --hard upstream/main
-          git push origin main --force
+          git fetch upstream --prune
+
+      - name: Sync all branches
+        run: |
+          for branch in $(git branch -r | grep 'upstream/' | grep -v 'HEAD' | sed 's#upstream/##'); do
+            git checkout -B "$branch" "upstream/$branch"
+            git push origin "$branch" --force
+          done
