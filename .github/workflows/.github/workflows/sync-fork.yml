@@ -5,12 +5,12 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     runs-on: ubuntu-latest
-
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout fork
@@ -18,14 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Add upstream
+      - name: Sync all upstream branches
         run: |
           git remote add upstream https://github.com/mohamedali-gazzar/PL-Website.git
           git fetch upstream --prune
 
-      - name: Sync all branches
-        run: |
-          for branch in $(git branch -r | grep 'upstream/' | grep -v 'HEAD' | sed 's#upstream/##'); do
-            git checkout -B "$branch" "upstream/$branch"
-            git push origin "$branch" --force
+          git for-each-ref --format='%(refname:short)' refs/remotes/upstream/ | while read branch; do
+            branch=${branch#upstream/}
+
+            if [ "$branch" != "HEAD" ]; then
+              git push origin "refs/remotes/upstream/$branch:refs/heads/$branch" --force
+            fi
           done
